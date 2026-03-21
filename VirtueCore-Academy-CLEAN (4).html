@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VirtueCore Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700;9..40,800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080C14;--s1:#0F1521;--s2:#161D2C;--s3:#1C2538;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--gold:#E8A020;--gold-bg:rgba(232,160,32,0.12);--text:#DDE4F0;--dim:#8592B0;--muted:#4A5470;--green:#22C55E;--red:#EF4444;--blue:#3E7BFA;--r:12px;--rs:8px}
+body{font-family:"DM Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+button{font-family:inherit}.hide{display:none!important}
+#pg-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(ellipse 70% 50% at 65% 40%,rgba(232,160,32,0.07) 0%,transparent 70%),var(--bg)}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:40px;width:420px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.brand-icon{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#000}
+.brand-name{font-family:"DM Serif Display",serif;font-size:18px}.brand-name em{color:var(--gold);font-style:normal}
+.login-h1{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:5px}
+.login-sub{color:var(--dim);font-size:13px;line-height:1.65;margin-bottom:16px}
+.field{margin-bottom:14px}.field label{display:block;font-size:11px;font-weight:700;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.field input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,160,32,.12)}.field input::placeholder{color:var(--muted)}
+.btn-gold-full{width:100%;background:var(--gold);color:#000;border:none;border-radius:var(--rs);padding:13px;font-size:14px;font-weight:800;cursor:pointer;transition:opacity .15s;margin-top:4px}.btn-gold-full:hover{opacity:.88}
+.login-note{text-align:center;margin-top:12px;font-size:11px;color:var(--muted)}
+.err{color:var(--red);font-size:12px;margin-bottom:10px;display:none}
+.lock-note{display:flex;align-items:center;gap:8px;background:rgba(62,123,250,.1);border:1px solid rgba(62,123,250,.2);border-radius:var(--rs);padding:10px 13px;margin-bottom:16px;font-size:12px;color:#6B9EFF}
+#pg-app{display:none}
+nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+.nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer}.nav-logo-icon{width:28px;height:28px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#000}
+.nav-logo-text{font-family:"DM Serif Display",serif;font-size:16px;color:var(--text)}.nav-logo-text em{color:var(--gold);font-style:normal}
+.nav-tabs{display:flex;gap:3px}.nav-tab{background:none;border:none;color:var(--muted);padding:5px 13px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.nav-tab.on{background:var(--gold-bg);color:var(--gold)}.nav-tab:hover:not(.on){background:var(--s2);color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:11px}.nav-user{font-size:13px;color:var(--dim);font-weight:500}
+.btn-so{background:var(--s2);border:1px solid var(--border);color:var(--dim);padding:5px 12px;border-radius:var(--rs);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}.btn-so:hover{color:var(--text)}
+.wrap{max-width:1020px;margin:0 auto;padding:32px 20px}.pg-title{font-family:"DM Serif Display",serif;font-size:28px;letter-spacing:-.3px;margin-bottom:5px}.pg-sub{color:var(--dim);font-size:14px;margin-bottom:26px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:26px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px}.stat-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:6px}.stat-val{font-size:26px;font-weight:800;letter-spacing:-1px;color:var(--gold)}.stat-sub{font-size:12px;color:var(--dim);margin-top:2px}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:15px}
+.c-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:22px;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.c-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .18s}
+.c-card:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.4)}.c-card:hover::before{opacity:1}
+.c-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:13px}
+.c-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:20px;margin-bottom:9px}
+.c-title{font-size:15px;font-weight:800;margin-bottom:6px;letter-spacing:-.1px}.c-desc{font-size:13px;color:var(--dim);line-height:1.65;margin-bottom:16px}
+.c-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:10px}
+.prog-wrap{background:var(--s3);border-radius:3px;height:4px;overflow:hidden}.prog-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.done-badge{position:absolute;top:14px;right:14px;background:rgba(34,197,94,.15);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(34,197,94,.2)}
+.back-btn{display:inline-flex;align-items:center;gap:7px;background:var(--s1);border:1px solid var(--border);color:var(--dim);padding:8px 14px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:22px;transition:all .15s}.back-btn:hover{color:var(--text);border-color:var(--border2)}
+.hero{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:26px;margin-bottom:18px;display:flex;gap:18px;align-items:flex-start}
+.hero-icon{width:56px;height:56px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.hero-title{font-family:"DM Serif Display",serif;font-size:22px;letter-spacing:-.3px;margin-bottom:7px}.hero-desc{color:var(--dim);font-size:13px;line-height:1.65;margin-bottom:13px}
+.hero-stats{display:flex;gap:22px}.h-stat{font-size:12px;color:var(--dim)}.h-stat strong{display:block;font-size:17px;font-weight:800;color:var(--text)}
+.mod-list{display:flex;flex-direction:column;gap:10px}.mod-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.mod-head{display:flex;align-items:center;padding:15px 19px;gap:13px;cursor:pointer;transition:background .15s}.mod-head:hover{background:var(--s2)}
+.mod-num{width:29px;height:29px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--dim);flex-shrink:0}.mod-num.ok{background:rgba(34,197,94,.15);color:var(--green)}
+.mod-info-title{font-size:14px;font-weight:700;margin-bottom:2px}.mod-info-sub{font-size:11px;color:var(--muted)}
+.chev{margin-left:auto;color:var(--muted);font-size:15px;transition:transform .2s;user-select:none}.chev.open{transform:rotate(180deg)}
+.mod-body{border-top:1px solid var(--border);padding:13px 19px;display:none}.mod-body.open{display:block}
+.l-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;transition:background .12s}.l-row:hover{background:var(--s2)}
+.l-dot{width:7px;height:7px;border-radius:50%;background:var(--s3);flex-shrink:0}.l-dot.ok{background:var(--green)}
+.l-name{font-size:13px;color:var(--dim);flex:1}.l-name.ok{color:var(--text)}.l-dur{font-size:11px;color:var(--muted)}
+.quiz-row{display:flex;align-items:center;gap:10px;padding:11px 12px;margin-top:8px;border-radius:var(--rs);background:var(--s2);cursor:pointer;border:1px solid var(--border);transition:border-color .15s}.quiz-row:hover{border-color:var(--gold)}
+.q-ico{width:29px;height:29px;background:var(--gold-bg);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.q-row-title{font-size:13px;font-weight:700;margin-bottom:2px}.q-row-sub{font-size:11px;color:var(--muted)}
+.lesson-layout{display:grid;grid-template-columns:235px 1fr;gap:17px}
+.l-sidebar{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:sticky;top:74px;align-self:start;max-height:78vh;overflow-y:auto}
+.sb-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:11px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:var(--rs);cursor:pointer;font-size:12px;color:var(--dim);transition:background .12s}.sb-item:hover:not(.on){background:var(--s2)}
+.sb-item.on{background:var(--gold-bg);color:var(--gold);font-weight:700}.sb-item.done{color:var(--text)}
+.sb-dot{width:6px;height:6px;border-radius:50%;background:var(--s3);flex-shrink:0}.sb-dot.ok{background:var(--green)}.sb-dot.on{background:var(--gold)}
+.lesson-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:32px 36px}
+.l-meta{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:8px}
+.l-title{font-family:"DM Serif Display",serif;font-size:24px;letter-spacing:-.3px;margin-bottom:20px;line-height:1.35}
+.l-body{color:var(--dim);font-size:14px;line-height:1.9;white-space:pre-line}
+.l-actions{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.l-ar{display:flex;align-items:center;gap:9px}
+.btn-sec{background:var(--s2);border:1px solid var(--border);color:var(--dim);padding:10px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}.btn-sec:hover{color:var(--text)}
+.btn-green{background:var(--green);color:#000;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:800;cursor:pointer;transition:opacity .15s}.btn-green:hover{opacity:.88}
+.btn-gold-sm{background:var(--gold);color:#000;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:800;cursor:pointer;transition:opacity .15s}.btn-gold-sm:hover{opacity:.88}
+.done-text{color:var(--green);font-size:13px;font-weight:700}
+.quiz-wrap{max-width:620px;margin:0 auto}
+.q-header{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:19px 23px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.q-header-title{font-size:16px;font-weight:800}.q-header-sub{font-size:13px;color:var(--dim)}
+.q-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:28px}
+.q-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gold);margin-bottom:9px}
+.q-text{font-size:18px;font-weight:800;line-height:1.5;margin-bottom:22px;letter-spacing:-.2px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:13px 15px;cursor:pointer;font-size:14px;color:var(--dim);text-align:left;transition:all .15s}
+.opt:hover:not(:disabled){border-color:var(--gold);color:var(--text);background:var(--gold-bg)}.opt.sel{border-color:var(--gold);background:var(--gold-bg);color:var(--text)}
+.opt.correct{border-color:var(--green);background:rgba(34,197,94,.1);color:var(--green)}.opt.wrong{border-color:var(--red);background:rgba(239,68,68,.1);color:#FF8080}
+.q-actions{display:flex;justify-content:flex-end;margin-top:20px}
+.result-wrap{max-width:520px;margin:0 auto}.result-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:44px 32px;text-align:center}
+.res-emo{font-size:48px;margin-bottom:14px}.res-title{font-family:"DM Serif Display",serif;font-size:24px;margin-bottom:5px}
+.res-score{font-size:64px;font-weight:900;letter-spacing:-2px;margin:10px 0}.res-score.pass{color:var(--green)}.res-score.fail{color:var(--red)}
+.res-sub{color:var(--dim);font-size:14px;margin-bottom:24px;line-height:1.65}.res-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.adm-table{width:100%;border-collapse:collapse;font-size:13px}
+.adm-table th{padding:11px 17px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--s2)}
+.adm-table td{padding:13px 17px;border-bottom:1px solid var(--border);color:var(--dim)}
+.adm-table tr:last-child td{border-bottom:none}.adm-table tr:hover td{background:rgba(255,255,255,.015)}
+.badge-pass{background:rgba(34,197,94,.12);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.badge-none{background:var(--s2);color:var(--muted);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--s2);border:1px solid var(--green);border-radius:var(--rs);padding:12px 18px;font-size:13px;font-weight:700;color:var(--green);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+.adm-actions{margin-top:16px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--dim)}
+@media(max-width:720px){.lesson-layout{grid-template-columns:1fr}.l-sidebar{position:static;max-height:none}.stats-row{grid-template-columns:1fr}.hero{flex-direction:column}nav{padding:0 14px}.wrap{padding:22px 14px}.lesson-card{padding:22px 18px}}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="pg-login">
+  <div class="login-card">
+    <div class="brand"><div class="brand-icon">V</div><div class="brand-name">VirtueCore <em>Academy</em></div></div>
+    <div class="login-h1">Team Login</div>
+    <div class="login-sub">This platform is for VirtueCore team members only. Enter your details and team access code to continue.</div>
+    <div class="lock-note">🔒 Private — do not share this platform outside the team.</div>
+    <div class="field"><label>Full Name</label><input type="text" id="inp-name" placeholder="e.g. Sarah Williams"/></div>
+    <div class="field"><label>Email Address</label><input type="email" id="inp-email" placeholder="e.g. sarah@email.com"/></div>
+    <div class="field"><label>Access Code</label><input type="password" id="inp-code" placeholder="Enter team access code"/></div>
+    <div class="err" id="login-err"></div>
+    <button class="btn-gold-full" onclick="doLogin()">Enter Academy →</button>
+    <div class="login-note">Access code provided by VirtueCore management · Admin: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3b0a2afa6b083b5aab1b7b6a6a0acb1a6eda0acedb6a8">[email&#160;protected]</a></div>
+  </div>
+</div>
+<div id="pg-app">
+  <nav>
+    <div class="nav-logo" onclick="goHome()"><div class="nav-logo-icon">V</div><span class="nav-logo-text">VirtueCore <em>Academy</em></span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab on" id="tab-courses" onclick="switchTab('courses')">Courses</button>
+      <button class="nav-tab hide" id="tab-admin" onclick="switchTab('admin')">Admin</button>
+    </div>
+    <div class="nav-right"><span class="nav-user" id="nav-uname"></span><button class="btn-so" onclick="doLogout()">Sign out</button></div>
+  </nav>
+  <div class="wrap" id="app-body"></div>
+</div>
+<script>
+/* ═══════════════════════════════════════════════════════
+   ACCESS CONTROL
+   VA access code:    VCTEAM2024
+   Admin access code: VCAdmin2024!  (for sales@virtuecore.co.uk only)
+   To change: update VA_CODE and ADMIN_CODE strings below
+═══════════════════════════════════════════════════════ */
+const VA_CODE="VCTEAM2024", ADMIN_CODE="VCAdmin2024!", ADMIN_EMAIL="sales@virtuecore.co.uk";
+const ZAPIER_WEBHOOK="https://hooks.zapier.com/hooks/catch/26321921/uxcjy1e/";
+
+/* ═══════════════════════════════════════════════════════
+   COURSES
+═══════════════════════════════════════════════════════ */
+const COURSES=[
+{id:"onboarding",icon:"🚀",color:"#3E7BFA",tagBg:"rgba(62,123,250,0.15)",tagCol:"#6B9EFF",tag:"START HERE",title:"VA Onboarding",
+desc:"Complete before your first client task. Company values, tools, communication standards, and how VirtueCore operates.",
+modules:[
+{id:"ob1",title:"Welcome to VirtueCore",lessons:[
+{id:"ob1l1",title:"Who We Are & What We Do",mins:5,body:`VirtueCore is one of Birmingham's fastest-growing business automation agencies. We work with founders and SMEs to remove bottlenecks and build the infrastructure they need to grow.
+
+CORE SERVICES
+• VA Placement & Training — placing and training virtual assistants for client businesses
+• Meta Ads Management — end-to-end Facebook & Instagram campaign management
+• Marketing Funnel Builds — landing pages, email sequences, lead generation
+• CRM Automation — building and managing pipelines in GoHighLevel
+• Business Infrastructure — SOPs, systems, and operational setup
+
+As a VirtueCore VA, you are the engine that keeps client operations running. Every task you complete — on time, to standard — directly affects a real business owner's results.
+
+VirtueCore was founded by Samuel (Sales & Strategy) and Caleb (Systems & Operations). Everything we build here is designed to scale — which means your work directly contributes to the growth of every client on our books.`},
+{id:"ob1l2",title:"Standards, Expectations & Communication",mins:6,body:`NON-NEGOTIABLES AT VIRTUECORE
+
+• Deadlines are firm. If you can't meet one, communicate at least 24 hours before — never after.
+• Quality over speed. A task done slowly and correctly beats one done quickly and wrong.
+• Proactive communication. Stuck? Ask. Something looks wrong? Flag it. Never sit on a problem.
+• Confidentiality. Client data, our processes, and internal systems are strictly confidential.
+• Own your mistakes. If you get something wrong, flag it immediately and fix it. We will not tolerate hidden errors.
+
+THE GOLDEN RULE
+Treat every client's business like it's your own. You wouldn't accept a sloppy job on your own business — don't deliver one to a client.
+
+COMMUNICATION STANDARDS
+• All task communication runs through designated Slack channels
+• Default response time: within 4 business hours during working hours
+• Always confirm task receipt when assigned ("On it — I'll have this done by [time]")
+• Always confirm completion with a summary of what was done`}
+],quiz:{id:"ob1q",title:"Module 1 Check",qs:[
+{q:"What is the Golden Rule at VirtueCore?",opts:["Complete tasks as fast as possible","Treat every client's business like your own","Only do what you are directly told","Focus on quantity over quality"],ans:1},
+{q:"If you cannot meet a deadline, when must you communicate?",opts:["After the deadline passes","The same day it is due","At least 24 hours in advance","Only if asked"],ans:2},
+{q:"Which is NOT a core VirtueCore service?",opts:["Meta Ads Management","CRM Automation","Web Hosting","VA Placement & Training"],ans:2},
+{q:"What should you do if you make a mistake?",opts:["Wait to see if anyone notices","Flag it immediately and fix it","Redo it quietly without telling anyone","Ask another VA to fix it"],ans:1}
+]}},
+{id:"ob2",title:"Tools, Access & Your First Week",lessons:[
+{id:"ob2l1",title:"Your Core Toolkit",mins:7,body:`TOOLS YOU WILL USE DAILY
+
+• GoHighLevel (GHL) — Our primary CRM and marketing automation platform. Most client pipelines and automations live here.
+• Zapier — Connects apps and automates workflows without code. You'll use this to automate lead flows, notifications, and data entry.
+• Meta Business Suite — Managing Facebook and Instagram ad accounts for clients.
+• Canva — Creating image ads, lead magnets, and social content.
+• Google Workspace (Docs, Sheets, Drive) — All internal documentation, reports, and files.
+• CapCut / Submagic — Video editing and caption generation for client content.
+• Slack — Internal team communication. Check your assigned channel daily.
+
+SECURITY RULES
+• You only have access to what you need for your specific tasks
+• Never share login credentials with anyone, including other VAs
+• Always log out of client accounts after use
+• If you notice unusual activity on any account, flag it to management immediately
+
+ACCESS PROTOCOL
+When you receive access to a client account: confirm receipt immediately, log it in the access tracker, and test that it works. If access is broken, flag it before the task is due — not after.`},
+{id:"ob2l2",title:"Your First Week Checklist",mins:5,body:`BEFORE YOU DO ANY CLIENT WORK
+
+All new VAs must complete the following before being assigned live client tasks:
+
+Week 1 — Training Only
+✓ Complete this entire Onboarding course and pass all quizzes
+✓ Watch the training videos for the skill area you've been assigned
+✓ Complete the relevant skill course on VirtueCore Academy (e.g. Meta Ads, Zapier, Lead Magnets)
+✓ Shadow a task being completed by Samuel or Caleb (or watch the Loom recording)
+✓ Complete one test task with feedback before going live
+
+HOW TASKS GET ASSIGNED TO YOU
+1. Samuel or Caleb sends a task in your Slack channel
+2. The message will include: what needs doing, the client it's for, the deadline, and a link to the relevant Academy module if needed
+3. You confirm receipt with: "On it — [task] for [client] — done by [time]"
+4. You complete the task using the relevant SOP or Academy module as your reference
+5. You report completion with a brief summary of what was done
+6. You add ✅ reaction to the Slack message to mark it done`}
+],quiz:{id:"ob2q",title:"Module 2 Check",qs:[
+{q:"What is GoHighLevel primarily used for at VirtueCore?",opts:["Video editing","CRM and marketing automation","Running Google Ads","Creating Canva designs"],ans:1},
+{q:"What should you do when you first receive access to a client account?",opts:["Start working immediately","Confirm receipt, log it, and test it works","Wait for further instructions","Share the login with your team"],ans:1},
+{q:"When should you flag a broken client login?",opts:["After the task deadline","Before the task is due","When you submit the completed task","Only if it affects multiple accounts"],ans:1},
+{q:"What is required before you do any live client work?",opts:["At least 3 years of marketing experience","Completing training and passing quizzes first","Completing 10 test tasks","A phone call with each client"],ans:1}
+]}}
+]},
+
+{id:"psych",icon:"🧠",color:"#8B5CF6",tagBg:"rgba(139,92,246,0.12)",tagCol:"#A78BFA",tag:"FOUNDATION",title:"Marketing Psychology",
+desc:"The mindset behind all effective advertising. Understand buyer awareness levels, pain-to-action psychology, and why ads either move people or get scrolled past.",
+modules:[
+{id:"ps1",title:"The Foundation of Advertising That Works",lessons:[
+{id:"ps1l1",title:"Selling Solutions, Not Products",mins:8,body:`THE MOST IMPORTANT SHIFT IN MARKETING
+
+Most people selling products or services think they're selling a thing. A service. A product. A subscription. They're wrong.
+
+You are always selling a solution to a problem.
+
+This distinction changes everything about how you write ads, how you frame offers, and how you speak to potential customers.
+
+EXAMPLE
+• Selling a gym membership — Wrong frame
+• Selling confidence, energy, and a body that makes people look twice — Right frame
+
+• Selling a Facebook ad campaign — Wrong frame
+• Selling more leads, more calls booked, less stress about where the next client comes from — Right frame
+
+THE CORE PRINCIPLE
+People don't buy products. They buy better versions of themselves or their situation. Every ad you write should answer the question: "What does this person's life look like after they buy?"
+
+THREE THINGS THAT MAKE GREAT ADS
+1. Speak to a specific person — not a general audience. The more specific you are, the more people feel like you're talking directly to them.
+2. Identify their exact pain point — what keeps them up at night, what frustrates them, what they've tried that hasn't worked.
+3. Position your product as the solution to that specific pain — with proof that it actually works.`},
+{id:"ps1l2",title:"The 5 Levels of Buyer Awareness",mins:10,body:`EUGENE SCHWARTZ'S AWARENESS FRAMEWORK
+
+This is the most important concept in advertising. Where your prospect sits on this scale determines everything: the headline you write, the length of your ad, the angle you take, and the call to action you use.
+
+LEVEL 1 — UNAWARE
+They don't know they have a problem. They haven't connected their situation to a solvable issue.
+Ad approach: Tell a story. Educate. Don't sell yet. Draw them in with relatable content.
+Example headline: "Why most business owners are burning 20 hours a week they'll never get back"
+
+LEVEL 2 — PROBLEM AWARE
+They know something is wrong but don't know solutions exist.
+Ad approach: Agitate the pain. Name it clearly. Then introduce the concept of a solution.
+Example headline: "Struggling to get consistent leads? You're not alone — and there's a reason why"
+
+LEVEL 3 — SOLUTION AWARE
+They know solutions exist but don't know your specific product/service.
+Ad approach: Show why your approach is different. Differentiate from alternatives.
+Example headline: "Why most lead gen agencies fail — and what we do differently"
+
+LEVEL 4 — PRODUCT AWARE
+They know you exist but haven't committed. They're comparing you to alternatives.
+Ad approach: Social proof, testimonials, risk reversal, guarantees. Remove objections.
+Example headline: "Join 127 business owners generating consistent leads with VirtueCore"
+
+LEVEL 5 — MOST AWARE
+They're ready to buy. They just need the right offer or a nudge.
+Ad approach: Strong offer, urgency, direct CTA. Keep it short and direct.
+Example headline: "3 spots left this month — book your free strategy call now"
+
+THE PRACTICAL APPLICATION
+Most cold audiences are at Level 1-2. Most retargeting audiences are at Level 3-4. Matching your ad to the wrong awareness level is the #1 reason ads fail despite good creative.`}
+],quiz:{id:"ps1q",title:"Awareness Levels Quiz",qs:[
+{q:"What are you always really selling, according to the VirtueCore marketing framework?",opts:["Products and services","Solutions to people's problems","The best price in the market","Your company's story"],ans:1},
+{q:"A prospect at Level 2 (Problem Aware) knows:",opts:["Exactly which product they want","That solutions exist but doesn't know yours","Something is wrong but hasn't found solutions","Nothing about their problem yet"],ans:2},
+{q:"Which awareness level should you target with social proof and testimonials?",opts:["Level 1 — Unaware","Level 2 — Problem Aware","Level 4 — Product Aware","Level 5 — Most Aware"],ans:2},
+{q:"Most cold audiences are at which awareness level?",opts:["Level 4-5","Level 3-4","Level 1-2","Level 5 only"],ans:2},
+{q:"What is the #1 reason ads fail despite good creative?",opts:["Wrong platform","Too much text","Mismatched awareness level in the ad","Poor video quality"],ans:2}
+]}},
+{id:"ps2",title:"Writing Ads That Actually Convert",lessons:[
+{id:"ps2l1",title:"The 7 Rules for All Ad Copy",mins:8,body:`BEFORE YOU WRITE A SINGLE WORD
+
+Every piece of ad copy — whether it's a headline, a video script, or a landing page — should be tested against these 7 rules.
+
+RULE 1 — WRITE SIMPLY
+7th grade reading level. Short sentences. Short paragraphs. If a 14-year-old couldn't understand it quickly, rewrite it.
+
+RULE 2 — LEAD WITH BENEFITS, NOT FEATURES
+Feature: "Our CRM has automated follow-up sequences"
+Benefit: "Never lose a lead because you forgot to follow up — it happens automatically"
+
+RULE 3 — WRITE TO ONE PERSON
+Use "you" constantly. Imagine one specific person reading this. Write to them. Not to a crowd.
+
+RULE 4 — FLOOD WITH PROOF
+Testimonials. Before/afters. Specific numbers. Case studies. Screenshots. The more sceptical your audience, the more proof you need.
+
+RULE 5 — BE SPECIFIC
+"We helped 23 wedding photographers in Birmingham book 4 extra clients per month" beats "We help photographers get more clients" every time.
+
+RULE 6 — TELL THE FULL STORY
+Long copy usually outperforms short copy. Cover all the selling points. Address every objection. Then close.
+
+RULE 7 — ONE CLEAR CTA
+What should they do next? Click the link? Book a call? DM you? Tell them exactly what to do, what happens when they do it, and what they get.`},
+{id:"ps2l2",title:"AIDA & PAS — The Two Frameworks",mins:7,body:`TWO PROVEN FRAMEWORKS FOR AD STRUCTURE
+
+FRAMEWORK 1 — AIDA (Lead with Aspiration)
+Use when your audience responds more to desire and aspiration than pain.
+
+A — ATTENTION: Your headline. Stop the right person scrolling.
+"How Sarah generated 47 qualified leads in 30 days without a single cold call"
+
+I — INTEREST: Give them a reason to keep reading. Facts, a curiosity gap, or a relatable story.
+"She was running ads for 6 months with no results. Then she made one change..."
+
+D — DESIRE: Paint the dream outcome. What does life look like after?
+"Now she has a predictable pipeline, books 8 calls a week, and finally has time to work on the business instead of in it."
+
+A — ACTION: Tell them exactly what to do next.
+"Click below to book a free 20-minute strategy call. We'll show you the exact same system."
+
+FRAMEWORK 2 — PAS (Lead with Pain)
+Use when your audience is more motivated by avoiding pain than gaining pleasure.
+
+P — PROBLEM: Name the specific pain directly.
+"Most service business owners are running ads that attract the wrong clients."
+
+A — AGITATE: Twist the knife. Make them feel the cost of the problem.
+"Low-quality leads, wasted sales calls, money spent on ads with no return — it compounds every week you let it continue."
+
+S — SOLUTION: Present your product or service as the answer, with proof.
+"VirtueCore's lead qualification system filters out time-wasters before they reach your calendar. Book a call to see how it works."
+
+WHEN TO USE WHICH
+PAS works well for cold audiences at Level 2-3 who are frustrated and actively looking for a solution.
+AIDA works well for warmer audiences who need to be inspired into action.`}
+],quiz:{id:"ps2q",title:"Copywriting Frameworks Quiz",qs:[
+{q:"In the AIDA framework, what does the 'I' stand for?",opts:["Identity","Interest","Impact","Intent"],ans:1},
+{q:"PAS framework is most effective for which audience?",opts:["People who have never heard of the problem","Warm audiences ready to buy","Cold audiences who are frustrated and looking for solutions","Existing customers"],ans:2},
+{q:"Which of these is a benefit (not a feature)?",opts:["Our software has 47 integrations","Stop losing leads — every enquiry gets followed up automatically","We use advanced AI algorithms","Our platform was founded in 2019"],ans:1},
+{q:"According to the 7 rules, what reading level should your ad copy target?",opts:["University level","7th grade","Professional/business level","It depends on the audience"],ans:1}
+]}}
+]},
+
+{id:"meta",icon:"📣",color:"#E8A020",tagBg:"rgba(232,160,32,0.12)",tagCol:"#E8A020",tag:"META ADS",title:"Meta Ads Mastery",
+desc:"The complete VirtueCore Meta Ads playbook. Pixel setup, audience research, campaign structure, creative briefing, optimisation and scaling — 8 phases end to end.",
+modules:[
+{id:"ma1",title:"Phase 1 & 2 — Tracking & Research",lessons:[
+{id:"ma1l1",title:"The Meta Pixel & Conversions API",mins:10,body:`WHY TRACKING COMES BEFORE EVERYTHING ELSE
+
+Nothing else in Meta Ads matters if Meta can't track what happens on your website. The Meta Pixel is a piece of code that tells Meta when someone takes an action — views a page, fills out a form, books a call, makes a purchase.
+
+Without it, Meta is flying blind and cannot optimise to find more buyers.
+
+WHAT THE PIXEL DOES
+When someone clicks your ad and visits your website, the pixel fires "events" back to Meta:
+• Page View — they landed on your site
+• Lead — they filled out a form
+• Schedule — they booked a call
+• Purchase — they bought something
+
+Meta collects this data and uses it to find MORE people like the ones who converted. That's why setting it up correctly from day one is non-negotiable.
+
+THE CONVERSIONS API (CAPI)
+Since iOS 14.5, Apple lets users opt out of browser tracking — so the pixel misses some people.
+The Conversions API is a server-to-server backup that catches what the pixel misses.
+You want BOTH running simultaneously. Meta de-duplicates them automatically.
+
+HOW TO CHECK YOUR PIXEL IS WORKING
+1. Go to Events Manager in Meta Business Suite
+2. Click your Dataset (pixel) → Test Events
+3. Enter the website URL and click Test Events
+4. Navigate the site like a customer — fill in the form, book a call
+5. Confirm each action fires the correct event exactly once
+
+KEY PIXEL SETTINGS
+• Automatic Website Matching: ON — passes maximum data to Meta
+• Track events automatically without code: OFF — causes double-firing on Shopify/GHL/WordPress
+• Event Match Quality (EMQ): check this score for Lead and Purchase events. Higher is better. Max is 9.3. Low EMQ = not enough data being passed.`},
+{id:"ma1l2",title:"Research — Understanding Who You're Talking To",mins:10,body:`THE VIRTUECORE RESEARCH FRAMEWORK
+
+Before you write a single word of ad copy, you need to answer two questions:
+
+QUESTION 1: WHO IS THE IDEAL CUSTOMER?
+Not a vague group. A specific person. What do they do? What do they earn? What keeps them up at night? What words do they actually use? What have they tried before that didn't work?
+
+QUESTION 2: HOW AWARE ARE THEY?
+Where the prospect sits on the awareness scale determines how you write the ad (covered in the Marketing Psychology course).
+
+THE 8-PHASE VIRTUECORE PROCESS
+Our system for scaling client ad accounts: Setup → Research → Prioritise → Create → Brief → Test → Learn → Scale → Repeat
+
+WHAT YOUR RESEARCH SHOULD ANSWER
+• Who are the top 1-4 ideal customer personas?
+• What are the top 1-4 angles — the main reasons people buy?
+• What are the main hesitations — what almost stops them buying?
+• What tone, language, and copy length should you use?
+• What visuals/imagery do they relate to?
+
+WHERE TO FIND THIS INFORMATION
+• Competitor Ads — Meta Ad Library. Find ads running 3+ months (probably profitable). Study their angles, headlines, copy length.
+• Competitor Reviews — Google, TrustPilot, Reddit, Amazon. 3-star reviews have the most nuance.
+• Your own client reviews — same analysis
+• Related communities — Reddit, Facebook Groups, relevant forums
+• Day in the Life — search the internet as if you were the customer. See what you find.
+
+CREATIVE DIVERSITY — 4 WAYS TO BE DIFFERENT
+Meta's algorithm groups similar ads and makes them compete against each other.
+1. Message — different personas, angles, awareness levels, offers
+2. Media Type — static image, video/reel, carousel, collection, dynamic catalog
+3. Creative Framework — benefits, us vs them, before/after, UGC, founder story, PAS
+4. Style — lo-fi/raw, hi-fi/polished, AI-generated`}
+],quiz:{id:"ma1q",title:"Tracking & Research Quiz",qs:[
+{q:"What does the Meta Pixel do?",opts:["Creates the ad creative","Tracks website actions and sends them back to Meta","Sets your ad budget","Targets specific interests"],ans:1},
+{q:"Why was the Conversions API (CAPI) created?",opts:["To replace the Pixel entirely","To track server-side data after iOS 14.5 limited browser tracking","To reduce ad costs","To improve creative quality"],ans:1},
+{q:"What is the Event Match Quality (EMQ) score?",opts:["Your ad's click-through rate","A score showing how much data Meta receives per conversion event","Your campaign's daily budget utilisation","The number of people your ad reached"],ans:1},
+{q:"Where are 3-star reviews particularly useful for research?",opts:["They are not useful","They provide the most nuanced customer insights","They show your top fans","They reveal competitor pricing"],ans:1},
+{q:"What is the purpose of Creative Diversity?",opts:["To confuse the algorithm","To avoid ads competing against each other in Meta's auction","To reduce ad spend","To test different budgets"],ans:1}
+]}},
+{id:"ma2",title:"Phase 3 & 4 — Writing Ads",lessons:[
+{id:"ma2l1",title:"Where Your Text Goes in a Meta Ad",mins:6,body:`THREE TEXT FIELDS — THREE JOBS
+
+PRIMARY TEXT
+The longer body copy. Appears above the creative on Facebook, below on Instagram.
+This is where you put: your opening headline (first sentence), benefits, selling points, risk reversal, guarantee, and CTA.
+Don't truncate yourself — long copy usually wins. Cover every objection.
+
+HEADLINE FIELD
+Short text below the ad image/video on Facebook and Instagram.
+Keep it to 5-8 words maximum — it gets cut off if longer.
+Use this for punchy, direct statements: "Book Your Free Call Today" or "No Contracts. Cancel Anytime."
+
+DESCRIPTION FIELD
+Below the headline on Facebook only (often hidden on Instagram).
+Use for short trust tags: "100% Money Back Guarantee" · "Free 20-Minute Strategy Call" · "Trusted by 300+ UK Businesses"
+
+THE 5 HEADLINE SPOTS YOU MUST OPTIMISE
+1. First sentence of your primary text (the hook)
+2. The headline field below the ad
+3. Text on a static image
+4. The verbal hook in video (first 3-5 seconds spoken)
+5. The caption hook in video (text on screen, first 3-5 seconds)
+
+THE 4 U'S — HOW TO SCORE YOUR HEADLINES
+Score 1-4 on each. Aim for 3+ on at least three:
+• Urgent — Is there a reason to act now?
+• Unique — Does it say something fresh?
+• Ultra-Specific — Does it use real numbers and concrete details?
+• Useful — Is there a clear benefit?`},
+{id:"ma2l2",title:"Video Hooks & Ad Types",mins:8,body:`VIDEO HOOKS — THE FIRST 3-5 SECONDS
+
+The hook is the most important part of any video ad. If you lose them in the first 5 seconds, the rest doesn't matter.
+
+THREE PARTS OF A STRONG VIDEO HOOK
+1. Visual Hook — what they SEE. Must be unexpected, interesting, or immediately relevant.
+2. Caption Hook — text ON SCREEN. Works when sound is off (most viewers watch silent).
+3. Verbal Hook — first words SPOKEN. Should match or complement the caption.
+
+Always brief for 3-5 different hooks per video. Same body content, different openings. This gives you testing material without recreating the whole video.
+
+KEY AD CREATIVE FRAMEWORKS
+• UGC (User Generated Content) — authentic, phone-shot content from a real person. Highest trust, lowest production cost.
+• Testimonial — real customer sharing their result. Proof-first approach.
+• Before/After — shows the transformation. Highly effective for pain-aware audiences.
+• Educational/Listicle — "3 reasons why [problem]" or "5 things you need to know about [topic]"
+• Founder Story — personal, builds trust and brand connection
+• Us vs Them — direct comparison without naming competitors
+
+FOR STATIC IMAGE ADS
+Each image brief should include:
+• Headline (big and bold, ~11 words)
+• Subheadline (supporting text)
+• Trust tags ("Rated 4.9/5", "Money Back Guarantee")
+• Imagery direction (what visuals this specific ad should show)
+• CTA button text ("Book Free Call", "Get Instant Access")
+
+Always create in both 1:1 and 9:16 formats. Stay within Meta's safe zones. Headlines must be readable at mobile size.`}
+],quiz:{id:"ma2q",title:"Ad Copy & Creative Quiz",qs:[
+{q:"What is the Primary Text field in a Meta ad?",opts:["The image on the ad","The short text below the creative","The longer body copy above the creative on Facebook","The headline field"],ans:2},
+{q:"How long should the Headline field be?",opts:["As long as needed","5-8 words maximum","At least 15 words","The same as primary text"],ans:1},
+{q:"What are the three parts of a strong video hook?",opts:["Script, voiceover, and music","Visual hook, caption hook, and verbal hook","Intro, middle, and outro","Logo, headline, and CTA"],ans:1},
+{q:"Why should you brief for 3-5 different hooks per video?",opts:["To fill time in the brief","To have testing material without recreating the whole video","Because Meta requires multiple hooks","To increase video length"],ans:1},
+{q:"The 4 U's framework is used to score what?",opts:["Campaign performance","Your headline quality","Budget allocation","Audience targeting"],ans:1}
+]}},
+{id:"ma3",title:"Phase 6 & 7 — Campaign Structure & Testing",lessons:[
+{id:"ma3l1",title:"ABO vs CBO — Campaign Structures",mins:9,body:`HOW META CAMPAIGNS ARE STRUCTURED
+
+Every Meta campaign has three levels:
+• Campaign — where you set the objective
+• Ad Set — where you set audience, budget, schedule, placement
+• Ad — the actual creative: image/video + copy
+
+ABO vs CBO — THE KEY DECISION
+
+ABO (Ad Budget Optimisation) — you set the budget at Ad Set level
+Each ad set gets its own budget. You control exactly how much each test spends.
+Best for: most advertisers, especially when testing
+
+CBO (Campaign Budget Optimisation) — Meta controls budget distribution across ad sets
+Meta decides which ad sets get more spend. Reduces manual management.
+Best for: larger budgets where Meta has enough data to optimise well
+
+THE VIRTUECORE RECOMMENDED STRUCTURE
+Setup 1 (Recommended): One ABO campaign per service, acting as a folder.
+Each new test = a new ad set. Up to 3-5 ads per ad set, grouped by angle/persona.
+You can add unlimited ad sets without affecting existing ones.
+
+SETTING UP CORRECTLY
+Step 1: Create one ABO campaign per service
+Step 2: Each test = new ad set with 3-5 ads grouped by angle or persona
+Step 3: Budget for 1-2 leads per day per ad set
+Step 4: Optimise for the LAST funnel step (Book a Call, not just Lead)
+Step 5: Schedule for early morning NEXT DAY — never tonight
+Step 6: Launch ONE ad set at a time. Wait 3-5 days before touching it.
+
+CAMPAIGN LABELLING
+Campaign: ABO Testing — [Service Name]
+Ad Set: [Date] | [Persona] | [Angle] | [Settings] | [Audience Type]
+Ad: [Persona] | [Angle] | [Unique description of the creative]
+
+Example:
+Campaign: ABO Testing — Lead Gen
+Ad Set: 14/03/26 | Agency Owners | Angle 1 — Churn Less Clients | Adv+ Broad | Auto Placements
+Ad: Agency Owners | Angle 1 | Red Shirt Talking Head`},
+{id:"ma3l2",title:"The Testing Rules",mins:7,body:`TESTING IS THE CORE SKILL OF META ADS
+
+Every result you get is data. Good data or bad data — both tell you something. The goal of the testing phase is to find what works, then scale it.
+
+THE NON-NEGOTIABLE TESTING RULES
+• One variable at a time — otherwise you can't know what caused the result
+• Group similar formats — statics with statics, videos with videos
+• Never add new ads into an existing active ad set
+• No tiny budgets — underspending starves the algorithm
+• Test when the account is performing well — hold when it's performing badly
+• Minimum 3-5 days before making any changes
+
+TESTING PRIORITY ORDER
+Test in this sequence. Don't skip ahead:
+1. PERSONAS — which type of person responds?
+2. ANGLES — which message resonates most?
+3. OFFERS — which gets them to actually click and enquire?
+4. CREATIVES — which format performs best?
+5. COPY — which style and length wins?
+
+THE SNOW GLOBE RULE
+Every change you make causes volatility. Let the algorithm settle after any change before judging the result. Think of it like a snow globe — shake it, then wait for the snow to settle before deciding if you like the view.
+
+THE LEARNING PHASE
+Every new ad set enters Meta's learning phase. Meta is figuring out who to show your ad to. Aim for 50 optimisation events per week to exit it. Avoid making changes during this phase — changes reset learning.
+
+Don't stress about the learning phase. Focus on results, not the label.`}
+],quiz:{id:"ma3q",title:"Campaign Structure & Testing Quiz",qs:[
+{q:"In ABO campaigns, where is the budget set?",opts:["Campaign level","Ad set level","Ad level","Account level"],ans:1},
+{q:"What is the recommended first thing to test in a new account?",opts:["Ad copy styles","Creative formats","Personas — which type of person responds","Campaign objectives"],ans:2},
+{q:"Why should you never add new ads to an existing active ad set?",opts:["It is against Meta's terms","It disrupts the existing data and resets learning","It doubles the budget automatically","Meta will suspend the account"],ans:1},
+{q:"What does the 'Snow Globe Rule' mean?",opts:["Use cold audiences first","After making a change, wait for results to stabilise before judging","Change budgets frequently","Launch new campaigns in winter"],ans:1},
+{q:"How many days minimum should you wait after making a change?",opts:["1 day","24 hours","3-5 days","1-2 weeks"],ans:2}
+]}},
+{id:"ma4",title:"Phase 8 — Optimisation & Scaling",lessons:[
+{id:"ma4l1",title:"Reading Your Data",mins:8,body:`WHICH NUMBERS ACTUALLY MATTER
+
+PRIMARY METRICS (Lead Generation)
+• Cost Per Lead (CPL) — your main scorecard. Lower is better, but quality matters too.
+• Lead Quality — are these people actually good leads? Talk to the client.
+
+SECONDARY METRICS (Diagnostics)
+• CTR (Click-Through Rate) — % of people who clicked after seeing the ad. Low CTR = weak hook or wrong audience.
+• CPC (Cost Per Click) — how much each click costs. High CPC + low CTR = creative problem.
+• Hook Rate — 3-second video plays ÷ impressions. Low = your first 3 seconds are losing people.
+• Hold Rate — ThruPlays ÷ 3-second plays. Low = they started watching but left. Your middle content is losing them.
+• CPM — cost per 1,000 impressions. This is what Meta charges you. High CPM = competitive auction or poor relevance.
+• Frequency — average times each person saw your ad. High frequency + bad results = ad fatigue. Refresh creative.
+
+THE DIAGNOSTIC FLOW
+Step 1: Check 7-day average (not single days — averages smooth out volatility)
+Step 2: Walk through each day's spend distribution
+Step 3: Find ads eating budget with poor results
+Step 4: Use "Filter By Selection" — tick your keepers, filter, compare CPL across them
+Step 5: After any changes, wait 3-5 days before judging again
+
+THE GOLDEN RULE: If it's working, leave it alone.
+9 out of 10 times, touching a working campaign makes it worse.`},
+{id:"ma4l2",title:"Scaling — Vertical & Horizontal",mins:9,body:`YOU FOUND SOMETHING THAT WORKS. NOW SCALE IT.
+
+WHEN TO SCALE
+Only scale when ALL of these are true:
+• 7-day average CPL is consistently below your target
+• Consistent lead volume day after day (not just 1-2 good days)
+• Overall account performance is positive
+
+VERTICAL SCALING (increase budgets)
+Increase the budget on winning ad sets.
+How much: start with 25-50% increases. Wait 3-5 days. If still working, increase again.
+Think in terms of leads per day, not percentages.
+
+THE POINT OF COLLAPSE
+Every campaign has a budget level where results crash. You can't know where it is in advance. Scale gradually and always observe for 3-5 days after each increase.
+
+HORIZONTAL SCALING (launch new campaigns)
+Leave winners alone. Launch NEW ad sets or campaigns with additional budget.
+Always use new assets — new creative, different offer, different landing page. This prevents you competing against yourself in the auction.
+Winner campaigns: take PostIDs from winning ads and put them in new campaigns with different targeting. NEVER close the original profitable campaign.
+
+COMMON SCALING MISTAKES
+✗ Scaling after only 1-2 good days
+✗ Scaling when results are mediocre (only scale when results are clearly good)
+✗ 3x-5x budget overnight
+✗ Scaling every single day (let the snow globe settle)
+✗ NOT scaling when results are amazing — this is a missed opportunity
+
+THE 23 META ADS RULES (Key Ones)
+• Optimise for the right thing. Leads = last funnel step. Sales = Purchase event.
+• Schedule launches for early morning next day. Never launch at 6pm.
+• Never turn off a profitable campaign — not even to "graduate" to a new one.
+• Focus on 7-day averages, not single days.
+• Ignore Meta's recommendations — they want you to spend more.
+• Always be making new creatives. Have a folder ready before you need them.`}
+],quiz:{id:"ma4q",title:"Optimisation & Scaling Quiz",qs:[
+{q:"What is the primary scorecard metric for lead generation campaigns?",opts:["CPM","Hook Rate","Cost Per Lead (CPL)","Frequency"],ans:2},
+{q:"What does a low Hook Rate indicate?",opts:["The offer is weak","The first 3 seconds of your video are losing viewers","The audience is too broad","The budget is too low"],ans:1},
+{q:"What does Horizontal Scaling mean?",opts:["Increasing budget on existing campaigns","Launching new campaigns with new assets alongside winners","Reducing budget to save money","Testing new audiences"],ans:1},
+{q:"When is the correct time to scale?",opts:["After 1-2 good days","When the account just launched","When 7-day average CPL is consistently below target with stable volume","Whenever the client asks you to"],ans:2},
+{q:"What is the Golden Rule of Meta Ads?",opts:["Always be testing","If it's working, leave it alone","Scale as fast as possible","Launch new campaigns every week"],ans:1}
+]}}
+]},
+
+{id:"imageads",icon:"🎨",color:"#EC4899",tagBg:"rgba(236,72,153,0.12)",tagCol:"#F472B6",tag:"CREATIVE",title:"Image Ads with Canva",
+desc:"Create high-quality image ads efficiently using Canva templates. Market research application, design principles, and quality standards for client campaigns.",
+modules:[
+{id:"ia1",title:"Image Ad Fundamentals",lessons:[
+{id:"ia1l1",title:"Speed, Quality & the Template Rule",mins:6,body:`THE CORE PRINCIPLE OF IMAGE AD CREATION
+
+At VirtueCore, image ads should be made fast without sacrificing quality. The key to doing both is templates.
+
+THE EFFICIENCY STANDARD
+• Image ads should take a maximum of 30 minutes each
+• Spending an hour per image ad is inefficient and unsustainable
+• Use Canva templates — we have a set folder of proven layouts to pull from
+• Once market research is done, image ad creation is essentially copy-and-paste
+
+WHY TEMPLATES WORK
+Templates give you the layout, sizing, and visual hierarchy sorted in advance. You're only changing the headline, supporting text, imagery, and colours to match the client's brand. The heavy lifting is already done.
+
+THE RULE ON TEXT IN IMAGE ADS
+Do not over-add text. Image ads should lead with a visual and one strong headline. Secondary text (if any) should be minimal. Meta's algorithm also historically penalises ads with too much text overlay.
+
+VOLUME + QUALITY
+The aim is to produce as many image ads as possible while maintaining quality. Why volume matters:
+• More variations = more testing data
+• Meta's algorithm needs options to find winners
+• Creative fatigue happens faster than most people expect — you need a pipeline of fresh ads ready
+
+One strong image ad batched into 5-10 variations (different headlines, different imagery, different formats) is far more powerful than one perfect ad.`},
+{id:"ia1l2",title:"Applying Market Research to Image Ads",mins:8,body:`FROM RESEARCH TO CREATIVE
+
+By the time you're building image ads, you should already have the market research document for that client. If you don't, stop and request it.
+
+WHAT THE RESEARCH GIVES YOU
+• The ICP (Ideal Customer Profile) — who the ad is for
+• Pain points — what frustrates this person
+• Desired outcomes — what they want their life/business to look like
+• Angles — the top 1-4 reasons people buy from this client
+• Sticky words — language the customer actually uses (use these exactly)
+• Visual direction — what imagery resonates with this audience
+
+HOW TO APPLY IT
+For each angle from the research, create a separate image ad concept:
+• Angle 1 (e.g. Pain): Headline hits the problem directly. Imagery shows the frustrated state.
+• Angle 2 (e.g. Aspiration): Headline shows the desired outcome. Imagery shows the ideal state.
+• Angle 3 (e.g. Social Proof): Headline is a result or testimonial. Imagery is the client/customer.
+
+CANVA WORKFLOW
+1. Open the VirtueCore Canva template folder — select the layout that fits the format (1:1, 9:16, 1.91:1)
+2. Duplicate the template — never edit the original
+3. Replace the headline with your angle's headline
+4. Replace the imagery — use client-provided photos or licensed stock (Canva Pro includes stock)
+5. Adjust brand colours if needed
+6. Export at maximum quality
+7. Name the file clearly: [ClientName]_[Angle]_[Format]_[Date]`}
+],quiz:{id:"ia1q",title:"Image Ads Quiz",qs:[
+{q:"What is the maximum time you should spend on a single image ad?",opts:["1 hour","2 hours","30 minutes","15 minutes"],ans:2},
+{q:"Why should you use templates for image ads?",opts:["Because it is required by Meta","To save time while maintaining quality and consistency","Because custom designs don't work","Templates are cheaper than custom design"],ans:1},
+{q:"What should you have before creating any image ads for a client?",opts:["The client's phone number","The market research document for that client","At least 10 approved designs","The client's social media passwords"],ans:1},
+{q:"Why does volume of image ads matter?",opts:["More ads always means more spend","More variations provide more testing data and fresh creative for when fatigue hits","Clients always want to see many options","Meta charges less for multiple ads"],ans:1}
+]}}
+]},
+
+{id:"leadmag",icon:"🧲",color:"#14B8A6",tagBg:"rgba(20,184,166,0.12)",tagCol:"#2DD4BF",tag:"LEAD GEN",title:"Lead Magnets",
+desc:"Design and create lead magnets that attract qualified prospects. From idea generation using AI to building in Canva and setting up delivery.",
+modules:[
+{id:"lm1",title:"Lead Magnet Strategy & Creation",lessons:[
+{id:"lm1l1",title:"What Makes a Good Lead Magnet",mins:7,body:`THE PURPOSE OF A LEAD MAGNET
+
+A lead magnet is something of genuine value you give away for free in exchange for contact information. It's the first step in converting a stranger into a lead.
+
+TWO THINGS YOU NEED TO CREATE AN EFFECTIVE LEAD MAGNET
+1. What the customer actually wants — what would they genuinely find valuable enough to exchange their email for?
+2. The client's niche and business variables — what industry are they in, what do they offer, who is their ideal customer?
+
+Without both, you cannot create a lead magnet that attracts the right people.
+
+WHAT MAKES A LEAD MAGNET WORK
+• Specificity — "The Wedding Photographer's Checklist for Booking 4 Extra Clients Per Month" beats "Marketing Tips for Photographers"
+• Immediate value — they should get value the moment they download it, not after a 6-step process
+• Directly relevant — it should be something only your ideal customer would want. A broad lead magnet attracts unqualified leads.
+• One clear promise — it does one thing really well. Not a guide to everything.
+
+TYPES OF LEAD MAGNETS WE BUILD
+• Checklists — fastest to produce, high perceived value
+• Mini-guides / eBooks — more detailed, slightly higher trust signal
+• Templates — something they can use immediately (swipe files, scripts, frameworks)
+• Quizzes and audits — high engagement, especially for service-based businesses
+• Video training / mini-course — higher effort to produce but highest trust`},
+{id:"lm1l2",title:"AI-Assisted Lead Magnet Creation",mins:8,body:`THE VIRTUECORE LEAD MAGNET WORKFLOW
+
+STEP 1 — GATHER CLIENT INFORMATION
+Before creating anything, collect from the client (via their onboarding form or call notes):
+• What industry/niche are they in?
+• Who is their ideal customer?
+• What is the main problem they solve?
+• What has their best result been for a client?
+• What do their customers want most?
+
+STEP 2 — USE AI TO GENERATE IDEAS
+Open ChatGPT or Claude. Use this prompt structure:
+
+"You are a lead generation specialist. My client is a [BUSINESS TYPE] targeting [TARGET CUSTOMER]. Their main offer is [MAIN SERVICE/PRODUCT]. Their customer's biggest problem is [PAIN POINT]. Generate 10 specific lead magnet ideas that would attract their ideal customer. Each idea should be specific, immediately valuable, and relevant to someone who would be a qualified prospect."
+
+Review the ideas and select the most relevant one. Use your judgment — the AI gives you options, not the final answer.
+
+STEP 3 — CREATE THE CONTENT WITH AI
+Once you have the concept:
+"Create the full content for a lead magnet called '[TITLE]' for a [BUSINESS TYPE]. It should be [FORMAT: checklist / guide / template]. Target reader: [ICP DESCRIPTION]. Make it specific, actionable, and immediately useful. Use simple language."
+
+STEP 4 — BUILD IN CANVA
+• Open VirtueCore's lead magnet Canva template folder
+• Select the appropriate template (PDF guide, checklist, or worksheet format)
+• Duplicate the template — never edit the original
+• Add the AI-generated content, structured clearly with headers and bullet points
+• Apply the client's brand colours and logo
+• Export as PDF`}
+],quiz:{id:"lm1q",title:"Lead Magnets Quiz",qs:[
+{q:"What two things do you need before creating a lead magnet?",opts:["A Canva account and a logo","What the customer wants, and the client's niche/business variables","The client's ad budget and their website URL","A ChatGPT account and a template"],ans:1},
+{q:"Which of these is the strongest lead magnet title?",opts:["Marketing Tips","How to Get More Clients","The Wedding Photographer's Checklist for Booking 4 Extra Clients Per Month","A Free Guide"],ans:2},
+{q:"What is the first step in the VirtueCore lead magnet workflow?",opts:["Open Canva and start designing","Generate ideas with AI","Gather client information first","Ask the client what design they want"],ans:2},
+{q:"What should you NEVER do with a Canva template?",opts:["Duplicate it","Export it as PDF","Edit the original template","Use the client's brand colours"],ans:2}
+]}}
+]},
+
+{id:"typeform",icon:"📋",color:"#6366F1",tagBg:"rgba(99,102,241,0.12)",tagCol:"#818CF8",tag:"QUALIFICATION",title:"Typeform for Client Qualification",
+desc:"Build Typeform qualification forms that filter leads, collect data, and connect to Zapier automations for client pipelines.",
+modules:[
+{id:"tf1",title:"Setup, ICP & Question Design",lessons:[
+{id:"tf1l1",title:"What Typeform Is For at VirtueCore",mins:6,body:`THE PURPOSE OF TYPEFORM IN OUR SYSTEM
+
+Typeform is the connector between our clients' advertising and their sales pipeline. Its job is simple: filter out people who are not a good fit before they reach the client's calendar.
+
+A well-built Typeform:
+• Identifies whether the prospect has the right budget
+• Qualifies their timeline and intent
+• Collects the exact information the client needs before a sales call
+• Automatically routes qualified leads to a booking page and disqualified leads to a polite rejection
+
+WHERE IT SITS IN THE CLIENT SYSTEM
+Option A: On the Facebook/Instagram ad as an Instant Form (built inside Meta Ads Manager)
+Option B: Built on Typeform and embedded into the client's website
+Option C: Direct link sent to prospects via DM, email, or ad
+
+In either case, the form data flows through Zapier into the client's CRM (usually GHL), and the client is notified of each new qualified lead.
+
+WHAT YOU NEED BEFORE STARTING
+• Client's Typeform account login — they must provide this
+• The client's ICP (Ideal Customer Profile) — either from their onboarding form or from your own research
+• Budget threshold — the minimum budget/investment level they will accept
+• Desired outcome — what the client wants to achieve for their customers
+• Any specific deal-breakers — dates, locations, industries to exclude`},
+{id:"tf1l2",title:"Generating the Right Questions",mins:7,body:`THE MOST IMPORTANT PART OF TYPEFORM IS THE QUESTIONS
+
+Bad questions = unqualified leads slipping through. Good questions = only the right people reach the client's calendar.
+
+QUESTION DESIGN USING AI
+Use this ChatGPT/Claude prompt to generate the question set:
+
+"Create filtering questions for a [BUSINESS TYPE] intake form that will qualify leads based on: [CRITERIA — e.g. budget range, timeline, location, specific requirements]. The form should: filter out anyone with a budget below [AMOUNT], identify their specific needs, and collect full contact information. Format as a list of questions with the question type (multiple choice, short text, etc.) next to each one."
+
+QUESTION STRUCTURE (in order)
+1. Contact information — First name, last name, email, phone (all required)
+   Why first: if they drop off, you still have their contact details
+2. Budget question — Multiple Choice. Position this EARLY to filter quickly
+3. Timeline/date question — when do they need this?
+4. Specific requirements — what exactly are they looking for?
+5. Qualifying questions — niche-specific (varies by client)
+
+QUESTION TYPE GUIDE
+• Multiple Choice — for single-select options (budget ranges, service types)
+• Multiple Selection — when multiple answers are allowed
+• Short Text — for brief written answers (company name, location)
+• Long Text — for detailed descriptions of their needs
+• Date — for event dates or timelines
+• Email / Phone — use the dedicated field types, not short text — they validate format automatically`}
+],quiz:{id:"tf1q",title:"Typeform Setup Quiz",qs:[
+{q:"What is the primary purpose of Typeform in VirtueCore's system?",opts:["To run Facebook ads","To filter leads and qualify prospects before they reach the client","To send email newsletters","To track time spent on tasks"],ans:1},
+{q:"Why should contact information come first in the form?",opts:["It looks more professional","If the prospect drops off, you still have their contact details","Meta requires it","It is easier to fill in"],ans:1},
+{q:"Why should the budget question be positioned early in the form?",opts:["Budgets are the most important data point","To filter out unqualified prospects quickly before they complete the form","Clients prefer to see budget first","Zapier requires budget data first"],ans:1},
+{q:"When building the question list, what tool should you use first?",opts:["Typeform's built-in AI","Your own judgment only","ChatGPT/Claude to generate relevant qualification questions","Ask the client to write all questions themselves"],ans:2}
+]}},
+{id:"tf2",title:"Building, Logic & Publishing",lessons:[
+{id:"tf2l1",title:"Form Structure & Conditional Logic",mins:9,body:`BUILDING THE FORM IN TYPEFORM
+
+CREATING THE FORM
+1. Log into the client's Typeform account at admin.typeform.com
+2. Click "+ Create a new form" → "Start from scratch"
+3. Name it clearly: "[Client Name] — Client Qualification Form"
+
+FORM SECTIONS
+• Section 1: Contact Information (name, email, phone)
+• Section 2: Qualifying Questions (budget, timeline, specific needs)
+• Section 3: Any niche-specific questions
+
+SETTING UP CONDITIONAL LOGIC (BRANCHING)
+This is what makes the form intelligent. Without branching, everyone gets the same ending.
+
+How to access: Workflow tab → Branching
+
+FOR THE BUDGET QUESTION:
+• Click on the budget question in the workflow view
+• Click "Manage Branching"
+• Add rule: IF answer IS "[low budget option]" THEN go to [Rejection Ending]
+• Set "All other cases go to" → next qualifying question
+
+FOR DATE/TIMELINE QUESTIONS:
+• Add rule: IF date is in the past THEN redirect to rejection page
+• Add rule: IF date is within 2 weeks THEN route to urgent follow-up
+
+CREATING ENDINGS
+Create at least two endings:
+• Ending A — Qualified leads: redirect to client's Calendly/booking page
+• Ending B — Unqualified leads: polite thank you message, offer an alternative resource
+
+Every logic path must lead to a defined ending. Test every possible route before publishing.`},
+{id:"tf2l2",title:"Branding, Testing & Publishing",mins:7,body:`APPLYING CLIENT BRANDING
+
+1. Click "Design" tab in the form editor
+2. Set primary brand colour (use hex code from client's brand guidelines)
+3. Use ChatGPT/Claude to suggest complementary colours if needed: "Suggest two complementary colours for a brand with primary colour [HEX]. The audience is [ICP DESCRIPTION]."
+4. Upload the client's logo: Design → Logo → Upload
+5. Select a font that matches the brand's tone (professional, playful, minimal)
+6. Remove Typeform branding if the client has a paid plan: Settings → Remove Typeform branding
+
+TESTING BEFORE PUBLISHING (NON-NEGOTIABLE)
+Click "Preview" and test every path:
+✓ Submit a QUALIFYING response — verify it routes to the booking page
+✓ Submit a DISQUALIFYING response — verify it routes to the rejection ending
+✓ Test all possible answer combinations that trigger different logic paths
+✓ Test on both desktop and mobile
+✓ Proofread every question for spelling and grammar
+✓ Verify all redirect URLs actually work
+
+PUBLISHING & HANDOVER
+1. Delete all test responses from Results before going live
+2. Click "Publish"
+3. Copy the direct share link
+4. Share with the client along with a brief explanation of how the logic works
+5. Document any conditional logic rules for your own reference and for the client`}
+],quiz:{id:"tf2q",title:"Typeform Building Quiz",qs:[
+{q:"Where do you set up conditional logic in Typeform?",opts:["Settings tab","Design tab","Workflow tab → Branching","Content tab → Logic"],ans:2},
+{q:"What should Ending A (qualified leads) do?",opts:["Show a thank you message","Redirect to the client's Calendly or booking page","Send an email to the VA","Ask another qualifying question"],ans:1},
+{q:"What must you do before publishing the form?",opts:["Add the client's logo first","Delete all test responses","Submit one test response","Contact Typeform support"],ans:1},
+{q:"What should you ALWAYS do with test responses before the form goes live?",opts:["Leave them as examples","Archive them","Delete them from Results","Share them with the client"],ans:2}
+]}}
+]},
+
+{id:"zapier",icon:"⚡",color:"#F59E0B",tagBg:"rgba(245,158,11,0.12)",tagCol:"#FCD34D",tag:"AUTOMATION",title:"Automation with Zapier",
+desc:"Build the automations that power VirtueCore's client systems. Typeform to Google Sheets, lead notifications, email sequences — master the core Zaps.",
+modules:[
+{id:"zap1",title:"Zapier Fundamentals",lessons:[
+{id:"zap1l1",title:"How Zapier Works",mins:6,body:`THE CORE CONCEPT
+
+Zapier connects apps that don't naturally talk to each other. The logic is always: when X happens in App A, do Y in App B.
+
+THREE COMPONENTS
+• Trigger — the event that starts the Zap. e.g. "A new Typeform response is submitted"
+• Action — what Zapier does in response. e.g. "Add a row to Google Sheets"
+• Filter — an optional condition. e.g. "Only if the budget answer is above £1,000"
+
+WHAT YOU NEED TO KNOW FOR VIRTUECORE WORK
+You don't need to learn every Zapier feature. You need to master three core combinations:
+
+1. Typeform → Google Sheets → Email notification to client/sales team
+2. Facebook Lead Ads → GoHighLevel CRM → Slack notification
+3. Webhook → Google Sheets (for tracking custom data like quiz results)
+
+THE ZAPIER ACCOUNT
+The client provides the Zapier login — you don't use a VirtueCore account for client Zaps.
+When you first log in, go straight to the Zaps section. This is where all existing automations live.
+The Home section has an AI assistant — you can type "create a lead sheet for my Facebook ads" and Zapier will suggest a structure. Useful for getting started, but always review and customise.`},
+{id:"zap1l2",title:"Building the Core Zap — Typeform to Sheets",mins:9,body:`THE MOST IMPORTANT ZAP YOU WILL BUILD
+
+The Typeform → Google Sheets → Email notification Zap is the backbone of most client lead qualification systems. Here's how to build it step by step.
+
+BEFORE YOU START
+Map the workflow in plain English first:
+"When a new Typeform response comes in → add it to the leads sheet → email the sales team with the lead details"
+
+Always map before you build. Zaps built without a map technically work but often don't solve the actual problem.
+
+STEP-BY-STEP BUILD
+
+Step 1: Create a new Zap → Trigger app: Typeform → Event: New Entry
+Connect the client's Typeform account. Select the correct form. Test the trigger by pulling in a real response.
+
+Step 2: Action 1 → App: Google Sheets → Event: Create Spreadsheet Row
+Connect the client's Google account. Select the correct spreadsheet and sheet tab.
+Map each Typeform field to the correct column. This step is where most errors happen — check every mapping carefully.
+
+Step 3: Action 2 → App: Gmail → Event: Send Email
+To: client's email / sales team email
+Subject: "New Lead: [First Name] [Last Name] — [Budget Answer]"
+Body: map all the relevant fields so the email includes full lead details
+
+Step 4: Test the full Zap using the test data. Confirm the row appears in Sheets and the email arrives.
+Step 5: Turn the Zap ON and monitor the Zap History for the first 24-48 hours.`}
+],quiz:{id:"zap1q",title:"Zapier Fundamentals Quiz",qs:[
+{q:"What is a Trigger in Zapier?",opts:["An action that happens after the Zap completes","The event in an app that starts the Zap","A filter condition in the middle of a Zap","A paid feature only"],ans:1},
+{q:"What should you do BEFORE building any Zap?",opts:["Turn it on immediately to test","Request client approval","Map the full workflow in plain English first","Import a template"],ans:2},
+{q:"Who provides the Zapier login for client automations?",opts:["VirtueCore provides a shared account","The client provides their own Zapier login","You create a new account each time","Zapier provides a free shared account"],ans:1},
+{q:"Where is the most common place errors occur in a multi-step Zap?",opts:["The trigger setup","The filter conditions","The field mapping between apps","The Zap name"],ans:2},
+{q:"How long should you monitor Zap History after turning on a new Zap?",opts:["1 hour","First 24-48 hours","One full week","Only when a client complains"],ans:1}
+]}}
+]},
+
+{id:"email",icon:"📧",color:"#3B82F6",tagBg:"rgba(59,130,246,0.12)",tagCol:"#60A5FA",tag:"EMAIL MKT",title:"Email Marketing",
+desc:"Set up email marketing campaigns for e-commerce and service clients. MailChimp/WooCommerce integration, abandoned cart sequences, and welcome flows.",
+modules:[
+{id:"em1",title:"Email Marketing Setup",lessons:[
+{id:"em1l1",title:"When & Why We Set Up Email Marketing",mins:5,body:`IMPORTANT — READ BEFORE STARTING ANY EMAIL SETUP
+
+Only set up email marketing for a client if you have been directly instructed to do so by Samuel or Caleb. Do not set it up speculatively or because you think it would be good for the client.
+
+THE TWO MAIN SCENARIOS
+1. E-commerce clients with a checkout page — these clients need: abandoned cart sequences (to recover lost sales), post-purchase sequences (upsell, review requests, re-engagement), and welcome flows for new subscribers.
+
+2. Service-based clients building a list — these clients need: lead nurture sequences after someone downloads a lead magnet, follow-up sequences after enquiry, and re-engagement campaigns for cold contacts.
+
+The setup process is different for each. This module covers e-commerce email setup through WordPress/WooCommerce.
+
+HOW IT CONNECTS TO THE BROADER SYSTEM
+Email marketing is one layer of the full client funnel:
+Ad → Landing Page → Lead Magnet / Enquiry Form → Email Sequence → Sales Call / Purchase
+
+Email is what happens after the ad gets the click. It nurtures the lead and converts them before (or after) they interact with the client.`},
+{id:"em1l2",title:"Mailchimp + WooCommerce Setup",mins:10,body:`SETTING UP EMAIL MARKETING ON WORDPRESS/WOOCOMMERCE
+
+STEP 1 — INSTALL THE PLUGIN
+1. Log into the client's WordPress admin panel
+2. Go to Plugins → Add New Plugin
+3. Search for "Mailchimp for WooCommerce"
+4. Install and Activate
+5. Go to Settings to configure
+
+STEP 2 — CONNECT MAILCHIMP
+Connect the plugin to the client's Mailchimp account.
+Key settings to configure:
+• Audience — select or create the correct audience/list
+• Track carts for WooCommerce — turn ON (this enables abandoned cart tracking)
+• Tick the sync settings and confirm the audience is correct
+
+STEP 3 — BUILD THE ABANDONED CART SEQUENCE
+In Mailchimp, go to Automations (or "Customer Journeys"):
+1. Create new journey → Start: Abandoned Cart
+2. Email 1 — Send 1 hour after cart abandonment. Subject: "[Product Name] — you left something behind"
+   Content: what they left in the cart, a gentle nudge, product image, CTA back to checkout
+3. Email 2 — Send 24 hours later. Subject: "Still thinking about it?"
+   Content: address the hesitation. Add a small incentive if appropriate (e.g. free shipping).
+4. Email 3 — Send 72 hours later. Final email. Subject: "Last chance — your cart expires soon"
+   Content: urgency, social proof, strong CTA.
+
+STEP 4 — ACTIVATE AND TEST
+Turn on the automation. Place a test order and abandon the cart. Confirm all three emails fire correctly at the right intervals.`}
+],quiz:{id:"em1q",title:"Email Marketing Quiz",qs:[
+{q:"When should you set up email marketing for a client?",opts:["Whenever you think it would help","Only when directly instructed by Samuel or Caleb","For every new client automatically","When the client asks for it via email"],ans:1},
+{q:"What does the abandoned cart sequence aim to do?",opts:["Collect new subscribers","Re-engage people who added items to cart but didn't purchase","Send newsletters to existing customers","Promote new products"],ans:1},
+{q:"How many emails are in the abandoned cart sequence described?",opts:["1","2","3","5"],ans:2},
+{q:"What is the correct installation path for Mailchimp on WordPress?",opts:["Settings → Integrations → Mailchimp","Plugins → Add New → Search Mailchimp for WooCommerce","Theme Editor → Add Plugin → Mailchimp","WooCommerce → Extensions → Email"],ans:1}
+]}}
+]},
+
+{id:"capcut",icon:"🎬",color:"#EF4444",tagBg:"rgba(239,68,68,0.12)",tagCol:"#FCA5A5",tag:"VIDEO EDITING",title:"CapCut & Submagic",
+desc:"Edit video content for client social media and ads. CapCut interface, timeline editing, captions with Submagic, and exporting for Meta ads.",
+modules:[
+{id:"cc1",title:"CapCut — Interface & Core Editing",lessons:[
+{id:"cc1l1",title:"CapCut Interface Overview",mins:7,body:`GETTING STARTED IN CAPCUT
+
+CapCut is our primary video editing tool for client content. Logins will be shared via the Google Doc — do not create your own account for client work.
+
+THE MAIN SECTIONS (top toolbar)
+• Media — where you import video clips, images, and audio
+• Audio — sound effects library and background music
+  - To add sound effects: type the effect name in the search (e.g. "whoosh") → preview → tap to add
+  - To add background music: browse by genre (rock, chill, etc.) → drag to audio track
+• Text — add text overlays, titles, and subtitles
+• Stickers — animated overlay elements (use sparingly and purposefully for client content)
+• Effects — visual filters and transitions that affect the overall video appearance
+
+THE TIMELINE
+The timeline at the bottom is where you edit. Each video clip, audio file, and text element appears as a separate track.
+• To trim: tap the clip → drag the edges to shorten from either end
+• To split: position the playhead where you want to cut → tap "Split"
+• To delete: tap the clip → tap the bin icon
+• To rearrange: tap and hold → drag to new position
+
+TRANSITIONS
+Tap the small icon between two clips to add a transition. Keep transitions subtle for client content — hard cuts usually look more professional than flashy wipes.`},
+{id:"cc1l2",title:"Editing Client Ad Videos",mins:9,body:`EDITING ADS IN CAPCUT — STEP BY STEP
+
+BEFORE YOU START
+• Have the raw footage ready (uploaded to Drive or shared directly)
+• Have the ad brief — what is the hook, what are the key talking points, what is the CTA?
+• Know the target format: 9:16 for Reels/Stories, 1:1 for Feed, 16:9 for YouTube
+
+WORKFLOW
+1. Open a new project → import all clips
+2. Arrange clips in the correct order on the timeline
+3. Cut dead moments — any pauses, filler words ("um", "uh"), or off-topic sections
+4. The hook must be compelling in the first 3 seconds — if the first clip doesn't grab attention, cut it shorter or find a stronger opening moment
+5. Add captions (covered in the Submagic module)
+6. Add background music if appropriate — keep it low (around 10-20% volume so the voice is always the dominant audio)
+7. Add any text overlays for key points — this helps when viewed with sound off
+8. Review the full video at least once before exporting
+9. Export at maximum quality for the correct aspect ratio
+
+THINGS TO AVOID
+✗ Over-editing — raw, authentic content often performs better for ads than heavily produced videos
+✗ Too many transitions — use hard cuts 90% of the time
+✗ Music too loud — the voice must always be the main audio
+✗ Captions that block the speaker's face
+✗ Aspect ratio mismatch — always check format before exporting`}
+],quiz:{id:"cc1q",title:"CapCut Quiz",qs:[
+{q:"Where do logins for CapCut client work come from?",opts:["You create your own free account","The shared Google Doc from VirtueCore","The client's own CapCut account","CapCut's website directly"],ans:1},
+{q:"What is the recommended music volume level for ad videos?",opts:["50% — equal to the voiceover","80% for energy","10-20% so the voice is dominant","0% — no music in ads"],ans:2},
+{q:"What should you do with dead moments and filler words in footage?",opts:["Leave them in for authenticity","Cut them out to keep the video tight","Add music over them","Speed them up"],ans:1},
+{q:"Why is the first 3 seconds of an ad video most important?",opts:["Meta charges more after 3 seconds","The hook must grab attention or viewers scroll away","Captions only appear after 3 seconds","The algorithm stops showing ads after 3 seconds"],ans:1}
+]}},
+{id:"cc2",title:"Submagic — Auto Captions",lessons:[
+{id:"cc2l1",title:"Using Submagic for Captions",mins:7,body:`WHY CAPTIONS MATTER
+
+Most people watch social media videos with the sound off. Captions are not optional — they are essential for any video that will run as a Meta ad or organic social content.
+
+SUBMAGIC VS CAPCUT CAPTIONS
+CapCut has a built-in auto-caption feature but Submagic produces significantly more accurate captions with better styling options. For all client ad content, use Submagic.
+
+THE SUBMAGIC WORKFLOW
+1. Export your edited video from CapCut (without captions — export the clean edit first)
+2. Upload the video to Submagic
+3. Submagic auto-transcribes and generates captions — wait for processing to complete
+4. Review and edit any incorrectly transcribed words (proper nouns, brand names, and technical terms are most likely to be wrong)
+5. Style the captions: position them in the safe zone (roughly the middle third of the screen — not too high, not too low)
+6. Choose a caption style appropriate for the content: bold white text with drop shadow for ads, or more styled for organic content
+7. Export the captioned video
+
+CAPTION POSITIONING RULES
+• Do NOT position captions over the speaker's face
+• Keep captions within Meta's safe zones (the centre area where captions won't be cropped on different placements)
+• For 9:16 format: position captions roughly at 60-70% height from the top
+• Test on both iPhone and Android screen sizes if possible
+
+REVIEWING BEFORE DELIVERY
+Always watch the full captioned video before delivering to the client. Incorrect captions look unprofessional and can confuse the message.`}
+],quiz:{id:"cc2q",title:"Submagic Quiz",qs:[
+{q:"Why should Submagic be used instead of CapCut's built-in captions?",opts:["Submagic is free and CapCut is not","Submagic produces more accurate captions with better styling","CapCut cannot add captions","Submagic is faster"],ans:1},
+{q:"What should you export from CapCut before uploading to Submagic?",opts:["The video with captions already added","A clean edited video without captions","A rough cut without any editing","Just the audio track"],ans:1},
+{q:"Where should captions be positioned for 9:16 video ads?",opts:["At the very top of the screen","Over the speaker's face for emphasis","In the safe zone — approximately 60-70% height from top","At the very bottom"],ans:2},
+{q:"What types of words are most likely to be transcribed incorrectly by Submagic?",opts:["Common words like 'the' and 'and'","Proper nouns, brand names, and technical terms","Short sentences","Questions"],ans:2}
+]}}
+]},
+
+{id:"googleads",icon:"🔍",color:"#34D399",tagBg:"rgba(52,211,153,0.12)",tagCol:"#6EE7B7",tag:"GOOGLE ADS",title:"Google Ads Setup",
+desc:"Set up and manage Google Ads accounts correctly. Account configuration, Merchant Center, and building branded search campaigns from scratch.",
+modules:[
+{id:"ga1",title:"Account Setup & Best Practices",lessons:[
+{id:"ga1l1",title:"Google Ads Account Configuration",mins:8,body:`GOOGLE IS GETTING STRICTER EVERY MONTH
+
+Google actively suspends accounts that aren't properly set up. These steps aren't optional — they are what keeps the client's account active.
+
+If you do not already have access to a Google Ads account for the client, go to ads.google.com and either get added as a user to their existing account or help them create one.
+
+STEP 1 — ACCOUNT NAME & PREFERENCES
+Tools and Settings → Preferences
+• Name the ad account exactly the same as the business — no abbreviations, no codes
+• Ensure all contact information is completely filled out
+• Expand "Contact Information" and verify everything is complete
+
+STEP 2 — BILLING SETTINGS
+Tools and Settings → Billing Settings
+• Ensure billing is fully set up with all contact information
+• A billing issue is the fastest way to get campaigns paused mid-flight
+
+STEP 3 — ADVERTISER VERIFICATION (CRITICAL)
+Apply for Advertiser Verification immediately.
+Google gives a 2-3 week window to complete this verification. If it's not done in time, the account gets suspended. Suspended accounts are very difficult to recover.
+Do not wait to be notified — apply the moment you have account access.
+
+STEP 4 — MERCHANT CENTER (FOR E-COMMERCE CLIENTS)
+If the client sells products online:
+• Set up Google Merchant Center and link it to the Ads account
+• Ensure product feed is connected and products are approved
+• Fix any policy violations before launching Shopping campaigns
+
+STEP 5 — CONVERSION TRACKING
+Set up conversion tracking before any campaign goes live. Without it, you have no data on what's actually converting.`},
+{id:"ga1l2",title:"Building a Branded Search Campaign",mins:10,body:`WHAT IS A BRANDED SEARCH CAMPAIGN?
+
+A branded search campaign ensures your client's brand appears at the top of Google search results when someone searches for their brand name directly. This protects them from competitors bidding on their brand terms.
+
+STEP 1 — CREATE A NEW CAMPAIGN
+• Click the blue "+" button → New Campaign
+• Select "No Goal" to see all campaign options
+• Choose "Search Campaign"
+• Add Goal: Purchases (conversion goal)
+
+STEP 2 — CAMPAIGN SETTINGS
+• Enter the homepage URL
+• Name: [Company Initials] — Search Branded
+• Bidding strategy: Max Conversions
+• Disable Display Network — you want search only
+• Location targeting: expand options → select "Presence" → target only people physically in the target location
+• Language: English (or relevant language)
+
+STEP 3 — KEYWORD SELECTION
+Use ONLY brand name and direct variations:
+• Exact match: ["Brand Name"]
+• Phrase match: ["Brand Name products"]
+• Broad match: [Brand Name]
+Create three separate ad groups — one for each match type.
+
+STEP 4 — AD CREATION
+Headlines (create 3):
+1. Brand name
+2. What they sell + who they sell it to
+3. Call to action ("Shop [Product] Today")
+
+Descriptions (create 2):
+1. What they sell + who for
+2. Call to action with product/service name
+
+STEP 5 — AD EXTENSIONS
+• Site Links — add unique URLs (use /#1, /#2, etc. if no dedicated pages exist). More site links = more real estate on the search results page.
+• Structured Snippets — add product/service categories (e.g. "Styles: Minimal, Bold, Classic")
+
+STEP 6 — FINAL REVIEW
+Before publishing: verify the homepage URL is correct, display network is disabled, location targeting is set to Presence only, budget is set, conversion tracking is active.`}
+],quiz:{id:"ga1q",title:"Google Ads Setup Quiz",qs:[
+{q:"Why must Advertiser Verification be applied for immediately?",opts:["It improves ad performance","Google gives a 2-3 week window — missing it results in account suspension","It reduces your cost per click","Google requires it for all new campaigns"],ans:1},
+{q:"What bidding strategy should be used for a branded search campaign?",opts:["Target ROAS","Manual CPC","Max Conversions","Target Impression Share"],ans:2},
+{q:"Why should you disable the Display Network for a branded search campaign?",opts:["Display ads cost more","You want search results only — not banner ads on other websites","Display Network doesn't support branded keywords","Google recommends disabling it"],ans:1},
+{q:"What are the three match types you create ad groups for in a branded campaign?",opts:["Broad, Phrase, Exact","Smart, Manual, Automatic","Keyword, Topic, Audience","Standard, Enhanced, Target"],ans:0},
+{q:"What should you add to maximise real estate on the search results page?",opts:["More keywords","Higher bids","Site Links and Structured Snippets","Longer ad descriptions"],ans:2}
+]}}
+]},
+
+{id:"squarespace",icon:"🌐",color:"#0EA5E9",tagBg:"rgba(14,165,233,0.12)",tagCol:"#38BDF8",tag:"WEB",title:"Squarespace & Domain Setup",
+desc:"Connect client domains to Squarespace websites. GoDaddy domain transfer, DNS configuration, and troubleshooting common connection issues.",
+modules:[
+{id:"sq1",title:"Domain Transfer & DNS Setup",lessons:[
+{id:"sq1l1",title:"Connecting a GoDaddy Domain to Squarespace",mins:8,body:`WHAT YOU'RE DOING AND WHY
+
+When a client has bought their domain from GoDaddy (or another registrar) but their website is on Squarespace, you need to point the domain at Squarespace's servers. This is called domain connection (not transfer — you're not moving the domain, just pointing it).
+
+The same process applies for other registrars (Wix, Namecheap, etc.) — the interface differs but the logic is identical. If you encounter a registrar you haven't seen before and can't figure it out, flag it to Samuel or Caleb immediately.
+
+WHAT YOU NEED BEFORE STARTING
+• GoDaddy login for the client
+• Squarespace login for the client
+• The client's domain name
+
+STEP-BY-STEP PROCESS
+
+IN SQUARESPACE
+1. Go to Pages → Not Linked → Connect Domain (or Website → Domains → Use a domain I own)
+2. Type in the client's domain name
+3. Squarespace will show you the nameservers you need to copy — these look like: ns1.squarespace.com, ns2.squarespace.com, etc.
+4. Copy these nameservers — you'll need them in GoDaddy
+
+IN GODADDY
+1. Log into the client's GoDaddy account
+2. Go to Domains → Manage → find the domain → click DNS
+3. Go to Nameservers → click "Change"
+4. Select "I'll use my own nameservers"
+5. Delete the existing nameservers
+6. Paste in the Squarespace nameservers one by one
+7. Save
+
+WHAT HAPPENS NEXT
+DNS propagation takes up to 48 hours. The domain should start working within a few hours in most cases. The client may see their site loading intermittently during this window — this is normal.`},
+{id:"sq1l2",title:"Troubleshooting & Other Registrars",mins:5,body:`COMMON ISSUES AND HOW TO FIX THEM
+
+ISSUE: Domain still not connected after 48 hours
+• Double-check the nameservers were saved correctly in GoDaddy — common mistake is a typo or an extra space
+• In Squarespace, go to Domains and check the connection status — it will show an error message if something is wrong
+• Try removing and re-adding the domain in Squarespace
+
+ISSUE: Only some pages load, others show an error
+• The nameservers are pointing correctly but some DNS records may still be propagating
+• Wait another 12-24 hours — this usually resolves itself
+• If not, check if any custom CNAME or A records need to be added alongside the nameservers
+
+ISSUE: The client has an SSL certificate error (padlock icon not showing)
+• SSL certificates take up to 72 hours after DNS connection to provision
+• In Squarespace, go to Settings → SSL — check the status and force a re-check if needed
+
+OTHER REGISTRARS — GENERAL PROCESS
+The nameserver change process is the same across all registrars:
+1. Find the "DNS" or "Nameservers" section in the registrar's dashboard
+2. Change to "Custom Nameservers" or "Use my own nameservers"
+3. Enter the Squarespace nameservers
+4. Save
+
+Wix, Namecheap, and Google Domains all follow this same pattern with slightly different UI. When in doubt, search YouTube for "[Registrar Name] + Squarespace nameservers" — there will always be an up-to-date tutorial.`}
+],quiz:{id:"sq1q",title:"Domain Setup Quiz",qs:[
+{q:"What is the correct term for what you're doing when connecting a GoDaddy domain to Squarespace?",opts:["Domain Transfer — moving the domain to Squarespace","Domain Connection — pointing the domain at Squarespace's servers","Domain Purchase — buying a new domain","Domain Hosting — changing the hosting provider"],ans:1},
+{q:"Where do you find the nameservers you need to enter in GoDaddy?",opts:["GoDaddy's dashboard","Squarespace's domain connection instructions","Google search results","The client provides them"],ans:1},
+{q:"How long can DNS propagation take?",opts:["5 minutes","1 hour","Up to 48 hours","Exactly 24 hours"],ans:2},
+{q:"What should you do if you encounter a domain registrar you have never used before?",opts:["Guess the process and hope for the best","Search YouTube and if still unsure, flag it to Samuel or Caleb","Refuse to do the task","Ask the client to do it themselves"],ans:1}
+]}}
+]},
+];
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+let U=null,P={},AC=null,AM=null,AL=null,AQ=null,EXP={},QS={qi:0,ans:[],sel:null,sub:false};
+
+/* ═══════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════ */
+const allL=c=>c.modules.flatMap(m=>m.lessons);
+const cPct=c=>{const ls=allL(c);return ls.length?Math.round(ls.filter(l=>P[l.id]).length/ls.length*100):0};
+const cDone=c=>allL(c).every(l=>P[l.id])&&c.modules.every(m=>!m.quiz||P[m.quiz.id]?.passed);
+const mDone=m=>m.lessons.every(l=>P[l.id])&&(!m.quiz||P[m.quiz.id]?.passed);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const set=h=>document.getElementById("app-body").innerHTML=h;
+const saveP=()=>{try{localStorage.setItem("vc_p_"+U.email,JSON.stringify(P))}catch(e){}};
+
+function toast(msg,col){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.style.borderColor=col||"var(--green)";t.style.color=col||"var(--green)";
+  t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+async function sendToZapier(data){
+  if(!ZAPIER_WEBHOOK)return;
+  try{await fetch(ZAPIER_WEBHOOK,{method:"POST",mode:"no-cors",body:JSON.stringify({timestamp:new Date().toLocaleString("en-GB"),name:U.name,email:U.email,course:data.course,quiz:data.quiz,score:data.score+"%",status:data.passed?"PASSED":"FAILED",correct:data.correct+"/"+data.total})})}catch(e){}
+}
+
+/* ═══════════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════════ */
+function doLogin(){
+  const n=document.getElementById("inp-name").value.trim();
+  const e=document.getElementById("inp-email").value.trim().toLowerCase();
+  const c=document.getElementById("inp-code").value.trim();
+  const err=document.getElementById("login-err");
+  if(!n||!e||!c){err.style.display="block";err.textContent="Please fill in all fields.";return}
+  if(!/\S+@\S+\.\S+/.test(e)){err.style.display="block";err.textContent="Please enter a valid email.";return}
+  const isAdmin=e===ADMIN_EMAIL&&c===ADMIN_CODE;
+  const isVA=c===VA_CODE;
+  if(!isAdmin&&!isVA){err.style.display="block";err.textContent="Incorrect access code. Contact VirtueCore management.";return}
+  U={name:n,email:e,isAdmin};
+  try{
+    const raw=localStorage.getItem("vc_p_"+e);P=raw?JSON.parse(raw):{};
+    const us=JSON.parse(localStorage.getItem("vc_users")||"[]");
+    const idx=us.findIndex(u=>u.email===e);
+    if(idx>=0)us[idx].name=n;else us.push({name:n,email:e,joined:new Date().toLocaleDateString("en-GB")});
+    localStorage.setItem("vc_users",JSON.stringify(us));
+  }catch(ex){P={}}
+  document.getElementById("nav-uname").textContent=n;
+  if(isAdmin)document.getElementById("tab-admin").classList.remove("hide");
+  document.getElementById("pg-login").style.display="none";
+  document.getElementById("pg-app").style.display="block";
+  renderDashboard();
+}
+
+["inp-name","inp-email","inp-code"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()}));
+
+function doLogout(){
+  U=null;P={};
+  document.getElementById("pg-app").style.display="none";
+  document.getElementById("pg-login").style.display="flex";
+  ["inp-name","inp-email","inp-code"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("login-err").style.display="none";
+  document.getElementById("tab-admin").classList.add("hide");
+}
+
+function goHome(){switchTab("courses")}
+
+function switchTab(t){
+  document.querySelectorAll(".nav-tab").forEach(b=>b.classList.remove("on"));
+  document.getElementById("tab-"+t).classList.add("on");
+  t==="courses"?renderDashboard():renderAdmin();
+}
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════════════ */
+function renderDashboard(){
+  const total=COURSES.flatMap(c=>allL(c)).length;
+  const done=COURSES.flatMap(c=>allL(c)).filter(l=>P[l.id]).length;
+  const dc=COURSES.filter(c=>cDone(c)).length;
+  const pq=Object.values(P).filter(v=>v?.passed).length;
+  const pct=total?Math.round(done/total*100):0;
+  let h=`<div class="pg-title">Welcome back, ${esc(U.name.split(" ")[0])} 👋</div>
+  <div class="pg-sub">Continue your training or start a new course below.</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-lbl">Overall Progress</div><div class="stat-val">${pct}%</div><div class="stat-sub">${done} of ${total} lessons done</div></div>
+    <div class="stat-card"><div class="stat-lbl">Courses Completed</div><div class="stat-val">${dc}</div><div class="stat-sub">of ${COURSES.length} total</div></div>
+    <div class="stat-card"><div class="stat-lbl">Quizzes Passed</div><div class="stat-val">${pq}</div><div class="stat-sub">assessments passed</div></div>
+  </div><div class="course-grid">`;
+  COURSES.forEach(c=>{
+    const p=cPct(c),d=cDone(c);
+    h+=`<div class="c-card" onclick="openCourse('${c.id}')">
+      ${d?'<div class="done-badge">✓ Complete</div>':""}
+      <div class="c-icon" style="background:${c.color}22">${c.icon}</div>
+      <div class="c-tag" style="background:${c.tagBg};color:${c.tagCol}">${c.tag}</div>
+      <div class="c-title">${esc(c.title)}</div>
+      <div class="c-desc">${esc(c.desc)}</div>
+      <div class="c-meta"><span>${c.modules.length} modules · ${allL(c).length} lessons</span><span style="color:${p>0?"var(--gold)":"var(--muted)"};font-weight:700">${p}%</span></div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${p}%;background:${d?"var(--green)":"var(--gold)"}"></div></div>
+    </div>`;
+  });
+  set(h+"</div>");
+}
+
+/* ═══════════════════════════════════════════════════════
+   COURSE
+═══════════════════════════════════════════════════════ */
+function openCourse(id){AC=COURSES.find(c=>c.id===id);EXP={};AC.modules.forEach(m=>EXP[m.id]=true);renderCourse();}
+
+function renderCourse(){
+  const c=AC,p=cPct(c);
+  let h=`<button class="back-btn" onclick="renderDashboard()">← Back to courses</button>
+  <div class="hero"><div class="hero-icon" style="background:${c.color}22">${c.icon}</div>
+  <div style="flex:1"><div class="c-tag" style="background:${c.tagBg};color:${c.tagCol}">${c.tag}</div>
+  <div class="hero-title">${esc(c.title)}</div><div class="hero-desc">${esc(c.desc)}</div>
+  <div class="hero-stats">
+    <div class="h-stat"><strong>${c.modules.length}</strong>Modules</div>
+    <div class="h-stat"><strong>${allL(c).length}</strong>Lessons</div>
+    <div class="h-stat"><strong style="color:var(--gold)">${p}%</strong>Done</div>
+  </div></div></div><div class="mod-list">`;
+  c.modules.forEach((m,i)=>{
+    const open=EXP[m.id],done=mDone(m);
+    h+=`<div class="mod-box"><div class="mod-head" onclick="toggleMod('${m.id}')">
+      <div class="mod-num ${done?"ok":""}">${done?"✓":i+1}</div>
+      <div style="flex:1"><div class="mod-info-title">${esc(m.title)}</div><div class="mod-info-sub">${m.lessons.length} lesson${m.lessons.length>1?"s":""}</div></div>
+      <div class="chev ${open?"open":""}">▾</div></div>
+    <div class="mod-body ${open?"open":""}">`;
+    m.lessons.forEach(l=>{
+      const ld=P[l.id];
+      h+=`<div class="l-row" onclick="openLesson('${l.id}','${m.id}')">
+        <div class="l-dot ${ld?"ok":""}"></div><span class="l-name ${ld?"ok":""}">${esc(l.title)}</span>
+        <span class="l-dur">📖 ${l.mins} min</span></div>`;
+    });
+    if(m.quiz){
+      const qd=P[m.quiz.id];
+      h+=`<div class="quiz-row" onclick="openQuiz('${m.quiz.id}','${m.id}')">
+        <div class="q-ico">📝</div><div style="flex:1">
+          <div class="q-row-title">${esc(m.quiz.title)}</div><div class="q-row-sub">${m.quiz.qs.length} questions</div></div>
+        ${qd?`<span style="font-size:12px;color:var(--green);font-weight:800">✓ ${qd.score}%</span>`:'<span style="font-size:11px;color:var(--muted)">Not taken</span>'}
+      </div>`;
+    }
+    h+="</div></div>";
+  });
+  set(h+"</div>");
+}
+
+function toggleMod(id){EXP[id]=!EXP[id];renderCourse();}
+
+/* ═══════════════════════════════════════════════════════
+   LESSON
+═══════════════════════════════════════════════════════ */
+function openLesson(lid,mid){
+  AM=AC.modules.find(m=>m.id===mid);AL=AM.lessons.find(l=>l.id===lid);renderLesson();
+}
+
+function renderLesson(){
+  const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id),ld=P[AL.id];
+  const hasPrev=idx>0,hasNext=idx<ls.length-1,isLast=!hasNext;
+  const hasQuiz=isLast&&AM?.quiz&&!P[AM.quiz.id];
+  let sb="";
+  ls.forEach(l=>{
+    const d=P[l.id],on=l.id===AL.id;
+    const mod=AC.modules.find(m=>m.lessons.find(ll=>ll.id===l.id));
+    sb+=`<div class="sb-item ${on?"on":""} ${d?"done":""}" onclick="openLesson('${l.id}','${mod.id}')">
+      <div class="sb-dot ${on?"on":d?"ok":""}"></div>${esc(l.title)}</div>`;
+  });
+  let rb="";
+  if(ld)rb+='<span class="done-text">✓ Complete</span>';
+  else rb+=`<button class="btn-green" onclick="markDone()">Mark complete ✓</button>`;
+  if(hasNext)rb+=`<button class="btn-gold-sm" onclick="goNext()">Next →</button>`;
+  else if(hasQuiz)rb+=`<button class="btn-gold-sm" onclick="openQuiz('${AM.quiz.id}','${AM.id}')">Take quiz →</button>`;
+  set(`<button class="back-btn" onclick="renderCourse()">← ${esc(AC.title)}</button>
+  <div class="lesson-layout">
+    <div class="l-sidebar"><div class="sb-ttl">Course contents</div>${sb}</div>
+    <div class="lesson-card">
+      <div class="l-meta">${esc(AM?.title||"")}</div>
+      <div class="l-title">${esc(AL.title)}</div>
+      <div class="l-body">${esc(AL.body)}</div>
+      <div class="l-actions">
+        ${hasPrev?'<button class="btn-sec" onclick="goPrev()">← Previous</button>':"<div></div>"}
+        <div class="l-ar">${rb}</div>
+      </div>
+    </div>
+  </div>`);
+}
+
+function markDone(){P[AL.id]=true;saveP();toast("✓ Lesson complete!");renderLesson();}
+
+function goNext(){
+  const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id);
+  if(!P[AL.id]){P[AL.id]=true;saveP();}
+  if(idx<ls.length-1){const n=ls[idx+1];AM=AC.modules.find(m=>m.lessons.find(l=>l.id===n.id));AL=n;renderLesson();window.scrollTo(0,0);}
+}
+
+function goPrev(){
+  const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id);
+  if(idx>0){const p=ls[idx-1];AM=AC.modules.find(m=>m.lessons.find(l=>l.id===p.id));AL=p;renderLesson();window.scrollTo(0,0);}
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════════════════ */
+function openQuiz(qid,mid){AM=AC.modules.find(m=>m.id===mid);AQ=AM.quiz;QS={qi:0,ans:[],sel:null,sub:false};renderQuiz();window.scrollTo(0,0);}
+
+function renderQuiz(){
+  const q=AQ.qs[QS.qi];
+  let opts="";
+  q.opts.forEach((o,i)=>{
+    const correct=QS.sub&&i===q.ans,wrong=QS.sub&&i===QS.sel&&i!==q.ans,sel=!QS.sub&&i===QS.sel;
+    opts+=`<button class="opt ${correct?"correct":wrong?"wrong":sel?"sel":""}" onclick="selOpt(${i})" ${QS.sub?"disabled":""}>${esc(o)}</button>`;
+  });
+  let acts="";
+  if(!QS.sub&&QS.sel!==null)acts='<button class="btn-gold-sm" onclick="subAns()">Submit answer</button>';
+  else if(QS.sub&&QS.qi<AQ.qs.length-1)acts='<button class="btn-gold-sm" onclick="nextQ()">Next →</button>';
+  else if(QS.sub&&QS.qi===AQ.qs.length-1)acts='<button class="btn-gold-sm" onclick="finishQ()">See results →</button>';
+  const pct=Math.round(QS.qi/AQ.qs.length*100);
+  set(`<button class="back-btn" onclick="renderCourse()">← Back to course</button>
+  <div class="quiz-wrap">
+    <div class="q-header"><span class="q-header-title">📝 ${esc(AQ.title)}</span><span class="q-header-sub">Question ${QS.qi+1} of ${AQ.qs.length}</span></div>
+    <div style="margin-bottom:14px"><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:var(--blue)"></div></div></div>
+    <div class="q-card">
+      <div class="q-num">Question ${QS.qi+1}</div>
+      <div class="q-text">${esc(q.q)}</div>
+      <div class="opts">${opts}</div>
+      <div class="q-actions">${acts}</div>
+    </div>
+  </div>`);
+}
+
+function selOpt(i){if(!QS.sub){QS.sel=i;renderQuiz();}}
+function subAns(){QS.sub=true;QS.ans.push(QS.sel);renderQuiz();}
+function nextQ(){QS.qi++;QS.sel=null;QS.sub=false;renderQuiz();window.scrollTo(0,0);}
+
+function finishQ(){
+  const correct=QS.ans.filter((a,i)=>a===AQ.qs[i].ans).length;
+  const score=Math.round(correct/AQ.qs.length*100),passed=score>=70;
+  P[AQ.id]={score,passed};saveP();
+  sendToZapier({course:AC.title,quiz:AQ.title,score,passed,correct,total:AQ.qs.length});
+  set(`<div class="result-wrap"><div class="result-card">
+    <div class="res-emo">${passed?"🏆":"📚"}</div>
+    <div class="res-title">${passed?"Quiz Passed!":"Keep Studying"}</div>
+    <div class="res-score ${passed?"pass":"fail"}">${score}%</div>
+    <div class="res-sub">${passed?`You got ${correct} of ${AQ.qs.length} correct. Module complete.`:`You got ${correct} of ${AQ.qs.length} correct. You need 70% to pass. Review the lessons and try again.`}</div>
+    <div class="res-btns">
+      ${!passed?'<button class="btn-sec" onclick="retryQ()">Retry quiz</button>':""}
+      <button class="btn-gold-sm" onclick="renderCourse()">Back to course →</button>
+    </div>
+  </div></div>`);
+  window.scrollTo(0,0);
+}
+
+function retryQ(){QS={qi:0,ans:[],sel:null,sub:false};renderQuiz();window.scrollTo(0,0);}
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════════════════════ */
+function renderAdmin(){
+  let users=[];try{users=JSON.parse(localStorage.getItem("vc_users")||"[]")}catch(e){}
+  const total=COURSES.flatMap(c=>allL(c)).length;
+  const avg=users.length?Math.round(users.reduce((a,u)=>{let p={};try{p=JSON.parse(localStorage.getItem("vc_p_"+u.email)||"{}")}catch(e){}return a+Object.keys(p).filter(k=>p[k]===true).length/total*100},0)/users.length):0;
+  const thS="padding:11px 17px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--s2)";
+  const rows=users.length?users.map(u=>{
+    let p={};try{p=JSON.parse(localStorage.getItem("vc_p_"+u.email)||"{}")}catch(e){}
+    const done=Object.keys(p).filter(k=>p[k]===true).length;
+    const pct=Math.round(done/total*100);
+    const dc=COURSES.filter(c=>allL(c).every(l=>p[l.id])&&c.modules.every(m=>!m.quiz||p[m.quiz.id]?.passed)).length;
+    const passed=Object.values(p).filter(v=>v?.passed).length;
+    const failed=Object.values(p).filter(v=>v&&v.passed===false).length;
+    return `<tr>
+      <td><strong style="color:var(--text)">${esc(u.name)}</strong></td>
+      <td>${esc(u.email)}</td><td>${u.joined||"—"}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="prog-wrap" style="width:70px"><div class="prog-fill" style="width:${pct}%;background:${pct===100?"var(--green)":"var(--gold)"}"></div></div><span style="font-weight:800;color:var(--gold)">${pct}%</span></div></td>
+      <td>${dc}/${COURSES.length}</td>
+      <td>${passed?`<span class="badge-pass">✓ ${passed} passed</span>`:""}${failed?`<span style="background:rgba(239,68,68,.12);color:#FCA5A5;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:4px">✗ ${failed} failed</span>`:""}${!passed&&!failed?'<span class="badge-none">none yet</span>':""}</td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">No VAs enrolled yet.</td></tr>`;
+  set(`<div class="pg-title">Admin Dashboard</div>
+  <div class="pg-sub">Track VA training progress. Only visible to sales@virtuecore.co.uk.</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-lbl">Total VAs</div><div class="stat-val">${users.length}</div><div class="stat-sub">enrolled</div></div>
+    <div class="stat-card"><div class="stat-lbl">Avg Completion</div><div class="stat-val">${avg}%</div><div class="stat-sub">across all VAs</div></div>
+    <div class="stat-card"><div class="stat-lbl">Courses</div><div class="stat-val">${COURSES.length}</div><div class="stat-sub">available</div></div>
+  </div>
+  <div class="tbl-wrap"><table class="adm-table">
+    <thead><tr><th style="${thS}">Name</th><th style="${thS}">Email</th><th style="${thS}">Joined</th><th style="${thS}">Progress</th><th style="${thS}">Courses</th><th style="${thS}">Quizzes</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>
+  <div class="adm-actions">💡 <strong style="color:var(--text)">Live tracking:</strong> Add your Zapier webhook URL in the code to push every quiz result to Google Sheets in real time. VA access code: <strong style="color:var(--gold)">VCTEAM2024</strong> · Admin code: <strong style="color:var(--gold)">VCAdmin2024!</strong></div>`);
+}
+</script>
+</body>
+</html>

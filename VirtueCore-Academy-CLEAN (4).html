@@ -57,6 +57,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,.93);backdrop-filt
 .mod-info-title{font-size:14px;font-weight:700;margin-bottom:2px}.mod-info-sub{font-size:11px;color:var(--muted)}
 .chev{margin-left:auto;color:var(--muted);font-size:15px;transition:transform .2s;user-select:none}.chev.open{transform:rotate(180deg)}
 .mod-body{border-top:1px solid var(--border);padding:13px 19px;display:none}.mod-body.open{display:block}
+.mod-video{margin-bottom:14px;position:relative;padding-bottom:62.5%;height:0;overflow:hidden;border-radius:var(--rs);background:var(--s3)}
+.mod-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 .l-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;transition:background .12s}.l-row:hover{background:var(--s2)}
 .l-dot{width:7px;height:7px;border-radius:50%;background:var(--s3);flex-shrink:0}.l-dot.ok{background:var(--green)}
 .l-name{font-size:13px;color:var(--dim);flex:1}.l-name.ok{color:var(--text)}.l-dur{font-size:11px;color:var(--muted)}
@@ -151,7 +153,7 @@ const COURSES=[
 {id:"onboarding",icon:"🚀",color:"#3E7BFA",tagBg:"rgba(62,123,250,0.15)",tagCol:"#6B9EFF",tag:"START HERE",title:"VA Onboarding",
 desc:"Complete before your first client task. Company values, tools, communication standards, and how VirtueCore operates.",
 modules:[
-{id:"ob1",title:"Welcome to VirtueCore",lessons:[
+{id:"ob1",title:"Welcome to VirtueCore",video:"387542fc5e0747739e6f2cc724fdbf84",lessons:[
 {id:"ob1l1",title:"Who We Are & What We Do",mins:5,body:`VirtueCore is one of Birmingham's fastest-growing business automation agencies. We work with founders and SMEs to remove bottlenecks and build the infrastructure they need to grow.
 
 CORE SERVICES
@@ -186,7 +188,7 @@ COMMUNICATION STANDARDS
 {q:"Which is NOT a core VirtueCore service?",opts:["Meta Ads Management","CRM Automation","Web Hosting","VA Placement & Training"],ans:2},
 {q:"What should you do if you make a mistake?",opts:["Wait to see if anyone notices","Flag it immediately and fix it","Redo it quietly without telling anyone","Ask another VA to fix it"],ans:1}
 ]}},
-{id:"ob2",title:"Tools, Access & Your First Week",lessons:[
+{id:"ob2",title:"Tools, Access & Your First Week",video:"",lessons:[
 {id:"ob2l1",title:"Your Core Toolkit",mins:7,body:`TOOLS YOU WILL USE DAILY
 
 • GoHighLevel (GHL) — Our primary CRM and marketing automation platform. Most client pipelines and automations live here.
@@ -234,7 +236,7 @@ HOW TASKS GET ASSIGNED TO YOU
 {id:"psych",icon:"🧠",color:"#8B5CF6",tagBg:"rgba(139,92,246,0.12)",tagCol:"#A78BFA",tag:"FOUNDATION",title:"Marketing Psychology",
 desc:"The mindset behind all effective advertising. Understand buyer awareness levels, pain-to-action psychology, and why ads either move people or get scrolled past.",
 modules:[
-{id:"ps1",title:"The Foundation of Advertising That Works",lessons:[
+{id:"ps1",title:"The Foundation of Advertising That Works",video:"",lessons:[
 {id:"ps1l1",title:"Selling Solutions, Not Products",mins:8,body:`THE MOST IMPORTANT SHIFT IN MARKETING
 
 Most people selling products or services think they're selling a thing. A service. A product. A subscription. They're wrong.
@@ -949,59 +951,751 @@ Step 5: Turn the Zap ON and monitor the Zap History for the first 24-48 hours.`}
 ]},
 
 {id:"email",icon:"📧",color:"#3B82F6",tagBg:"rgba(59,130,246,0.12)",tagCol:"#60A5FA",tag:"EMAIL MKT",title:"Email Marketing",
-desc:"Set up email marketing campaigns for e-commerce and service clients. MailChimp/WooCommerce integration, abandoned cart sequences, and welcome flows.",
+desc:"Master email marketing from scratch — inbox warm-up, MailChimp setup, WooCommerce integration, email design, abandoned cart automation, survey campaigns, and live watch-and-learn sessions.",
 modules:[
-{id:"em1",title:"Email Marketing Setup",lessons:[
-{id:"em1l1",title:"When & Why We Set Up Email Marketing",mins:5,body:`IMPORTANT — READ BEFORE STARTING ANY EMAIL SETUP
 
-Only set up email marketing for a client if you have been directly instructed to do so by Samuel or Caleb. Do not set it up speculatively or because you think it would be good for the client.
+{id:"em-m1",title:"Module 1: Setup & Integration",lessons:[
+{id:"em-m1l1",title:"Client Inbox Warm-Up",mins:8,video:"22bea3d286ae4f5eb40607177f1ecc93",body:`CLIENT INBOX WARM-UP — SOP
 
-THE TWO MAIN SCENARIOS
-1. E-commerce clients with a checkout page — these clients need: abandoned cart sequences (to recover lost sales), post-purchase sequences (upsell, review requests, re-engagement), and welcome flows for new subscribers.
+PURPOSE
+Before sending any marketing emails from a client's domain, the inbox must be warmed up. Sending cold from a brand-new or dormant domain causes spam filters to flag all outgoing mail, destroying deliverability and wasting every campaign you build.
 
-2. Service-based clients building a list — these clients need: lead nurture sequences after someone downloads a lead magnet, follow-up sequences after enquiry, and re-engagement campaigns for cold contacts.
+WHY INBOX WARM-UP MATTERS
+Email service providers (ESPs) like Gmail, Outlook, and Yahoo use sender reputation scores to decide whether to deliver your email to the inbox, spam folder, or reject it entirely. A new or inactive domain starts with zero reputation. If you immediately blast 1,000 emails, the ESP will treat it as spam activity and likely blacklist the sending domain.
 
-The setup process is different for each. This module covers e-commerce email setup through WordPress/WooCommerce.
+Warm-up gradually builds trust with the ESPs by showing them that real people are receiving, opening, and engaging with emails from this domain.
 
-HOW IT CONNECTS TO THE BROADER SYSTEM
-Email marketing is one layer of the full client funnel:
-Ad → Landing Page → Lead Magnet / Enquiry Form → Email Sequence → Sales Call / Purchase
+THE WARM-UP PROCESS
+Week 1 — Send 20–50 emails per day
+Week 2 — Send 50–100 emails per day
+Week 3 — Send 100–250 emails per day
+Week 4 — Send 250–500 emails per day
+After Week 4 — Scale to full campaign volume
 
-Email is what happens after the ad gets the click. It nurtures the lead and converts them before (or after) they interact with the client.`},
-{id:"em1l2",title:"Mailchimp + WooCommerce Setup",mins:10,body:`SETTING UP EMAIL MARKETING ON WORDPRESS/WOOCOMMERCE
+WHAT TO SEND DURING WARM-UP
+• Send to your most engaged, real contacts first (people who know and expect email from you)
+• Use plain text or simple HTML — no heavy image-only emails
+• Encourage recipients to reply or move the email from spam if it lands there
+• Do NOT send to purchased or scraped lists — only genuine opt-in contacts
 
-STEP 1 — INSTALL THE PLUGIN
-1. Log into the client's WordPress admin panel
-2. Go to Plugins → Add New Plugin
+TOOLS FOR AUTOMATED WARM-UP
+If the client is starting from zero with no existing list to warm up against, use a warm-up tool such as:
+• Warmup Inbox
+• Mailwarm
+• Lemwarm
+
+These tools send real-back-and-forth emails between seeded inboxes to build domain reputation on autopilot. Set one up and let it run for at least 2–4 weeks before the first campaign.
+
+WHAT TO CHECK BEFORE WARM-UP
+1. SPF record — is it configured correctly in DNS?
+2. DKIM record — is it active and passing?
+3. DMARC record — is a policy set?
+4. Domain age — is the domain at least 30 days old?
+
+If any of these are missing, set them up first. Email authentication is non-negotiable.
+
+SIGN-OFF
+Do not begin any campaign sending until warm-up is complete and the domain's spam score is green. Document the warm-up start date in the client's folder.`},
+
+{id:"em-m1l2",title:"MailChimp Site Tracking for WooCommerce",mins:6,video:"39ac44f548164691a6f75841e24dba1b",body:`MAILCHIMP SITE TRACKING FOR WOOCOMMERCE — SOP
+
+PURPOSE
+Site tracking allows MailChimp to follow what subscribers do on the client's WooCommerce store — which pages they visit, what they add to cart, and whether they complete a purchase. This data powers abandoned cart automations and audience segmentation.
+
+STEP 1 — INSTALL THE MAILCHIMP FOR WOOCOMMERCE PLUGIN
+1. Log into the client's WordPress admin dashboard
+2. Navigate to Plugins → Add New Plugin
 3. Search for "Mailchimp for WooCommerce"
-4. Install and Activate
-5. Go to Settings to configure
+4. Click Install Now, then Activate
 
-STEP 2 — CONNECT MAILCHIMP
-Connect the plugin to the client's Mailchimp account.
-Key settings to configure:
-• Audience — select or create the correct audience/list
-• Track carts for WooCommerce — turn ON (this enables abandoned cart tracking)
-• Tick the sync settings and confirm the audience is correct
+STEP 2 — CONNECT TO THE MAILCHIMP ACCOUNT
+1. After activation, go to WooCommerce → Mailchimp
+2. Click Connect Account
+3. Log into the client's Mailchimp account and authorise the connection
+4. Select the correct Audience (mailing list) to sync with
 
-STEP 3 — BUILD THE ABANDONED CART SEQUENCE
-In Mailchimp, go to Automations (or "Customer Journeys"):
-1. Create new journey → Start: Abandoned Cart
-2. Email 1 — Send 1 hour after cart abandonment. Subject: "[Product Name] — you left something behind"
-   Content: what they left in the cart, a gentle nudge, product image, CTA back to checkout
-3. Email 2 — Send 24 hours later. Subject: "Still thinking about it?"
-   Content: address the hesitation. Add a small incentive if appropriate (e.g. free shipping).
-4. Email 3 — Send 72 hours later. Final email. Subject: "Last chance — your cart expires soon"
-   Content: urgency, social proof, strong CTA.
+STEP 3 — CONFIGURE SYNC SETTINGS
+In the plugin settings panel:
+• Sync existing WooCommerce customers → ON
+• Track carts → ON (this is essential for abandoned cart automations)
+• Track orders → ON
+• Sync order data → ON
 
-STEP 4 — ACTIVATE AND TEST
-Turn on the automation. Place a test order and abandon the cart. Confirm all three emails fire correctly at the right intervals.`}
-],quiz:{id:"em1q",title:"Email Marketing Quiz",qs:[
-{q:"When should you set up email marketing for a client?",opts:["Whenever you think it would help","Only when directly instructed by Samuel or Caleb","For every new client automatically","When the client asks for it via email"],ans:1},
-{q:"What does the abandoned cart sequence aim to do?",opts:["Collect new subscribers","Re-engage people who added items to cart but didn't purchase","Send newsletters to existing customers","Promote new products"],ans:1},
-{q:"How many emails are in the abandoned cart sequence described?",opts:["1","2","3","5"],ans:2},
-{q:"What is the correct installation path for Mailchimp on WordPress?",opts:["Settings → Integrations → Mailchimp","Plugins → Add New → Search Mailchimp for WooCommerce","Theme Editor → Add Plugin → Mailchimp","WooCommerce → Extensions → Email"],ans:1}
-]}}
+STEP 4 — ENABLE SITE TRACKING
+Still in the Mailchimp plugin settings:
+• Scroll to the "Mailchimp Site Tracking" section
+• Toggle site tracking ON
+• This inserts MailChimp's tracking script on all pages of the store automatically
+
+STEP 5 — VERIFY THE CONNECTION
+1. In MailChimp, go to Audience → All Contacts
+2. Confirm existing WooCommerce customers are appearing
+3. Browse the client's store while logged into a test account — wait 10–15 minutes
+4. Check in MailChimp → Audience → Activity to confirm page visits are being tracked
+
+WHAT GETS TRACKED
+• Pages visited on the store
+• Products viewed
+• Items added to cart
+• Cart abandoned (when a user leaves without purchasing)
+• Purchases completed
+
+This data feeds into all automations you build in later modules. Without site tracking enabled, abandoned cart flows will not fire.`},
+
+{id:"em-m1l3",title:"Monster Run Integrations",mins:4,video:"31ca3f09a4144d4fa78f873a31ed8df2",body:`MONSTER RUN INTEGRATIONS — SOP
+
+PURPOSE
+Monster Run refers to the batch of integrations required when onboarding a new e-commerce client onto the full email marketing stack. This SOP ensures every connection is in place before any campaign work begins.
+
+THE INTEGRATION CHECKLIST
+Run through every item on this list for every new e-commerce email client:
+
+[ ] 1. MailChimp account created or accessed
+[ ] 2. Sending domain verified in MailChimp (domain authentication — SPF, DKIM)
+[ ] 3. MailChimp for WooCommerce plugin installed and activated
+[ ] 4. Plugin connected to correct MailChimp audience
+[ ] 5. Site tracking enabled
+[ ] 6. Cart tracking confirmed active
+[ ] 7. Audience sync completed (existing customers pulled in)
+[ ] 8. MailChimp audience fields mapped correctly (first name, last name, email, order history)
+[ ] 9. Tags set up for segmentation (e.g. "Purchased", "Abandoned Cart", "New Subscriber")
+[ ] 10. Transactional email service connected if applicable (Mandrill/SMTP)
+[ ] 11. Unsubscribe link and footer compliance checked
+
+COMMON INTEGRATION ERRORS
+
+Error: WooCommerce plugin not syncing orders
+Fix: Deactivate and reactivate the plugin. Check API key permissions in MailChimp.
+
+Error: Cart abandonment not triggering
+Fix: Confirm site tracking script is loading. Test by adding item to cart from a tracked email subscriber's session.
+
+Error: Domain not verified
+Fix: Add the DKIM CNAME records to the client's DNS provider. Allow 24–48 hours to propagate.
+
+AFTER COMPLETING THE MONSTER RUN
+Document which integrations were completed and the date in the client's Notion or Google Drive folder. Flag any items that could not be completed and escalate to Samuel or Caleb before starting campaign work.`}
+],quiz:{id:"em-m1q",title:"Module 1 Quiz — Setup & Integration",qs:[
+{q:"Why must a client's inbox be warmed up before sending campaigns?",opts:["To test if MailChimp is installed","To build sender reputation and avoid spam filters","To sync contacts from WooCommerce","To enable site tracking"],ans:1},
+{q:"Which plugin connects MailChimp to WooCommerce?",opts:["WPForms","Mailchimp for WooCommerce","WooCommerce Mailer","Email Subscribers"],ans:1},
+{q:"What does enabling site tracking in MailChimp allow?",opts:["Sending more emails per day","Tracking subscriber activity on the store including cart events","Designing email templates","Creating pop-up forms"],ans:1},
+{q:"What does 'Track carts' setting do in the MailChimp plugin?",opts:["Sends cart receipt emails","Enables abandoned cart automation tracking","Syncs product images to MailChimp","Connects the store to Facebook"],ans:1},
+{q:"What should you do after completing the Monster Run integration checklist?",opts:["Immediately launch the first campaign","Document completions and escalate any unresolved items","Delete the checklist","Archive the client's account"],ans:1}
+]}},
+
+{id:"em-m2",title:"Module 2: Email Design & Formatting",lessons:[
+{id:"em-m2l1",title:"Creating Email Designs in MailChimp",mins:17,video:"8533b2eb79b142319aadf1c012202621",body:`CREATING EMAIL DESIGNS IN MAILCHIMP — SOP
+
+PURPOSE
+This SOP covers how to build professional, on-brand email campaigns inside MailChimp's email designer. Every email you create must look polished, load correctly on mobile, and represent the client's brand accurately.
+
+BEFORE YOU START
+• Have the client's brand kit ready: logo file, hex colour codes, font preferences
+• Know the goal of the email: promotional, informational, automated trigger
+• Have the copy (subject line + body text) drafted and approved before designing
+
+STEP 1 — CREATE A NEW CAMPAIGN
+1. In MailChimp, go to Campaigns → Create Campaign
+2. Select "Email"
+3. Choose campaign type: Regular, Automated, or A/B Test
+4. Name the campaign clearly (use format: ClientName_CampaignType_Date)
+
+STEP 2 — SET UP CAMPAIGN DETAILS
+• To: Select the correct audience or segment
+• From: Use the client's branded from name and email address (not a generic one)
+• Subject line: Keep to 40–60 characters. Avoid spam trigger words (FREE, URGENT, !!!)
+• Preview text: Write 60–90 characters that complement the subject line
+
+STEP 3 — CHOOSE A TEMPLATE
+Options:
+• Basic layouts — clean, minimal, good for most campaigns
+• Themed templates — pre-styled, faster but less on-brand
+• Code your own — maximum control, use only if you have HTML email experience
+• Saved templates — reuse a template you've already built for this client
+
+Recommended: Start with a Basic layout and customise to match brand.
+
+STEP 4 — BUILD THE EMAIL IN THE DRAG-AND-DROP EDITOR
+Structure every marketing email with:
+1. Header — logo, navigation links (optional)
+2. Hero section — strong headline + image or colour block
+3. Body — main message, 2–4 short paragraphs max
+4. CTA button — one clear, bold call to action
+5. Footer — unsubscribe link, physical address, social icons
+
+DESIGN PRINCIPLES
+• Single-column layout for mobile compatibility
+• Font size minimum 14px for body, 22px+ for headings
+• CTA button: high-contrast colour, minimum 44px tall, short action text ("Shop Now", "Book a Call", "Claim Offer")
+• Max email width: 600px
+• Total images: use sparingly. Many email clients block images by default — your email must make sense as text alone.
+
+STEP 5 — PREVIEW AND TEST
+• Use Preview Mode to check desktop and mobile rendering
+• Send a test email to yourself and to a Gmail/Outlook address
+• Check that all links work
+• Check that images load`},
+
+{id:"em-m2l2",title:"Creating an Email Template with Images & Text",mins:19,video:"6913bbf000c94d5d80a275599c5b0166",body:`CREATING AN EMAIL TEMPLATE WITH IMAGES & TEXT — SOP
+
+PURPOSE
+Building a reusable email template with the client's branding saves time on every future campaign and ensures visual consistency. This SOP walks through creating a fully branded template inside MailChimp that includes both image blocks and formatted text sections.
+
+WHEN TO USE THIS
+• When onboarding a new client who has no existing MailChimp template
+• When the client has rebranded and templates need updating
+• When building a new type of email (e.g. promotional vs. transactional) that needs its own template
+
+STEP 1 — GATHER BRAND ASSETS
+Before opening MailChimp, collect:
+• Client logo (PNG with transparent background, minimum 300px wide)
+• Brand primary and secondary colour hex codes
+• Brand fonts (or closest Google/web-safe equivalent)
+• Any product or lifestyle imagery the client uses regularly
+• Client's physical address (required in email footer by law)
+
+STEP 2 — OPEN TEMPLATE BUILDER
+1. In MailChimp, go to Content → Email Templates
+2. Click Create Template
+3. Choose "Layouts" → Select a basic single-column or two-column structure
+4. Name the template: ClientName_TemplateName
+
+STEP 3 — SET GLOBAL STYLES
+Click on the "Design" tab (not a content block — the global design panel):
+• Background colour: white (#FFFFFF) or client's chosen background
+• Body font: select brand font or fallback (Arial, Georgia, Helvetica)
+• Link colour: brand primary colour
+• Heading colour: brand heading colour
+
+STEP 4 — BUILD THE HEADER BLOCK
+1. Drag an Image block to the top of the template
+2. Upload the client's logo
+3. Set width to 150–200px, centre-aligned
+4. Add a thin brand-colour divider line below the logo
+
+STEP 5 — BUILD THE HERO BLOCK
+Options:
+A) Full-width image — drag an Image block, upload a banner image (1200 x 400px recommended)
+B) Colour block with text — drag a Text block, set background to brand primary colour, headline in white
+
+STEP 6 — BUILD THE BODY SECTION
+• Drag Text blocks for main copy areas
+• Set font size to 15–16px, line height 1.6
+• Keep paragraphs to 3–4 lines maximum
+• Use bullet points for lists rather than long run-on sentences
+
+STEP 7 — ADD IMAGES WITHIN THE BODY
+For product or lifestyle images:
+1. Drag an Image block to the desired position
+2. Upload image (max 1MB for email — compress before uploading)
+3. Add alt text describing the image
+4. Optionally link the image to a product page or landing page
+
+STEP 8 — ADD CTA BUTTON
+1. Drag a Button block into position
+2. Button text: short action phrase (max 4 words)
+3. Button colour: brand primary or a high-contrast accent
+4. Add the destination URL
+5. Centre the button
+
+STEP 9 — BUILD THE FOOTER
+Must include:
+• Unsubscribe link (MailChimp adds this automatically but verify it's visible)
+• Client business name and physical address
+• Social media icons linking to client profiles
+• Optional: "Why am I receiving this?" copy
+
+STEP 10 — SAVE THE TEMPLATE
+Click Save and Exit. The template will appear in Content → Email Templates for reuse on all future campaigns.`},
+
+{id:"em-m2l3",title:"Email Formatting & Optimisation",mins:7,video:"0858a564307e4e00839fe6457b51d9cb",body:`EMAIL FORMATTING & OPTIMISATION — SOP
+
+PURPOSE
+A well-formatted email is one that delivers its message clearly, renders correctly across all email clients, avoids spam filters, and drives the reader to take action. This SOP covers the essential formatting rules every team member must follow on all client emails.
+
+SUBJECT LINE RULES
+• Length: 40–60 characters (some sources say up to 70 — keep it concise)
+• No ALL CAPS
+• Avoid spam trigger words: FREE, URGENT, ACT NOW, CONGRATULATIONS, WINNER, $$
+• Personalisation increases open rates — use merge tags where appropriate: "Hi *|FNAME|*"
+• Test subject lines using an A/B send when possible
+• Emojis: use sparingly and only if on-brand
+
+PREVIEW TEXT
+• 85–100 characters
+• Should complement the subject line, not repeat it
+• This is your "second subject line" — make it count
+
+COPY FORMATTING
+• Short paragraphs — 2–4 lines maximum
+• Use headers (H2/H3) to break up longer emails
+• Bullet points for lists
+• Bold key phrases — never underline (looks like a link)
+• Never use red text (triggers spam warnings)
+• Avoid excessive exclamation marks!!!
+
+IMAGE BEST PRACTICES
+• Compress all images before uploading (target under 200KB per image)
+• Always add alt text
+• Don't send image-only emails — text must convey the message even if images don't load
+• Minimum image width for header: 600px
+• Recommended banner size: 1200 x 400px
+
+MOBILE OPTIMISATION
+• Use a single-column layout — multi-column breaks on small screens
+• Font size minimum 14px body, 22px headings
+• CTA buttons minimum 44px tall — easy to tap with a thumb
+• Avoid tiny links — space out clickable elements
+
+SEND TIME OPTIMISATION
+• Tuesday, Wednesday, Thursday perform best for most industries
+• Optimal send windows: 10am–12pm or 2pm–4pm (recipient's local time)
+• Use MailChimp's "Send Time Optimisation" feature if available on the client's plan
+
+SPAM AVOIDANCE CHECKLIST
+[ ] Unsubscribe link present and visible
+[ ] Physical address in footer
+[ ] From name is recognisable (not a random string)
+[ ] Sender domain is authenticated (SPF, DKIM, DMARC)
+[ ] No excessive capitalisation or punctuation in subject
+[ ] Text-to-image ratio is balanced (not image-only)`},
+
+{id:"em-m2l4",title:"Email Editing & Formatting",mins:16,video:"23a4ca9a8f1d4a4c8a6ad4c58d74b18e",body:`EMAIL EDITING & FORMATTING — SOP
+
+PURPOSE
+This SOP covers the process of editing existing email campaigns or templates in MailChimp — including how to make copy edits, update images, change CTAs, and reformat layouts before sending or scheduling.
+
+WHEN YOU'LL USE THIS
+• Editing a draft campaign created by another team member
+• Updating a template with new content for a recurring send (e.g. weekly newsletter)
+• Revising an email based on client or internal feedback
+• Fixing formatting issues found during preview/test send
+
+OPENING AN EXISTING CAMPAIGN FOR EDITING
+1. Go to Campaigns → All Campaigns
+2. Find the campaign by name or date
+3. Click the dropdown arrow → Edit
+4. The campaign builder will open at the stage it was last saved
+
+EDITING THE SUBJECT LINE AND PREVIEW TEXT
+1. In the campaign builder, click on "Subject" section
+2. Edit subject line and preview text
+3. Double-check: character count, no spam words, personalisation tags correct
+
+EDITING CONTENT BLOCKS
+• Click on any block in the email preview to open its editing panel
+• Text blocks: click inside to type — use the toolbar for bold, italic, links, bullet points
+• Image blocks: click the image to replace it or edit the link and alt text
+• Button blocks: click to update label text, URL, or colours
+
+MOVING AND REARRANGING BLOCKS
+• Hover over a block — a move icon (≡) appears on the left
+• Click and drag to reorder blocks
+• To delete a block: hover → click the trash icon on the right
+
+ADDING NEW BLOCKS
+• In the right sidebar, drag any block type (Text, Image, Button, Divider, Social) into the email body
+• Position it between existing blocks
+
+CHECKING LINKS
+Before saving any edited campaign:
+• Click on every CTA button and hyperlinked text
+• Confirm the URL is correct and the page loads
+• Confirm UTM parameters are present if using tracked links
+
+APPLYING CHANGES TO A TEMPLATE (NOT A CAMPAIGN)
+If you are editing a saved template:
+1. Go to Content → Email Templates
+2. Find the template → click Edit
+3. Make changes and Save
+Note: Updating a template does NOT retroactively update campaigns already created from it. Each campaign is an independent copy.
+
+FINAL FORMATTING CHECKLIST BEFORE SAVING
+[ ] Subject line and preview text complete and correct
+[ ] All copy blocks edited and proof-read
+[ ] All images updated with correct alt text
+[ ] All CTA buttons updated with correct URLs
+[ ] Footer correct (address, unsubscribe link, social icons)
+[ ] Test email sent and reviewed on desktop + mobile`},
+
+{id:"em-m2l5",title:"Email Creation & Follow-Up Procedure",mins:23,video:"8189d771e86a4392b857784037828aeb",body:`EMAIL CREATION & FOLLOW-UP PROCEDURE — SOP
+
+PURPOSE
+This SOP covers the end-to-end process of creating a marketing email from brief to scheduled send — including the follow-up steps to take after the email has been delivered to ensure we track performance and act on the results.
+
+STAGE 1 — BRIEF & PLANNING
+Before opening MailChimp, confirm the following with the team lead:
+• What is the goal of this email? (Sales, traffic, awareness, survey, re-engagement)
+• Who is the audience? (Full list, segment, tagged group)
+• What is the offer or key message?
+• Is there a deadline or specific send date/time?
+• Are there assets ready? (Images, copy, offer details)
+
+Do not begin building until these are confirmed.
+
+STAGE 2 — CAMPAIGN CREATION
+1. Create new campaign: Campaigns → Create Campaign → Email → Regular
+2. Name the campaign: ClientName_Purpose_Date (e.g. SolsticeBeauty_FlashSale_2024-03-15)
+3. Set To: audience or segment
+4. Set From: client's branded name and verified email
+5. Write subject line (40–60 chars) + preview text (85–100 chars)
+
+STAGE 3 — EMAIL BUILD
+Using a saved client template as the starting point:
+1. Open Content → Email Templates → Select client template
+2. Click Create Campaign from Template
+3. Update all content blocks: headline, body copy, images, CTA, any offers
+4. Replace any placeholder text — do a full scan of every block
+
+STAGE 4 — INTERNAL REVIEW
+Before sending or scheduling:
+1. Send a test email to yourself and one other team member
+2. Check on desktop (Gmail, Outlook) and mobile
+3. Click every link — confirm they are working
+4. Proof-read subject line, preview text, and all body copy
+5. Confirm audience selection is correct
+6. Confirm send time is correct (check timezone)
+
+STAGE 5 — SCHEDULE OR SEND
+• For campaigns: use Schedule to set the exact send date and time
+• For urgent sends: use Send Now only if confirmed by team lead
+• Log the campaign send in the client's activity tracker
+
+STAGE 6 — FOLLOW-UP (POST-SEND)
+24 Hours After Send:
+• Check campaign report: Open rate, Click rate, Bounce rate, Unsubscribe rate
+• Flag anything unusual to the team lead
+
+Benchmarks to watch:
+• Open rate below 20% — subject line or list health issue
+• Click rate below 1.5% — CTA or content issue
+• Unsubscribe rate above 0.5% — content mismatch or send frequency issue
+• Bounce rate above 2% — list hygiene needed
+
+48–72 Hours After Send:
+• Capture final stats in the client's performance tracker
+• Note any segments that significantly over or underperformed
+• Recommend follow-up action if relevant (re-send to non-openers, segment for next campaign)`}
+],quiz:{id:"em-m2q",title:"Module 2 Quiz — Email Design & Formatting",qs:[
+{q:"What is the recommended subject line character length?",opts:["10–20 characters","40–60 characters","100–120 characters","Any length is fine"],ans:1},
+{q:"What should the minimum body font size be for mobile-friendly emails?",opts:["10px","12px","14px","18px"],ans:2},
+{q:"Why should you never send an image-only email?",opts:["Images slow down the send","Many email clients block images by default so the message won't be readable","MailChimp doesn't allow it","Images cost extra to host"],ans:1},
+{q:"What is the recommended image size for an email header banner?",opts:["400 x 200px","600 x 100px","1200 x 400px","800 x 800px"],ans:2},
+{q:"What campaign naming format should you use in MailChimp?",opts:["Random descriptive name","ClientName_Purpose_Date","Date_ClientName","EmailType_Number"],ans:1}
+]}},
+
+{id:"em-m3",title:"Module 3: Abandoned Cart Automation",lessons:[
+{id:"em-m3l1",title:"Email Cutoff Flow Overview",mins:8,video:"a7a3cb3eb06c4ab99791652728754e56",body:`EMAIL CUTOFF FLOW OVERVIEW — SOP
+
+PURPOSE
+The Email Cutoff Flow is the logic that determines when a contact should stop receiving automated emails in a sequence. Without this, customers who have already purchased will continue to receive abandoned cart nudges — which is both annoying and damages brand trust.
+
+WHAT IS AN EMAIL CUTOFF FLOW?
+A cutoff flow (also called an exit or suppression logic) is a conditional step inside an automation that checks whether the contact has met a certain condition — and if they have, removes them from the journey before sending the next email.
+
+WHEN TO APPLY CUTOFF LOGIC
+Apply a cutoff at every email step in the following automation types:
+• Abandoned cart sequences — exit if contact completes a purchase
+• Re-engagement sequences — exit if contact opens or clicks any email
+• Win-back campaigns — exit if contact makes a purchase
+• Post-purchase sequences — exit if contact requests a refund
+
+THE THREE CUTOFF CONDITIONS TO KNOW
+1. Purchased — contact has completed an order in WooCommerce since entering the flow
+2. Unsubscribed — contact has opted out (MailChimp handles this automatically, but verify)
+3. Tag applied — a manual or automated tag has been added that disqualifies the contact
+
+HOW TO SET UP A CUTOFF IN MAILCHIMP CUSTOMER JOURNEYS
+1. In the journey builder, after a Wait step, add a Yes/No branch point
+2. Set the condition: "Has purchased" or "Has tag: [specific tag]"
+3. YES path → End Journey (remove from flow)
+4. NO path → Continue to next email
+
+BEST PRACTICE
+Add the cutoff check BEFORE every email in the sequence — not just at the start. Contacts can purchase between email sends, and if the check only runs once at entry, they will still receive the remaining emails.
+
+VISUAL FLOW EXAMPLE
+Entry: Cart Abandoned
+→ Wait 1 hour
+→ Check: Purchased? YES → End | NO → Send Email 1
+→ Wait 24 hours
+→ Check: Purchased? YES → End | NO → Send Email 2
+→ Wait 48 hours
+→ Check: Purchased? YES → End | NO → Send Email 3
+→ End`},
+
+{id:"em-m3l2",title:"Abandoned Cart Email & SMS Sequence",mins:19,video:"2133b5b2affd4afd876cd87e3afb227d",body:`ABANDONED CART EMAIL & SMS SEQUENCE — SOP
+
+PURPOSE
+The abandoned cart sequence is one of the highest-ROI automations in e-commerce email marketing. Research shows 70–80% of online shopping carts are abandoned. A well-built recovery sequence recovers 5–15% of those lost sales automatically.
+
+THE FULL SEQUENCE STRUCTURE
+
+EMAIL 1 — Reminder (Send: 1 hour after abandonment)
+Subject: "[First Name], you left something behind 👀"
+Content:
+• Show the exact product(s) left in cart (dynamic product block)
+• Short, warm copy — no hard sell
+• Single CTA button: "Complete Your Order" linking back to cart
+• No discount — it's too early
+
+EMAIL 2 — Address Hesitation (Send: 24 hours after abandonment)
+Subject: "Still thinking about it?"
+Content:
+• Acknowledge they might have questions
+• Include product benefits / reviews / social proof
+• Optional: introduce a small incentive (free shipping, 5% off) — only if margin allows
+• CTA button: "Go Back to Your Cart"
+
+EMAIL 3 — Urgency Close (Send: 72 hours after abandonment)
+Subject: "Last chance — your cart expires soon"
+Content:
+• Create urgency: limited stock, cart about to clear
+• If discount offered in Email 2, reinforce or increase it slightly
+• Strong CTA: "Claim Your Order Now"
+
+SMS (Optional — Send: 30 minutes after abandonment if email is not opened)
+Message format: "Hi [First Name]! You left [Product] in your cart. Complete your order here: [link] — Reply STOP to unsubscribe."
+
+SETTING UP IN MAILCHIMP CUSTOMER JOURNEYS
+1. Go to Automations → Customer Journeys → Create Journey
+2. Starting Point: Abandoned Cart (requires WooCommerce site tracking active)
+3. Add Email 1 step with 1-hour wait
+4. Add cutoff check (Has Purchased? → Yes: End Journey)
+5. Add Email 2 step with 24-hour wait
+6. Add cutoff check
+7. Add Email 3 step with 48-hour wait (from Email 2)
+8. Add cutoff check
+9. End Journey
+
+COMPLIANCE NOTES
+• All emails must include unsubscribe link
+• SMS requires separate opt-in consent — do not add SMS unless the subscriber has explicitly opted into SMS communications
+• Physical address required in footer`},
+
+{id:"em-m3l3",title:"Email Abandonment Flow",mins:13,video:"c45248bd747f4adca84ee1746e7ae05f",body:`EMAIL ABANDONMENT FLOW — SOP
+
+PURPOSE
+The Email Abandonment Flow specifically handles contacts who started engaging with an email (opened it, possibly clicked) but didn't convert. This is distinct from the cart abandonment flow — here the trigger is email engagement behaviour rather than cart activity.
+
+WHEN TO USE THIS FLOW
+• After sending a promotional campaign to a segment
+• When a link in an email was clicked but no purchase was made
+• When a contact opened an email but did not complete a form or booking
+
+FLOW TRIGGER OPTIONS IN MAILCHIMP
+• Contact opens campaign (track opens must be enabled)
+• Contact clicks a specific link in a campaign
+• Contact is tagged after clicking but not converting
+
+THE ABANDONMENT FOLLOW-UP FLOW
+
+Trigger: Contact clicks CTA in campaign but does not purchase within X hours
+
+STEP 1 — WAIT 2–4 HOURS
+Give the contact time to convert before triggering follow-up.
+
+STEP 2 — CHECK CONVERSION
+Add a Yes/No branch:
+• Has purchased? → YES: End journey
+• NO: Continue
+
+STEP 3 — SEND FOLLOW-UP EMAIL
+Subject: "Did you get a chance to check this out?"
+Content:
+• Reference what they were looking at
+• Remove friction — address common objections (shipping, returns, quality)
+• Restate the offer or value proposition
+• Single CTA back to the relevant page
+
+STEP 4 — WAIT 48 HOURS
+STEP 5 — CHECK CONVERSION AGAIN
+STEP 6 — FINAL EMAIL (if still not converted)
+Subject: "We saved your spot — but not for long"
+Content:
+• Urgency
+• Final CTA
+• After this email, do not continue the follow-up — let them exit naturally
+
+TAGGING CONTACTS
+Throughout the flow, apply tags:
+• "Engaged-No-Convert" — contacts who clicked but didn't buy
+• "Abandoned-Flow-Complete" — contacts who went through the full sequence without converting
+• Remove the "Engaged-No-Convert" tag after the flow completes to keep audience data clean
+
+This flow should be activated on every major promotional send where conversion tracking is in place.`},
+
+{id:"em-m3l4",title:"Purchase Logic Flow",mins:6,video:"2e14c6389c674dea984a5c8db1db7ce6",body:`PURCHASE LOGIC FLOW — SOP
+
+PURPOSE
+The Purchase Logic Flow is the automation triggered when a contact completes a purchase. Its job is to: (1) remove the contact from any active abandoned cart or follow-up flows, (2) apply the correct "Purchased" tag, and (3) enrol the contact into the post-purchase sequence.
+
+WHY THIS MATTERS
+Without a purchase logic flow, contacts who buy will continue to receive cart recovery emails. This is a poor customer experience and wastes email quota. Worse, it signals to the customer that you don't know they've already bought.
+
+TRIGGER
+Starting Point: Contact completes a purchase (WooCommerce order status = Processing or Completed)
+
+FLOW STEPS
+
+STEP 1 — REMOVE FROM ACTIVE FLOWS
+MailChimp Customer Journeys allows you to exit a contact from other journeys when they trigger this flow. Configure:
+• Exit Contact from: [Abandoned Cart Journey], [Email Follow-Up Journey], [Re-Engagement Journey]
+
+STEP 2 — APPLY PURCHASED TAG
+• Add tag: "Purchased"
+• Remove tag: "Abandoned Cart" (if present)
+• Remove tag: "Engaged-No-Convert" (if present)
+
+STEP 3 — WAIT 1 HOUR
+Allow order confirmation email to be delivered first before starting marketing follow-up.
+
+STEP 4 — ENROL IN POST-PURCHASE SEQUENCE
+The post-purchase sequence typically includes:
+• Email 1 (Day 1): Thank you + order summary (this may be WooCommerce transactional — confirm it's not duplicated)
+• Email 2 (Day 3): How to use / getting started content
+• Email 3 (Day 7): Leave a review request
+• Email 4 (Day 14): Related products / upsell
+• Email 5 (Day 30): Re-engagement / loyalty offer
+
+STEP 5 — TAG AS "Post-Purchase-Sequence-Active"
+Track who is in the post-purchase sequence for reporting and suppression purposes.
+
+This flow is the backbone of the customer journey. Every e-commerce client should have it active from day one.`}
+],quiz:{id:"em-m3q",title:"Module 3 Quiz — Abandoned Cart Automation",qs:[
+{q:"How long after cart abandonment should the first recovery email be sent?",opts:["5 minutes","1 hour","12 hours","24 hours"],ans:1},
+{q:"What is the purpose of a cutoff flow in an email automation?",opts:["To delete contacts who don't open emails","To stop sending emails to contacts who have already converted","To pause the sequence on weekends","To limit total email volume"],ans:1},
+{q:"What should the third abandoned cart email focus on?",opts:["Introducing the brand","Asking for feedback","Creating urgency and a final call to action","Requesting a review"],ans:2},
+{q:"What should happen when a contact completes a purchase?",opts:["Leave them in all active flows","Apply the 'Purchased' tag and remove them from cart recovery flows","Send them a survey immediately","Delete their contact record"],ans:1},
+{q:"When is it appropriate to include a discount in the abandoned cart sequence?",opts:["In Email 1, one hour after abandonment","Never — discounts hurt margins","From Email 2 onwards, only if margin allows","Only if the cart value is over £500"],ans:2}
+]}},
+
+{id:"em-m4",title:"Module 4: Survey Emails",lessons:[
+{id:"em-m4l1",title:"Creating a Survey Email",mins:17,video:"b6684f8dddda4443a7247feb31f3fd5f",body:`CREATING A SURVEY EMAIL — SOP
+
+PURPOSE
+Survey emails gather customer feedback directly from the email list. They are used to understand customer satisfaction, improve products/services, qualify leads, or collect testimonials. This SOP covers when and how to create a survey email campaign from scratch.
+
+WHEN TO SEND A SURVEY EMAIL
+• After a customer has received a product (7–14 days post-purchase)
+• After a service has been delivered
+• When launching a new product and gauging interest
+• Quarterly to measure overall customer satisfaction (NPS)
+• To gather case study or testimonial content
+
+TOOLS TO USE
+• Google Forms — free, simple, works with any email platform
+• Typeform — more polished UI, better for conversion-focused surveys
+• MailChimp's built-in Survey feature (available on certain plans)
+• SurveyMonkey — enterprise option
+
+STEP 1 — DEFINE THE SURVEY GOAL
+Before building anything, confirm:
+• What decision will this survey inform?
+• How many questions are needed? (Keep to 3–5 maximum — fewer = more responses)
+• What type of answers: multiple choice, rating scale, open text?
+
+STEP 2 — BUILD THE SURVEY FORM
+Using Google Forms or Typeform:
+1. Create a new form
+2. Title it clearly (internal reference — not necessarily what the user sees)
+3. Add a friendly intro message
+4. Add 3–5 questions — keep them focused and specific
+5. Add a thank-you / completion message
+6. Copy the survey link
+
+Recommended question types:
+• "How satisfied are you with [product/service]?" — 1–5 star rating
+• "What did you like most about your experience?" — open text
+• "Is there anything we could have done better?" — open text
+• "Would you recommend us to a friend?" — Yes / No / Maybe
+
+STEP 3 — BUILD THE EMAIL IN MAILCHIMP
+Subject line options:
+• "We'd love your feedback — 2 minutes of your time?"
+• "Quick question for you, [First Name]"
+• "How was your experience with us?"
+
+Email structure:
+1. Personalised greeting: "Hi [First Name],"
+2. Short intro: why you're asking and how long it takes (be honest — "2 minutes")
+3. One prominent CTA button: "Share Your Feedback" → links to the survey
+4. Optional: small incentive for completing ("Enter a draw for a £50 gift card")
+5. Thank them in advance
+
+STEP 4 — SELECT THE CORRECT AUDIENCE SEGMENT
+• Send only to customers who have completed a purchase or received a service
+• Do NOT send survey emails to cold contacts or leads who have never bought
+
+STEP 5 — SCHEDULE AND SEND
+• Best time for survey emails: Tuesday or Wednesday, 10am–12pm
+• Do not send more than one survey email per quarter per contact`},
+
+{id:"em-m4l2",title:"Creating a Survey Email Using MailChimp",mins:18,video:"455b93f8f3ea467f807f04d02eb11802",body:`CREATING A SURVEY EMAIL USING MAILCHIMP — SOP
+
+PURPOSE
+This SOP specifically covers how to create a survey email using MailChimp's native survey and poll features, including embedding a question directly inside the email body — which increases response rates by removing the friction of clicking through to an external form.
+
+MAILCHIMP SURVEY OPTIONS
+MailChimp offers two native methods:
+
+1. Embedded Poll — a single-question poll directly in the email body. Contact clicks an answer option inside the email. Response is recorded automatically. No external form needed.
+
+2. Survey Link — a multi-question survey hosted on a MailChimp-generated page. Contact clicks a button in the email and completes the survey in their browser.
+
+WHEN TO USE EACH
+• Embedded Poll: for quick NPS-style or yes/no questions. High completion rate. Good for: "Would you recommend us? Yes / Maybe / No"
+• Survey Link: for multi-question surveys where you need more detailed data.
+
+METHOD 1 — BUILDING AN EMBEDDED POLL INSIDE AN EMAIL
+
+STEP 1 — Create a new email campaign (Regular or Automated)
+STEP 2 — In the email builder, drag a "Survey" content block into the body
+STEP 3 — Click the block to edit:
+  • Enter your survey question
+  • Add answer options (2–5 options)
+  • Set a thank-you message for after the click
+STEP 4 — The poll results are tracked in the Campaign Report under "Survey Responses"
+
+METHOD 2 — BUILDING A MULTI-QUESTION SURVEY VIA MAILCHIMP
+
+STEP 1 — Go to Campaigns → Surveys → Create Survey
+STEP 2 — Add your questions (text, rating, multiple choice)
+STEP 3 — Customise the survey page (add logo, brand colours)
+STEP 4 — Copy the survey URL
+STEP 5 — In a new email campaign, create a button CTA linking to the survey URL
+STEP 6 — In the email copy, set clear expectations: "This takes 2 minutes"
+
+TRACKING SURVEY RESULTS
+• Embedded Poll responses: Campaign → Reports → Survey Responses tab
+• Survey page responses: Campaigns → Surveys → View Results
+• Export results to CSV for client reporting
+
+REPORTING TO THE CLIENT
+After the survey closes (7–14 days after send):
+• Export the results
+• Summarise key findings in a short written summary (3–5 bullet points)
+• Share with the client and recommend any actions based on the feedback
+
+Common findings to highlight:
+• Overall satisfaction score
+• Most frequently mentioned positive (what to keep doing)
+• Most frequently mentioned negative (what to fix)
+• Any verbatim quotes suitable for testimonials`}
+],quiz:{id:"em-m4q",title:"Module 4 Quiz — Survey Emails",qs:[
+{q:"How many questions should a survey email ideally contain?",opts:["10–15 for thorough data","1–2 maximum","3–5 maximum","As many as needed"],ans:2},
+{q:"What is the advantage of an embedded poll over an external survey link?",opts:["It allows more questions","It removes the friction of clicking to an external page, increasing response rates","It is cheaper to run","It works on all email platforms"],ans:1},
+{q:"Who should receive a survey email?",opts:["All subscribers on the list","Only cold leads","Customers who have completed a purchase or received a service","New subscribers who just joined"],ans:2},
+{q:"What should you include in the survey email to clearly set expectations?",opts:["A legal disclaimer","How long the survey takes (e.g. '2 minutes')","The client's full price list","A video embed"],ans:1},
+{q:"How should survey results be delivered to the client?",opts:["Raw CSV file only","A verbal summary during a call","Exported results plus a written summary of key findings","Posted directly to their social media"],ans:2}
+]}},
+
+{id:"em-m5",title:"Module 5: Live Watch & Learn",lessons:[
+{id:"em-m5l1",title:"Live Email Creation — Watch & Learn",mins:10,video:"c2b4bc5ebf5b4f57bb3487740daebf86",body:`This is a silent screen recording — no narration. Watch the full video to see a real email campaign being built inside MailChimp from start to finish. Pay attention to the layout choices, template structure, copy placement, and how the designer navigates the platform. There is no quiz for this module.`},
+{id:"em-m5l2",title:"Live Email Creation 2 — Watch & Learn",mins:10,video:"e2709461c5284dd5b30014087d6cae16",body:`This is a silent screen recording — no narration. Watch the full video to observe a second live email creation session. Note the differences in approach, content type, and workflow compared to the first session. There is no quiz for this module.`},
+{id:"em-m5l3",title:"Live Email Creation 3 — Watch & Learn",mins:10,video:"1a054ca9563b45a7905db76c279ee1a4",body:`This is a silent screen recording — no narration. Watch the full video to see a third live email build session. Focus on how the finished email is reviewed, tested, and prepared for send. There is no quiz for this module.`}
+]}
+
 ]},
 
 {id:"capcut",icon:"🎬",color:"#EF4444",tagBg:"rgba(239,68,68,0.12)",tagCol:"#FCA5A5",tag:"VIDEO EDITING",title:"CapCut & Submagic",
@@ -1371,7 +2065,8 @@ function renderCourse(){
       <div class="mod-num ${done?"ok":""}">${done?"✓":i+1}</div>
       <div style="flex:1"><div class="mod-info-title">${esc(m.title)}</div><div class="mod-info-sub">${m.lessons.length} lesson${m.lessons.length>1?"s":""}</div></div>
       <div class="chev ${open?"open":""}">▾</div></div>
-    <div class="mod-body ${open?"open":""}">`;
+    <div class="mod-body ${open?"open":""}">
+    ${m.video?`<div class="mod-video"><iframe src="https://www.loom.com/embed/${m.video}" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`:""}`;
     m.lessons.forEach(l=>{
       const ld=P[l.id];
       h+=`<div class="l-row" onclick="openLesson('${l.id}','${m.id}')">
@@ -1422,6 +2117,7 @@ function renderLesson(){
     <div class="lesson-card">
       <div class="l-meta">${esc(AM?.title||"")}</div>
       <div class="l-title">${esc(AL.title)}</div>
+      ${AL.video?`<div class="mod-video" style="margin-bottom:24px"><iframe src="https://www.loom.com/embed/${AL.video}" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`:""}
       <div class="l-body">${esc(AL.body)}</div>
       <div class="l-actions">
         ${hasPrev?'<button class="btn-sec" onclick="goPrev()">← Previous</button>':"<div></div>"}

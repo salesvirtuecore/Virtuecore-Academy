@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VirtueCore Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700;9..40,800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080C14;--s1:#0F1521;--s2:#161D2C;--s3:#1C2538;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--gold:#E8A020;--gold-bg:rgba(232,160,32,0.12);--text:#DDE4F0;--dim:#8592B0;--muted:#4A5470;--green:#22C55E;--red:#EF4444;--blue:#3E7BFA;--r:12px;--rs:8px}
+body{font-family:"DM Sans",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--s1)}::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+button{font-family:inherit}.hide{display:none!important}
+#pg-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:radial-gradient(ellipse 70% 50% at 65% 40%,rgba(232,160,32,0.07) 0%,transparent 70%),var(--bg)}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:40px;width:420px;max-width:100%;box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:26px}
+.brand-icon{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#000}
+.brand-name{font-family:"DM Serif Display",serif;font-size:18px}.brand-name em{color:var(--gold);font-style:normal}
+.login-h1{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:5px}
+.login-sub{color:var(--dim);font-size:13px;line-height:1.65;margin-bottom:16px}
+.field{margin-bottom:14px}.field label{display:block;font-size:11px;font-weight:700;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.field input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,160,32,.12)}.field input::placeholder{color:var(--muted)}
+.btn-gold-full{width:100%;background:var(--gold);color:#000;border:none;border-radius:var(--rs);padding:13px;font-size:14px;font-weight:800;cursor:pointer;transition:opacity .15s;margin-top:4px}.btn-gold-full:hover{opacity:.88}
+.login-note{text-align:center;margin-top:12px;font-size:11px;color:var(--muted)}
+.err{color:var(--red);font-size:12px;margin-bottom:10px;display:none}
+.lock-note{display:flex;align-items:center;gap:8px;background:rgba(62,123,250,.1);border:1px solid rgba(62,123,250,.2);border-radius:var(--rs);padding:10px 13px;margin-bottom:16px;font-size:12px;color:#6B9EFF}
+#pg-app{display:none}
+nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+.nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer}.nav-logo-icon{width:28px;height:28px;background:var(--gold);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#000}
+.nav-logo-text{font-family:"DM Serif Display",serif;font-size:16px;color:var(--text)}.nav-logo-text em{color:var(--gold);font-style:normal}
+.nav-tabs{display:flex;gap:3px}.nav-tab{background:none;border:none;color:var(--muted);padding:5px 13px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.nav-tab.on{background:var(--gold-bg);color:var(--gold)}.nav-tab:hover:not(.on){background:var(--s2);color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:11px}.nav-user{font-size:13px;color:var(--dim);font-weight:500}
+.btn-so{background:var(--s2);border:1px solid var(--border);color:var(--dim);padding:5px 12px;border-radius:var(--rs);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}.btn-so:hover{color:var(--text)}
+.wrap{max-width:1020px;margin:0 auto;padding:32px 20px}.pg-title{font-family:"DM Serif Display",serif;font-size:28px;letter-spacing:-.3px;margin-bottom:5px}.pg-sub{color:var(--dim);font-size:14px;margin-bottom:26px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:26px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px}.stat-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:6px}.stat-val{font-size:26px;font-weight:800;letter-spacing:-1px;color:var(--gold)}.stat-sub{font-size:12px;color:var(--dim);margin-top:2px}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:15px}
+.c-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:22px;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.c-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:0;transition:opacity .18s}
+.c-card:hover{transform:translateY(-3px);border-color:var(--border2);box-shadow:0 12px 40px rgba(0,0,0,.4)}.c-card:hover::before{opacity:1}
+.c-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:13px}
+.c-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:20px;margin-bottom:9px}
+.c-title{font-size:15px;font-weight:800;margin-bottom:6px;letter-spacing:-.1px}.c-desc{font-size:13px;color:var(--dim);line-height:1.65;margin-bottom:16px}
+.c-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:10px}
+.prog-wrap{background:var(--s3);border-radius:3px;height:4px;overflow:hidden}.prog-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.done-badge{position:absolute;top:14px;right:14px;background:rgba(34,197,94,.15);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid rgba(34,197,94,.2)}
+.back-btn{display:inline-flex;align-items:center;gap:7px;background:var(--s1);border:1px solid var(--border);color:var(--dim);padding:8px 14px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:22px;transition:all .15s}.back-btn:hover{color:var(--text);border-color:var(--border2)}
+.hero{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:26px;margin-bottom:18px;display:flex;gap:18px;align-items:flex-start}
+.hero-icon{width:56px;height:56px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.hero-title{font-family:"DM Serif Display",serif;font-size:22px;letter-spacing:-.3px;margin-bottom:7px}.hero-desc{color:var(--dim);font-size:13px;line-height:1.65;margin-bottom:13px}
+.hero-stats{display:flex;gap:22px}.h-stat{font-size:12px;color:var(--dim)}.h-stat strong{display:block;font-size:17px;font-weight:800;color:var(--text)}
+.mod-list{display:flex;flex-direction:column;gap:10px}.mod-box{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.mod-head{display:flex;align-items:center;padding:15px 19px;gap:13px;cursor:pointer;transition:background .15s}.mod-head:hover{background:var(--s2)}
+.mod-num{width:29px;height:29px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--dim);flex-shrink:0}.mod-num.ok{background:rgba(34,197,94,.15);color:var(--green)}
+.mod-info-title{font-size:14px;font-weight:700;margin-bottom:2px}.mod-info-sub{font-size:11px;color:var(--muted)}
+.chev{margin-left:auto;color:var(--muted);font-size:15px;transition:transform .2s;user-select:none}.chev.open{transform:rotate(180deg)}
+.mod-body{border-top:1px solid var(--border);padding:13px 19px;display:none}.mod-body.open{display:block}
+.mod-video{margin-bottom:14px;position:relative;padding-bottom:62.5%;height:0;overflow:hidden;border-radius:var(--rs);background:var(--s3)}
+.mod-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.l-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;transition:background .12s}.l-row:hover{background:var(--s2)}
+.l-dot{width:7px;height:7px;border-radius:50%;background:var(--s3);flex-shrink:0}.l-dot.ok{background:var(--green)}
+.l-name{font-size:13px;color:var(--dim);flex:1}.l-name.ok{color:var(--text)}.l-dur{font-size:11px;color:var(--muted)}
+.quiz-row{display:flex;align-items:center;gap:10px;padding:11px 12px;margin-top:8px;border-radius:var(--rs);background:var(--s2);cursor:pointer;border:1px solid var(--border);transition:border-color .15s}.quiz-row:hover{border-color:var(--gold)}
+.q-ico{width:29px;height:29px;background:var(--gold-bg);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.q-row-title{font-size:13px;font-weight:700;margin-bottom:2px}.q-row-sub{font-size:11px;color:var(--muted)}
+.lesson-layout{display:grid;grid-template-columns:235px 1fr;gap:17px}
+.l-sidebar{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;position:sticky;top:74px;align-self:start;max-height:78vh;overflow-y:auto}
+.sb-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:11px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:var(--rs);cursor:pointer;font-size:12px;color:var(--dim);transition:background .12s}.sb-item:hover:not(.on){background:var(--s2)}
+.sb-item.on{background:var(--gold-bg);color:var(--gold);font-weight:700}.sb-item.done{color:var(--text)}
+.sb-dot{width:6px;height:6px;border-radius:50%;background:var(--s3);flex-shrink:0}.sb-dot.ok{background:var(--green)}.sb-dot.on{background:var(--gold)}
+.lesson-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:32px 36px}
+.l-meta{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:8px}
+.l-title{font-family:"DM Serif Display",serif;font-size:24px;letter-spacing:-.3px;margin-bottom:20px;line-height:1.35}
+.l-body{color:var(--dim);font-size:14px;line-height:1.9;white-space:pre-line}
+.l-actions{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.l-ar{display:flex;align-items:center;gap:9px}
+.btn-sec{background:var(--s2);border:1px solid var(--border);color:var(--dim);padding:10px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}.btn-sec:hover{color:var(--text)}
+.btn-green{background:var(--green);color:#000;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:800;cursor:pointer;transition:opacity .15s}.btn-green:hover{opacity:.88}
+.btn-gold-sm{background:var(--gold);color:#000;border:none;padding:10px 20px;border-radius:var(--rs);font-size:13px;font-weight:800;cursor:pointer;transition:opacity .15s}.btn-gold-sm:hover{opacity:.88}
+.done-text{color:var(--green);font-size:13px;font-weight:700}
+.quiz-wrap{max-width:620px;margin:0 auto}
+.q-header{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:19px 23px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.q-header-title{font-size:16px;font-weight:800}.q-header-sub{font-size:13px;color:var(--dim)}
+.q-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:28px}
+.q-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gold);margin-bottom:9px}
+.q-text{font-size:18px;font-weight:800;line-height:1.5;margin-bottom:22px;letter-spacing:-.2px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:13px 15px;cursor:pointer;font-size:14px;color:var(--dim);text-align:left;transition:all .15s}
+.opt:hover:not(:disabled){border-color:var(--gold);color:var(--text);background:var(--gold-bg)}.opt.sel{border-color:var(--gold);background:var(--gold-bg);color:var(--text)}
+.opt.correct{border-color:var(--green);background:rgba(34,197,94,.1);color:var(--green)}.opt.wrong{border-color:var(--red);background:rgba(239,68,68,.1);color:#FF8080}
+.q-actions{display:flex;justify-content:flex-end;margin-top:20px}
+.result-wrap{max-width:520px;margin:0 auto}.result-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:44px 32px;text-align:center}
+.res-emo{font-size:48px;margin-bottom:14px}.res-title{font-family:"DM Serif Display",serif;font-size:24px;margin-bottom:5px}
+.res-score{font-size:64px;font-weight:900;letter-spacing:-2px;margin:10px 0}.res-score.pass{color:var(--green)}.res-score.fail{color:var(--red)}
+.res-sub{color:var(--dim);font-size:14px;margin-bottom:24px;line-height:1.65}.res-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.tbl-wrap{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.adm-table{width:100%;border-collapse:collapse;font-size:13px}
+.adm-table th{padding:11px 17px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--s2)}
+.adm-table td{padding:13px 17px;border-bottom:1px solid var(--border);color:var(--dim)}
+.adm-table tr:last-child td{border-bottom:none}.adm-table tr:hover td{background:rgba(255,255,255,.015)}
+.badge-pass{background:rgba(34,197,94,.12);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.badge-none{background:var(--s2);color:var(--muted);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--s2);border:1px solid var(--green);border-radius:var(--rs);padding:12px 18px;font-size:13px;font-weight:700;color:var(--green);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+#toast.show{opacity:1;transform:translateY(0)}
+.adm-actions{margin-top:16px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--dim)}
+.adm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+.btn-invite{background:var(--gold);color:#000;border:none;border-radius:var(--rs);padding:10px 20px;font-size:13px;font-weight:800;cursor:pointer;transition:opacity .15s}.btn-invite:hover{opacity:.85}
+.va-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px}
+.va-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .18s}
+.va-card:hover{border-color:var(--border2)}
+.va-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.va-avatar{width:40px;height:40px;border-radius:50%;background:var(--gold-bg);border:1px solid rgba(232,160,32,.3);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--gold);flex-shrink:0}
+.va-name{font-size:14px;font-weight:800;color:var(--text)}
+.va-email{font-size:11px;color:var(--muted);margin-top:2px}
+.va-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.va-stat{background:var(--s2);border-radius:var(--rs);padding:8px 10px;text-align:center}
+.va-stat-val{font-size:18px;font-weight:900;color:var(--gold)}
+.va-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-top:2px}
+.btn-detail{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--dim);border-radius:var(--rs);padding:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:4px}.btn-detail:hover{color:var(--text);border-color:var(--border2)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--s1);border:1px solid var(--border2);border-radius:18px;padding:32px;width:480px;max-width:100%;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:"DM Serif Display",serif;font-size:20px;margin-bottom:6px}
+.modal-sub{color:var(--dim);font-size:13px;margin-bottom:22px}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;margin-top:-4px}.modal-close:hover{color:var(--text)}
+.detail-course{margin-bottom:18px}
+.detail-course-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.detail-lesson{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.detail-lesson:last-child{border-bottom:none}
+.dl-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.dl-done{background:rgba(34,197,94,.15);color:var(--green)}
+.dl-todo{background:var(--s3);color:var(--muted)}
+.dl-name{font-size:12px;color:var(--dim);flex:1}
+.dl-quiz{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.dl-qpass{background:rgba(34,197,94,.12);color:var(--green)}
+.dl-qfail{background:rgba(239,68,68,.12);color:#FCA5A5}
+.dl-qnone{background:var(--s3);color:var(--muted)}
+@media(max-width:720px){.lesson-layout{grid-template-columns:1fr}.l-sidebar{position:static;max-height:none}.stats-row{grid-template-columns:1fr}.hero{flex-direction:column}nav{padding:0 14px}.wrap{padding:22px 14px}.lesson-card{padding:22px 18px}}
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="pg-login">
+  <div class="login-card">
+    <div class="brand"><div class="brand-icon">V</div><div class="brand-name">VirtueCore <em>Academy</em></div></div>
+    <div class="login-h1" id="login-title">Team Login</div>
+    <div class="login-sub" id="login-sub">This platform is for VirtueCore team members only. Your account is set up by VirtueCore management.</div>
+    <div class="lock-note">🔒 Private — do not share this platform outside the team.</div>
+    <div class="field"><label>Email Address</label><input type="email" id="inp-email" placeholder="e.g. sarah@email.com"/></div>
+    <div class="field" id="pw-field"><label>Password</label><input type="password" id="inp-password" placeholder="Enter your password"/></div>
+    <div class="err" id="login-err"></div>
+    <button class="btn-gold-full" id="login-btn" onclick="doLogin()">Enter Academy →</button>
+    <div class="login-note" style="margin-top:10px"><a href="#" onclick="showForgot();return false;" style="color:var(--dim);text-decoration:underline;font-size:12px">Forgot password?</a></div>
+    <div class="login-note" style="margin-top:6px">Access managed by VirtueCore · <span style="color:var(--gold)">sales@virtuecore.co.uk</span></div>
+  </div>
+</div>
+<div id="pg-app">
+  <nav>
+    <div class="nav-logo" onclick="goHome()"><div class="nav-logo-icon">V</div><span class="nav-logo-text">VirtueCore <em>Academy</em></span></div>
+    <div class="nav-tabs">
+      <button class="nav-tab on" id="tab-courses" onclick="switchTab('courses')">Courses</button>
+      <button class="nav-tab hide" id="tab-admin" onclick="switchTab('admin')">Admin</button>
+    </div>
+    <div class="nav-right"><span class="nav-user" id="nav-uname"></span><button class="btn-so" onclick="doLogout()">Sign out</button></div>
+  </nav>
+  <div class="wrap" id="app-body"></div>
+</div>
+<script>
+/* ═══════════════════════════════════════════════════════
+   SUPABASE
+═══════════════════════════════════════════════════════ */
+const SB_URL="https://ehpnumpupqpwjsvyhrkr.supabase.co";
+const SB_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVocG51bXB1cHFwd2pzdnlocmtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjA5MjAsImV4cCI6MjA4OTY5NjkyMH0.Q28O_iXVTSdnA0XPzMOsWSQBB8-avqzeqmVn1yFy-hQ";
+const SB_SVC="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVocG51bXB1cHFwd2pzdnlocmtyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDEyMDkyMCwiZXhwIjoyMDg5Njk2OTIwfQ.39hLmDbmFMKZyanpy51qHge6Lw86GkyP_bCsNB3Wry8";
+const sb=supabase.createClient(SB_URL,SB_ANON);
+const sbAdmin=supabase.createClient(SB_URL,SB_SVC,{auth:{autoRefreshToken:false,persistSession:false}});
+const ZAPIER_WEBHOOK="https://hooks.zapier.com/hooks/catch/26321921/uxcjy1e/";
+
+/* ═══════════════════════════════════════════════════════
+   COURSES
+═══════════════════════════════════════════════════════ */
+const COURSES=[
+{id:"lead-magnets",icon:"🧲",color:"#14B8A6",tagBg:"rgba(20,184,166,0.12)",tagCol:"#2DD4BF",tag:"LEAD GENERATION",title:"Lead Magnets",
+desc:"Learn how to create high-converting lead magnets for clients using ChatGPT and Canva — from idea generation through to a finished, professional design.",
+modules:[
+{id:"lm1",title:"Creating Lead Magnets",lessons:[
+
+{id:"lm1l1",title:"Creating Lead Magnets Using ChatGPT & Design Tools",mins:5,video:"bbeee0bd2a7941c7a27980c11c705090",
+body:`OBJECTIVE
+Use ChatGPT alongside Canva to create professional lead magnet content quickly and efficiently.
+
+STEP 1 — COPY AND PASTE BULLET POINTS
+• Begin by copying and pasting all bullet points from ChatGPT into the designated sections in your Canva design until each section is filled.
+• Ensure the content accurately reflects what was generated by the ChatGPT prompt — do not alter or paraphrase without instruction.
+
+STEP 2 — ORGANISE AND FORMAT CONTENT
+• After filling all sections, organise the content to make it visually appealing.
+• Use the templates already available in Canva to assist with formatting — do not start from scratch.
+
+STEP 3 — CREATE SHAPES AND TEXT ELEMENTS
+• Navigate to the 'Elements' tab in Canva to create shapes (squares, circles, diamonds, etc.).
+• Use the text tool to add any additional text elements required by the design.
+
+STEP 4 — APPLY EFFECTS AND BACKGROUND COLOURS
+• Explore the 'Effects' option in Canva to enhance the design visually.
+• Change background colours by typing in the desired hex colour codes directly into the colour picker.
+
+STEP 5 — USE FRAMES FOR IMAGES
+• Utilise frames in Canva to insert images into the design.
+• Ensure all images are relevant to the lead magnet topic and the client's niche.
+
+STEP 6 — FINALISE TEMPLATE AND CONDUCT CHECKS
+• Once the template is complete, conduct final checks for consistency and neatness.
+• Measure elements to ensure proper alignment and spacing throughout the entire design.
+
+STEP 7 — ADD EXTRA PAGES IF NECESSARY
+• If additional content is needed, add extra pages to the current template.
+• Continue building on the existing design — do not create a separate file.
+
+STEP 8 — ADJUST SHAPE PROPERTIES
+• Modify shapes where needed by adjusting properties such as corner rounding and number of sides.
+
+STEP 9 — UPLOAD CUSTOM FILES
+• If needed, upload custom files (logos, brand assets) via the Uploads tab to enhance the lead magnet.
+
+CAUTIONARY NOTES
+• Ensure all content is relevant and valuable to the client — no filler.
+• Double-check for spelling and grammatical errors before finalising.
+
+TIPS FOR EFFICIENCY
+• Use existing Canva templates to save time on formatting.
+• Keep a checklist of required elements to avoid missing important components.`,
+quiz:{id:"lm1l1q",title:"Lesson 1 Quiz",qs:[
+{q:"When copying bullet points from ChatGPT into Canva, what must you ensure?",opts:["The font size matches the original template","The content accurately reflects the ChatGPT prompt without alteration","All sections remain empty until reviewed by a manager","You create a new Canva file for each section"],ans:1},
+{q:"Which tab in Canva do you use to create shapes like squares, circles, and diamonds?",opts:["The Text tab","The Brand tab","The Elements tab","The Uploads tab"],ans:2},
+{q:"According to the SOP, how do you change background colours in Canva?",opts:["Use the Magic Write tool to suggest a colour","Go to File > Page Settings > Background","Type in the desired hex colour codes directly into the colour picker","Delete the background layer and add a new one"],ans:2},
+{q:"If additional content is needed during the design process, what should you do?",opts:["Create a completely separate Canva file","Export what you have and start a new design","Add extra pages to the current template and continue building on it","Ask the client to provide more content before continuing"],ans:2}
+]}},
+
+{id:"lm1l2",title:"Creating a Lead Magnet Design in Canva",mins:10,video:"c3c2fa4620204286902f3f6ded438040",
+body:`OBJECTIVE
+Build a professional lead magnet design in Canva from template selection to finished product, applying correct branding and design principles throughout.
+
+STEP 1 — LOG INTO CANVA
+• Go to Canva.com and log in using the company credentials provided to you.
+• Ensure you have the necessary access before starting any design work.
+
+STEP 2 — SEARCH FOR A TEMPLATE
+• Click the search button in Canva and type keywords related to the lead magnet topic (e.g. 'wedding', 'checklist', 'guide').
+• If no suitable templates appear, navigate to 'Docs' and browse for a clean, minimal template.
+
+STEP 3 — SELECT A TEMPLATE
+• Choose a template that aligns with the lead magnet's theme and purpose.
+• Ensure the template supports multiple pages if the content requires it.
+
+STEP 4 — CUSTOMISE THE TEMPLATE
+• Modify the template to match the client's niche and branding (colours, fonts, logo).
+• Gather all branding elements such as logos from the client before you start designing.
+
+STEP 5 — EDIT TEXT CONTENT
+• Remove existing placeholder text by double-tapping the text box and pressing backspace.
+• Copy and paste the required content directly from the ChatGPT output — do not retype manually.
+
+STEP 6 — ADJUST FONT AND SIZE
+• Select a clean, professional font from Canva's font options.
+• Adjust text size to ensure readability — not too small, not too large.
+
+STEP 7 — CENTRE TEXT AND ELEMENTS
+• Ensure all text and design elements are centred by watching for Canva's blue alignment guides as you move them into position.
+
+STEP 8 — ADD SUBHEADLINES AND ADDITIONAL TEXT
+• To add a subheadline, go to 'Text' and select 'Add a text box'.
+• Adjust the size and font of the subheadline to match the visual hierarchy of the main text.
+
+STEP 9 — REMOVE UNNECESSARY CHARACTERS
+• Eliminate any dashes, hyphens, or stray formatting symbols that may have been included when pasting from ChatGPT.
+
+STEP 10 — UPLOAD COMPANY LOGO
+• Navigate to 'Uploads' in Canva and click 'Upload File' to add the company or client logo from your device.
+
+STEP 11 — USE SHAPES AND ELEMENTS
+• Go to 'Elements' to add shapes as design features.
+• Change colours of shapes to match the client's brand colours.
+
+STEP 12 — LAYERING ELEMENTS
+• Use the three-dots context menu on any element to adjust its layer order (Bring Forward, Bring to Front, Send Backward, Send to Back).
+
+STEP 13 — ADD LINKS TO TEXT
+• To add a hyperlink, select the text, click the three dots, and paste the URL into the link field.
+
+STEP 14 — FINAL ADJUSTMENTS
+• Ensure all text is legible and appropriately sized.
+• Make sure the overall design is neat, consistent, and fully aligned with the client's branding guidelines.
+
+CAUTIONARY NOTES
+• Always verify the design matches the client's branding guidelines before submitting.
+• Avoid overloading the design — keep it clean and purposeful.
+
+TIPS FOR EFFICIENCY
+• Use keyboard shortcuts (Ctrl+C / Ctrl+V) to save time when pasting content.
+• Save your work regularly in Canva to prevent data loss.
+• Get feedback from a team member before sending to the client.`,
+quiz:{id:"lm1l2q",title:"Lesson 2 Quiz",qs:[
+{q:"When searching for templates in Canva and none appear for your keyword, what is the correct next step according to the SOP?",opts:["Switch to a different design tool entirely","Use the first template that appears regardless of relevance","Navigate to 'Docs' and browse for a clean template","Ask the client to provide their own Canva template"],ans:2},
+{q:"What is the correct method for removing placeholder text from a Canva template?",opts:["Select all text on the page and press Delete once","Double-tap the text box and press backspace","Right-click the text box and choose 'Clear Text'","Use Magic Write to automatically replace it"],ans:1},
+{q:"According to the SOP, what must you watch for to ensure elements are centred correctly in Canva?",opts:["A green tick that appears when alignment is perfect","The position coordinates in the top toolbar reaching zero","Canva's blue alignment guides appearing as you move elements","A pop-up confirmation that asks if you want to centre the element"],ans:2},
+{q:"What is the correct process for adding a hyperlink to text in Canva?",opts:["Select text, right-click, choose 'Add Hyperlink'","Select text, click the three dots, paste the URL into the link field","Double-click the text, then type the URL directly inside the text box","Highlight text, go to Insert menu, then click Link"],ans:1}
+]}},
+
+{id:"lm1l3",title:"The Full Lead Magnet Workflow",mins:15,video:"ad2333540bb942869303bdec6356cfda",
+body:`OBJECTIVE
+Complete the full end-to-end process for creating a client lead magnet — from idea generation with ChatGPT through to a finished, downloadable Canva design ready to deliver.
+
+STEP 1 — GENERATE LEAD MAGNET IDEAS WITH CHATGPT
+• Start by understanding the client's niche and their specific target customer.
+• Use ChatGPT to brainstorm lead magnet ideas based on the client's information.
+• Use this exact prompt structure: "Create [number] Lead Magnet ideas for a [niche] looking to attract [target audience]."
+• Example: "Create 3 Lead Magnet ideas for a wedding videographer looking to attract wedding clients."
+
+STEP 2 — SELECT THE BEST IDEA(S)
+• Review the ChatGPT output and choose 1–3 ideas that are feasible, specific, and high-value for the target audience.
+• Examples of strong ideas: "The Ultimate Wedding Video Planning Checklist", "How Much Should Wedding Videography Cost?"
+• Avoid generic ideas — the more specific and actionable the lead magnet, the better it converts.
+
+STEP 3 — CREATE DETAILED CONTENT FOR SELECTED IDEAS
+• Use ChatGPT to expand on your chosen idea with detailed, structured content.
+• Request content in bullet point or checklist format where appropriate — this makes the Canva layout significantly easier.
+• Focus on clarity and value — the content must be genuinely useful to the reader.
+
+STEP 4 — LOG INTO CANVA AND SEARCH FOR A TEMPLATE
+• Go to canva.com and log in using company credentials.
+• Search for "lead magnet" to find relevant starting templates.
+• Look for clean, professional designs that match the client's branding and lead magnet format.
+
+STEP 5 — CUSTOMISE THE TEMPLATE
+• Replace all placeholder text with the content generated from ChatGPT.
+• Adjust colours, fonts, and layout to align precisely with the client's branding.
+
+STEP 6 — EDIT TEXT AND LAYOUT
+• Adjust font size and style throughout for readability and visual hierarchy.
+• Centre text and ensure consistent spacing for a professional, clean layout.
+
+STEP 7 — ADD VISUAL ELEMENTS
+• Incorporate shapes, icons, and elements from the Elements panel to enhance the design.
+• Keep visuals minimal and relevant — they should support the content, not distract from it.
+
+STEP 8 — FINALISE AND QUALITY CHECK
+• Review the entire lead magnet for spelling and grammatical errors — check every single text box.
+• Ensure all elements are aligned, visually consistent, and on-brand before downloading.
+
+STEP 9 — DOWNLOAD AND SHARE
+• Download the completed lead magnet as a PDF (for documents) or PNG (for images).
+• Share the final product with the client or upload it to the designated platform as instructed.
+
+CAUTIONARY NOTES
+• Always double-check for spelling and grammatical errors — this reflects directly on the client's brand.
+• Never send a lead magnet to a client without team review first.
+
+TIPS FOR EFFICIENCY
+• Use existing templates — never design from scratch unless specifically instructed.
+• Familiarise yourself with Canva's brand kit, keyboard shortcuts, and elements panel to speed up your workflow.`,
+quiz:{id:"lm1l3q",title:"Lesson 3 Quiz",qs:[
+{q:"According to the SOP, what is the correct ChatGPT prompt structure for generating lead magnet ideas?",opts:["\"Give me some lead magnet ideas for my client\"","\"Create [number] Lead Magnet ideas for a [niche] looking to attract [target audience]\"","\"Write a full lead magnet about [topic] for me\"","\"What are the best lead magnets used in marketing?\""],ans:1},
+{q:"When selecting lead magnet ideas from ChatGPT output, how many should you typically choose to move forward with?",opts:["All of the ideas generated to give the client maximum options","Only ever 1 — pick the strongest and commit","1–3 ideas that are feasible, specific, and high-value","At least 5 so the client can decide which they prefer"],ans:2},
+{q:"In what format should you request the ChatGPT content to make your Canva layout easier to build?",opts:["Long paragraphs with detailed explanations","A numbered list of at least 20 items","Bullet point or checklist format where appropriate","A table format with two columns"],ans:2},
+{q:"What file format should you download a lead magnet document in before sharing with the client?",opts:["JPEG — highest image quality for documents","MP4 — compatible with all platforms","PDF — correct format for downloadable documents","SVG — scalable and editable by the client"],ans:2}
+]}}
+
+]}
+]},
+
+{id:"zapier1",title:"Zapier Automations",desc:"Build powerful no-code automations connecting your tools — Typeform, Google Sheets, and Gmail — to save time and eliminate manual data entry.",modules:[
+{id:"zapier1m1",title:"Creating Automations with Zapier",lessons:[
+
+{id:"zapier1m1l1",title:"Creating a Zapier Automation (Typeform → Sheets + Email)",mins:20,video:"c9355c2dc10b41a68cd9df966b9210ab",
+body:`OBJECTIVE
+Build a complete Zapier automation that captures Typeform responses, logs them into Google Sheets, and sends an email notification to the sales team — all without writing any code.
+
+STEP 1 — ACCESS ZAPIER
+• Go to zapier.com and log in using the company credentials provided to you.
+• Once logged in, you will land on the Zapier dashboard.
+
+STEP 2 — CREATE A NEW ZAP
+• Click the orange "Create" button (or "+ Create Zap") in the top left of the dashboard.
+• This opens the Zap editor where you will build your automation.
+
+STEP 3 — USE THE AI PROMPT TO DESCRIBE YOUR AUTOMATION
+• In the Zap editor, use the AI prompt field to describe what the automation should do.
+• Example prompt: "When a new Typeform entry is submitted, add the response to Google Sheets and send an email notification."
+• Zapier's AI will suggest a workflow based on your description — review and accept it to pre-fill the trigger and action steps.
+
+STEP 4 — CONFIGURE THE TRIGGER: TYPEFORM
+• Select Typeform as your trigger app.
+• Choose the event: "New Entry" — this fires the Zap every time someone submits the form.
+• Connect your Typeform account if not already connected (follow the OAuth prompts).
+• Select the specific Typeform you want to use from the dropdown list.
+• Click "Test trigger" to pull in a sample submission — this is required to map fields in later steps.
+
+STEP 5 — SET UP GOOGLE SHEETS
+• Before configuring the Google Sheets action, open Google Sheets and create a new spreadsheet.
+• Add column headers in Row 1 that match the questions in your Typeform exactly (e.g. Name, Email, Phone Number, Message).
+• These column names must match — Zapier will use them to map the Typeform responses.
+• Save the spreadsheet with a clear name (e.g. "Typeform Responses — [Client Name]").
+
+STEP 6 — CONFIGURE THE ACTION: GOOGLE SHEETS
+• Back in Zapier, add Google Sheets as the first action.
+• Choose the event: "Create Spreadsheet Row" — this adds a new row for every Typeform submission.
+• Connect your Google account if not already connected.
+• Select the correct Google Drive, Spreadsheet, and Sheet (tab) from the dropdowns.
+• Map each Typeform field to the corresponding Google Sheets column:
+  — Name field → Name column
+  — Email field → Email column
+  — Phone field → Phone Number column
+  — Message field → Message column
+• Double-check every mapping before continuing.
+
+STEP 7 — TEST THE GOOGLE SHEETS ACTION
+• Click "Test action" to verify the row is created correctly in your spreadsheet.
+• Open Google Sheets and confirm that the test data has appeared in the correct columns.
+• If any data is in the wrong column, go back and fix the field mapping before proceeding.
+
+STEP 8 — CONFIGURE THE ACTION: GMAIL EMAIL NOTIFICATION
+• Add a second action to the Zap: Gmail.
+• Choose the event: "Send Email".
+• Connect the Gmail account that will send the notification (typically the company sales inbox or a no-reply address).
+• Fill in the email fields:
+  — To: sales team email address (e.g. sales@virtuecore.co.uk)
+  — Subject: "New Typeform Submission — [Form Name]"
+  — Body: Include mapped fields so the email contains the actual submission data (e.g. "Name: [Name field], Email: [Email field], Message: [Message field]").
+
+STEP 9 — TEST THE GMAIL ACTION
+• Click "Test action" to send a test email.
+• Check the inbox of the sales email to confirm the notification arrived and contains the correct information.
+
+STEP 10 — PUBLISH THE ZAP
+• Once all steps are tested and confirmed, click "Publish" to make the Zap live.
+• Ensure the Zap is toggled ON — a Zap that is off will not run.
+• Give the Zap a clear, descriptive name (e.g. "Typeform → Sheets + Email Notification") so it is easy to identify later.
+
+STEP 11 — VERIFY THE LIVE ZAP
+• Submit a real test entry through the Typeform to confirm the full automation runs end-to-end.
+• Check that the row appears in Google Sheets and the email notification is received by the sales team.
+• If either step fails, open the Zap history in Zapier to identify where the error occurred.
+
+CAUTIONARY NOTES
+• Never publish a Zap without testing every step first — untested Zaps can silently fail.
+• Ensure Google Sheets column headers match the Typeform field names exactly — any mismatch will cause blank or misaligned data.
+• Do not use a personal Gmail account for sending notifications — always use the designated company account.
+
+TIPS FOR EFFICIENCY
+• Use Zapier's AI prompt to speed up the initial setup — describe the automation in plain English and let it pre-fill the steps.
+• Name all Zaps clearly and consistently so they are easy to manage and audit later.
+• Always check Zap history after going live to catch any errors early.`,
+quiz:{id:"zapier1m1l1q",title:"Zapier Automations Quiz",qs:[
+{q:"When configuring the Typeform trigger in Zapier, which event must you select?",opts:["Form Published","New Entry","Response Updated","Submission Closed"],ans:1},
+{q:"Before setting up the Google Sheets action in Zapier, what must you do first in Google Sheets?",opts:["Share the spreadsheet publicly so Zapier can access it","Add column headers in Row 1 that match the Typeform questions exactly","Create a separate sheet tab for each Zap","Download the Typeform responses as a CSV and import them manually"],ans:1},
+{q:"According to the SOP, what is the correct Google Sheets action event to use when adding a new Typeform response?",opts:["Update Spreadsheet Row","Create Spreadsheet Row","Append to Spreadsheet","Duplicate Sheet"],ans:1},
+{q:"After publishing a Zap, what must you do to confirm the full automation is working correctly?",opts:["Wait 24 hours and check the Zap history dashboard","Submit a real test entry through the Typeform and verify the row appears in Sheets and the email notification is received","Click 'Verify' inside the Zapier editor to run an automatic check","Export the Zap as JSON and validate it manually"],ans:1}
+]}}
+
+]}
+]}
+,
+
+{id:"typeform1",title:"Typeform",desc:"Master Typeform from setup to conditional logic — build lead generation forms, client filters, branded intake forms, and smart branching workflows for your clients.",modules:[
+{id:"typeform1m1",title:"Building Typeforms That Convert",lessons:[
+
+{id:"typeform1m1l1",title:"Creating a Typeform for Lead Generation",mins:15,video:"f206f25b1c7049dbb51997b6ee55bb25",
+body:`OBJECTIVE
+Build a fully configured Typeform for lead generation — including all qualification questions, revenue ranges, required fields, end screens, and a linked lead magnet PDF — ready to publish and go live.
+
+STEP 1 — ACCESS THE TYPEFORM
+• Log into the Typeform platform using the company credentials provided to you.
+• Navigate to the form you are working on and open the question section.
+
+STEP 2 — CONFIGURE THE QUESTIONS
+• Review the default questions and decide which to keep or modify.
+• Ensure the form includes the following required fields:
+  — Company name (important for filtering leads by business)
+  — First name, last name, phone number, email (required for follow-up)
+  — How did you hear about us? (important for tracking lead sources)
+  — Current monthly revenue (critical for qualifying the lead)
+
+STEP 3 — SET REVENUE RANGES
+• For the "Current monthly revenue" question, use Multiple Choice answer type.
+• Add the following options:
+  — Less than £1k/month
+  — £1k–5k/month
+  — £5k–10k/month
+  — £10k–30k/month
+  — £30k–50k/month
+  — £50k–100k/month
+  — £100k+/month
+• Enable "Multiple selection" so respondents can select one band.
+
+STEP 4 — ADD BUDGET AND INDUSTRY QUESTIONS
+• Add a question asking: "What is your current budget for setting up systems?"
+• Add a question asking: "What industry is your business in?"
+• Both questions help qualify the lead before a sales call.
+
+STEP 5 — MAKE ALL QUESTIONS REQUIRED
+• For each question, toggle the "Required" setting to ON.
+• This prevents incomplete submissions from entering your pipeline.
+
+STEP 6 — CONFIGURE END SCREENS
+• Set up two different endings for the form:
+  — Ending A (Successful lead): Redirect the respondent to the booking URL so they can book a call.
+  — Ending B (Unsuccessful lead): Display a message such as "Thank you for your interest — we'll be in touch when the time is right."
+• You will link these endings to questions using branching logic in a later step.
+
+STEP 7 — UPLOAD LEAD MAGNET TO GOOGLE DRIVE
+• Create a new folder in Google Drive specifically for lead magnets.
+• Upload the lead magnet PDF file into that folder.
+• Right-click the file, select "Share", and set access to "Anyone with the link can view".
+• Copy the shareable link.
+
+STEP 8 — LINK THE PDF IN THE TYPEFORM END SCREEN
+• Navigate to the successful lead end screen in Typeform.
+• Add a button (e.g. "Get My Free Guide") and paste the Google Drive link into the button URL field.
+• Ensure the link starts with HTTPS — Typeform will flag it if it does not.
+
+STEP 9 — FINALISE AND PUBLISH THE FORM
+• Save all changes in Typeform.
+• Click "Publish" to make the form live.
+• Copy the form link and test it yourself before sharing it with anyone.
+
+STEP 10 — REMOVE TYPEFORM BRANDING
+• Navigate to form settings and locate the "Powered by Typeform" branding option.
+• Remove or hide it to maintain a professional appearance for the client.
+
+CAUTIONARY NOTES
+• Always test all links in the form before publishing — broken links reflect poorly on the client.
+• Double-check that every question is marked as required to prevent incomplete submissions reaching your CRM.
+
+TIPS FOR EFFICIENCY
+• Use existing Typeform templates as a starting point to save setup time.
+• Regularly review and update questions based on changes in the client's targeting or offer.`,
+quiz:{id:"typeform1m1l1q",title:"Lesson 1 Quiz",qs:[
+{q:"Which of the following questions is described as 'critical for qualification' in the lead generation Typeform?",opts:["How did you hear about us?","Company name","Current monthly revenue","First and last name"],ans:2},
+{q:"When setting up the end screens, what should happen to a successful lead after submitting the form?",opts:["They should see a thank you message with no further action","They should be redirected to a booking URL to book a call","They should receive an automatic email from Typeform","They should be asked to complete a second, shorter form"],ans:1},
+{q:"Before pasting the Google Drive link into Typeform, what must you check about the file's sharing settings?",opts:["It must be shared with specific email addresses only","It must be set to 'Anyone with the link can view'","It must be downloaded and re-uploaded directly to Typeform","It must be converted to a Word document first"],ans:1},
+{q:"According to the SOP, why must you mark all questions as required?",opts:["Required questions allow Typeform to rank the form higher in search results","It unlocks the branching logic feature in Typeform","It prevents incomplete submissions from entering your pipeline","Required questions are needed before you can publish the form"],ans:2}
+]}},
+
+{id:"typeform1m1l2",title:"Creating a Typeform for Client Filtering — Branding & Design",mins:10,video:"84fb03a2e6e64e57b2af322034e87dd1",
+body:`OBJECTIVE
+Configure the visual design and branding of a client's Typeform — including theme creation, logo, font, colours, and layout — so the form looks professional and on-brand before publishing.
+
+STEP 1 — PREPARE YOUR QUESTIONS
+• Before touching any design settings, gather and finalise all the questions you will use to filter clients.
+• Ensure questions are tailored to the specific client's niche and ideal customer profile.
+• Having questions ready before designing prevents rework.
+
+STEP 2 — OPEN THE DESIGN SETTINGS
+• In Typeform, navigate to the top menu and click "Design".
+• This opens the theme editor where you can customise all visual elements of the form.
+
+STEP 3 — CREATE A NEW THEME
+• Click "Themes" and select "Create new theme".
+• Name the theme clearly (e.g. "VirtueCore Theme" or the client's brand name).
+• Saving a named theme allows you to reuse it across multiple forms for the same client.
+
+STEP 4 — ADD THE CLIENT'S LOGO
+• In the Logo tab, click "Upload logo" and select the client's logo file from your device.
+• Adjust the size and alignment of the logo so it sits neatly at the top of the form.
+• Always obtain the correct logo file from the client before starting — do not use a screenshot.
+
+STEP 5 — SET THE FONT
+• Navigate to the Font tab in the theme editor.
+• Choose a font that reflects the brand's professionalism (e.g. Georgia for formal brands).
+• Ensure the same font is applied consistently to both headings and question text.
+
+STEP 6 — CONFIGURE TEXT SIZE AND ALIGNMENT
+• Under "Size and positioning", set the welcome screen text to "Medium" or "Large" as appropriate.
+• Set the question text size to "Medium" for readability on mobile and desktop.
+• Align questions and answers appropriately — questions on the side, answers in the middle is a clean default layout.
+
+STEP 7 — CUSTOMISE BUTTON AND ANSWER COLOURS
+• In the Buttons tab, change the button colour to black with white text for a clean, professional look.
+• Set the answer option colour to dark purple to match the VirtueCore brand palette.
+• Ensure there is strong contrast between button text and button background.
+
+STEP 8 — ADJUST BACKGROUND COLOUR
+• Navigate to the Background tab.
+• Select a background colour that matches the client's brand (e.g. dark purple for VirtueCore).
+• Check that all text and buttons remain clearly readable against the chosen background.
+
+STEP 9 — FINALISE TEXT COLOURS
+• In the Font tab, adjust the "Titles and questions" colour to ensure visibility against the background.
+• Save all changes by clicking "Save changes".
+
+STEP 10 — PREVIEW AND QA
+• Click the preview button to view the form as a respondent would see it.
+• Check for any colour clashes, alignment issues, or text that is hard to read.
+• Fix any issues before saving the final version of the theme.
+
+CAUTIONARY NOTES
+• Always check text legibility against the background — especially on mobile screens.
+• Never use a screenshot or low-resolution image as the client's logo.
+
+TIPS FOR EFFICIENCY
+• Prepare all questions in advance so you can design and configure the form in one sitting.
+• Save the branded theme so you can apply it instantly to future forms for the same client.`,
+quiz:{id:"typeform1m1l2q",title:"Lesson 2 Quiz",qs:[
+{q:"According to the SOP, where do you navigate to access the theme editor in Typeform?",opts:["Settings > Advanced","The 'Design' option in the top menu","Workflow > Branching","Connect > Integrations"],ans:1},
+{q:"What colours does the SOP specify for buttons and answer options in the VirtueCore Typeform theme?",opts:["White buttons with black text; light grey answers","Black buttons with white text; dark purple answer options","Purple buttons with white text; black answer options","Dark green buttons; white answer options"],ans:1},
+{q:"Why should you save a named theme after building it?",opts:["Named themes are required before Typeform will allow publishing","Saving a theme removes the Typeform branding watermark","It allows you to reuse it instantly across multiple forms for the same client","It locks the design so other team members cannot accidentally change it"],ans:2},
+{q:"What must you check after selecting a background colour?",opts:["That the background colour matches the Typeform default palette","That all questions are required before the background will save","That all text and buttons remain clearly readable against the chosen background","That the background image is at least 1920x1080 pixels"],ans:2}
+]}},
+
+{id:"typeform1m1l3",title:"Creating a Client Intake Form with Conditional Logic",mins:12,video:"fb8116e1b13941bbbef9c1a5010f714a",
+body:`OBJECTIVE
+Build a client intake form in Typeform using branching logic to automatically route respondents to different endings based on their budget and date of service — filtering qualified leads from unqualified ones without manual review.
+
+STEP 1 — CREATE THE INITIAL FORM
+• Navigate to the Workflow section in Typeform.
+• Create a new form with the following core questions:
+  — Client identification: first name, last name, email, phone (who are they?)
+  — Date of service (when do they need it?)
+  — Budget amount (what can they spend?)
+• Add an end screen — you will configure multiple endings later.
+
+STEP 2 — ADJUST QUESTION ORDER
+• Move the budget question to an earlier position in the form (e.g. Question 2 or 3).
+• Asking budget early prevents unqualified respondents from wasting time completing the full form before being filtered out.
+
+STEP 3 — MANAGE BRANCHING LOGIC ON THE BUDGET QUESTION
+• Select the budget question and click "Manage Branching" (or "Logic" in newer Typeform versions).
+• Add a rule:
+  — If the answer is below the minimum threshold (e.g. £500–£1,000), redirect the respondent to a different ending (the "not a fit" ending).
+  — All other cases continue to the next question as normal.
+
+STEP 4 — CREATE TWO ENDINGS
+• In the Content section, add two endings:
+  — Ending A: Redirect to a specific URL for qualified clients who meet the budget criteria (e.g. your Calendly booking page).
+  — Ending B: Redirect to a different URL or display a polite message for clients who do not meet the criteria (e.g. "Thank you — we'll reach out when the time is right").
+• Name each ending clearly so you can identify them in the branching rules.
+
+STEP 5 — PUBLISH EDITS AFTER EACH CHANGE
+• After setting up each branching rule, click "Publish edits" to save the logic.
+• Typeform requires you to publish changes for them to take effect — unsaved logic will not run.
+
+STEP 6 — SET UP CONDITIONAL LOGIC FOR DATE RESPONSES
+• Navigate to the date question and open its logic settings.
+• Add a rule:
+  — If the date entered is in the past (i.e. the event has already happened), redirect to a "thank you for filling out the form" page rather than a booking link.
+• This prevents wasted call bookings for events that cannot be serviced.
+
+STEP 7 — FINALISE ALL FORM LOGIC
+• Review all branching rules to ensure every question leads to the appropriate next step or ending.
+• Use "See all rules" in the Workflow section to get a full overview of your logic map.
+
+STEP 8 — TEST THE FORM
+• Submit test responses that cover all branching paths:
+  — A response with a qualifying budget and a future date (should reach Ending A).
+  — A response with a budget below threshold (should reach Ending B).
+  — A response with a date in the past (should reach the thank you page).
+• Fix any paths that route incorrectly.
+
+STEP 9 — REMOVE UNNECESSARY BRANDING
+• Go to the form's content settings and remove the Typeform progress bar if not needed.
+• Remove the "Powered by Typeform" branding if your plan supports it.
+
+STEP 10 — PUBLISH THE FINAL VERSION
+• Once all logic is tested and confirmed, publish the final version.
+• Share the form link with the client or embed it on the relevant landing page.
+
+STEP 11 — INTEGRATE WITH CALENDLY (OPTIONAL)
+• If the client uses Calendly for booking, set Ending A's redirect URL to the client's Calendly link.
+• This creates a seamless flow: qualify via Typeform → book call via Calendly.
+
+CAUTIONARY NOTES
+• Always publish edits after every logic change — Typeform does not auto-save branching rules.
+• Double-check all redirect URLs are correct and working before the form goes live.
+
+TIPS FOR EFFICIENCY
+• Use clear and concise question wording to reduce respondent confusion.
+• Regularly review and update branching thresholds if the client's minimum budget or criteria changes.`,
+quiz:{id:"typeform1m1l3q",title:"Lesson 3 Quiz",qs:[
+{q:"Why should the budget question be moved to an earlier position in the intake form?",opts:["Typeform requires budget questions to appear before contact details","It makes the form look more professional to leads","It prevents unqualified respondents from wasting time completing the full form before being filtered out","Budget questions must appear before date questions for the branching logic to work"],ans:2},
+{q:"According to the SOP, what must you do after setting up each branching rule in Typeform?",opts:["Refresh the page to reload the logic","Click 'Publish edits' — unsaved logic will not run","Save the form as a new version before testing","Export the logic as a PDF for backup"],ans:1},
+{q:"What should happen when a respondent enters a date that is in the past?",opts:["They should be asked to re-enter a valid future date","The form should skip all remaining questions and end immediately","They should be redirected to a 'thank you for filling out the form' page rather than a booking link","They should receive an automatic email asking them to rebook"],ans:2},
+{q:"What are the two endings described in the SOP for the client intake form?",opts:["Ending A redirects to a booking URL for qualified clients; Ending B redirects to or displays a message for unqualified clients","Ending A sends a confirmation email; Ending B shows a discount offer","Ending A asks for additional details; Ending B requests a phone number","Ending A is for mobile users; Ending B is for desktop users"],ans:0}
+]}},
+
+{id:"typeform1m1l4",title:"Creating a Typeform for Client Filtering — ICP & Questions",mins:20,video:"f153ddf7b53646e293e250ba688a836b",
+body:`OBJECTIVE
+Build a complete client filtering Typeform from scratch using a client's Ideal Customer Profile (ICP) — from determining the right questions with ChatGPT, through to applying conditional logic and publishing a live, branded form.
+
+STEP 1 — SET UP THE TYPEFORM ACCOUNT
+• Ensure the client has a Typeform account.
+• Obtain the login credentials from the client.
+• Log in and navigate to the client's workspace (not your personal workspace).
+
+STEP 2 — DETERMINE THE CLIENT'S IDEAL CUSTOMER PROFILE (ICP)
+• Before writing any questions, identify who the client's ideal customer is.
+• Use information provided by the client during onboarding or through direct discussion.
+• Apply common sense and knowledge of the niche to refine the ICP.
+• Example: For a wedding videographer, the ICP is engaged couples with a specific budget range and wedding date in the future.
+
+STEP 3 — USE CHATGPT TO GENERATE RELEVANT QUESTIONS
+• Open ChatGPT and use a prompt such as: "Create a Typeform client filter for a [niche] business. Generate questions that qualify leads and move serious clients toward booking a call, while filtering out low-intent enquiries. Include logic notes."
+• Review the ChatGPT output and select the most relevant questions.
+• Consider the client's business type and industry when evaluating each suggested question.
+
+STEP 4 — DECIDE ON TYPEFORM STRUCTURE
+• Determine whether a welcome screen is needed — for lead generation forms, a welcome screen is usually not necessary.
+• Structure the form to start with contact details (first name, last name, phone, email) followed by qualifying questions.
+• Aim for a maximum of 5–7 questions total to maintain completion rates.
+
+STEP 5 — ADD QUESTIONS TO TYPEFORM
+• Log into Typeform and create a new form in the client's workspace.
+• Click "+ Add content" and add questions sequentially, starting with contact information.
+• For each question, set the appropriate answer type (Short Text, Multiple Choice, Date, Contact Info, etc.).
+• Mark every question as required.
+
+STEP 6 — CUSTOMISE THE FORM DESIGN
+• Match the form's colours and fonts to the client's branding (refer to the Typeform Branding SOP for the full design process).
+• Upload the client's logo.
+• Ensure the form looks professional and consistent before moving to logic.
+
+STEP 7 — IMPLEMENT CONDITIONAL LOGIC
+• Navigate to the Workflow tab in Typeform.
+• Add branching rules to redirect respondents based on their answers:
+  — Example: If budget is "£500–£1,000" → redirect to Ending B (not a fit).
+  — Example: If still exploring options → continue but tag as lower priority.
+• Ensure all questions are set to required so the logic functions correctly.
+
+STEP 8 — TEST THE FORM
+• Preview the form and submit test responses covering all branching paths.
+• Verify that each path routes the respondent to the correct ending.
+• Make adjustments based on test results before going live.
+
+STEP 9 — PUBLISH THE FORM
+• Once satisfied with the form and all logic is tested, publish it.
+• Share the live link with the client and confirm it is working on their end.
+
+CAUTIONARY NOTES
+• Never publish a form without testing all branching paths — misrouting respondents can cost the client real leads.
+• Avoid using too many questions — aim for a maximum of 5–7 to maintain engagement and completion rates.
+
+TIPS FOR EFFICIENCY
+• Use ChatGPT to generate a structured question set quickly rather than writing from scratch.
+• Use templates or previously successful forms as a starting reference.
+• Regularly update the questions and logic based on client feedback and changes to their offer.`,
+quiz:{id:"typeform1m1l4q",title:"Lesson 4 Quiz",qs:[
+{q:"According to the SOP, what is the recommended maximum number of questions in a client filtering Typeform?",opts:["3–4 questions to keep it extremely brief","5–7 questions to maintain engagement and completion rates","10–12 questions to gather comprehensive data","As many as needed — there is no limit recommended"],ans:1},
+{q:"What tool does the SOP recommend using to generate the initial list of questions for the Typeform?",opts:["A Typeform template from the built-in library","A spreadsheet of questions from previous forms","ChatGPT, using a prompt that describes the client's niche and goal","Google Forms question suggestions"],ans:2},
+{q:"When should you avoid adding a welcome screen to a Typeform?",opts:["When the form has more than 5 questions","When the form is embedded in an email","When building a lead generation or client filtering form — a welcome screen is usually not necessary","When the client has not provided a logo yet"],ans:2},
+{q:"According to the SOP, where in Typeform do you go to set up branching and conditional logic?",opts:["Design > Theme Settings","The Workflow tab","Settings > Advanced Logic","Connect > Automations"],ans:1}
+]}}
+
+]}
+]}
+,
+
+{id:"framer1",title:"Framer Website Building",desc:"Learn to build professional, responsive websites in Framer — from layout and breakpoints to publishing — using a structured SOP workflow.",modules:[
+{id:"framer1m1",title:"Building in Framer",lessons:[
+
+{id:"framer1m1l1",title:"Building a Website in Framer",mins:20,video:"3fecbe1da6ce434cbc0a87b0c6a4bb73",
+body:`OBJECTIVE
+Build a fully structured, responsive website in Framer — covering breakpoints, layout, hero section, text, buttons, images, navigation, and publishing — following a consistent, repeatable process.
+
+STEP 1 — SET UP BREAKPOINTS
+• Open Framer and navigate to the canvas for the project you are working on.
+• Set up the following breakpoints to ensure the site is fully responsive:
+  — Large Desktop: 1440px (primary design canvas)
+  — Medium Desktop: 1200px
+  — Tablet: 768px
+  — Phone: 375px
+• Always design on the 1440px large desktop canvas first, then adapt for smaller screens.
+• Use Framer's built-in breakpoint switcher in the top toolbar to preview each size.
+
+STEP 2 — UNDERSTAND DESIGN ORDER
+• Always design in this order: Large Desktop → Medium Desktop → Tablet → Phone.
+• Never jump to mobile before completing the desktop layout — responsive adaptations flow downward from the largest breakpoint.
+• Each smaller breakpoint inherits the structure from the one above unless you override it.
+
+STEP 3 — BUILD THE HERO SECTION
+• Create a new frame on the canvas.
+• Set the hero section dimensions to: Fill width × 700px height.
+• This ensures the hero spans the full browser width regardless of screen size.
+• Add a background — either a solid colour, gradient, or image fill — inside the hero frame.
+• Keep hero content vertically centred using Framer's alignment tools.
+
+STEP 4 — ADD TEXT ELEMENTS
+• Press T on your keyboard to activate the Text tool (shortcut: T key).
+• Click on the canvas to place a text element.
+• Set the font, size, weight, and colour to match the client's brand guidelines.
+• Use Framer's Styles panel to save reusable text styles (Heading 1, Heading 2, Body, etc.) — this saves significant time when the design evolves.
+• Always use Styles for repeated text elements rather than setting properties manually each time.
+
+STEP 5 — CREATE BUTTONS
+• To create a button in Framer, follow this process:
+  1. Add a text element with the button label.
+  2. Select the text element and wrap it in a Stack (right-click → Wrap in Stack, or use the keyboard shortcut).
+  3. Add padding inside the Stack to create space around the text (e.g. 14px vertical, 28px horizontal).
+  4. Apply a fill colour to the Stack frame to create the button background.
+  5. Set the border radius to create rounded corners if required.
+• Do not use images for buttons — always build them natively in Framer for clean, scalable results.
+
+STEP 6 — ADD IMAGES
+• To add an image that does not need to move with the scroll (decorative or background images), use absolute positioning.
+• Place the image layer inside the relevant frame and set its position to Absolute.
+• Use the Fit and Fill options in the image settings to control how the image fills its container.
+• For images that are part of the content flow (e.g. product shots, team photos), keep them in the layout stack so they reflow correctly on smaller screens.
+
+STEP 7 — BUILD THE NAVIGATION BAR
+• Create a new frame at the top of the page for the navigation.
+• Set the navigation bar height to 65px — this is the standard height used across all VirtueCore client builds.
+• Set the width to Fill so it spans the full page width.
+• Add the client logo on the left side of the nav frame.
+• Add navigation links on the right side — use a horizontal Stack to keep them evenly spaced.
+• Set the nav frame background to match the site header colour or use a transparent/blur effect as required.
+• Pin the navigation to the top of the viewport using Framer's sticky/fixed position setting so it stays visible on scroll.
+
+STEP 8 — OPTIMISE FOR TABLET
+• Switch to the Tablet breakpoint (768px).
+• Review every section for layout issues: text overflow, broken stacks, misaligned images.
+• Adjust font sizes, padding, and image sizes where needed.
+• Collapse horizontal stacks to vertical stacks where content becomes too cramped side-by-side.
+• Ensure buttons and interactive elements remain easily tappable (minimum 44px tap target).
+
+STEP 9 — OPTIMISE FOR MOBILE (PHONE)
+• Switch to the Phone breakpoint (375px).
+• Apply the same review process as tablet: check text, images, spacing, and stacks.
+• Reduce heading font sizes to prevent overflow.
+• Stack all horizontal layouts vertically for the phone view.
+• Ensure the navigation collapses into a hamburger menu or simplified mobile nav.
+• Test scroll behaviour — all content should be reachable without horizontal scrolling.
+
+STEP 10 — FINAL REVIEW BEFORE PUBLISHING
+• Switch back to the Large Desktop breakpoint and review the full design from top to bottom.
+• Check all text styles, button styles, and colours are consistent.
+• Verify all images are loading correctly and are not pixelated or stretched.
+• Confirm the navigation is functional and all links are correctly set.
+• Test all breakpoints one final time before publishing.
+
+STEP 11 — PUBLISH THE SITE
+• Click the "Publish" button in the top-right corner of Framer.
+• Choose the correct domain or subdomain for the client's site.
+• Confirm the publish settings (SEO title, description, favicon) before going live.
+• After publishing, open the live URL in a browser and verify the site displays correctly.
+• Test on both desktop and mobile using a real device or browser dev tools.
+
+CAUTIONARY NOTES
+• Never skip the breakpoint optimisation steps — a site that looks good on desktop but breaks on mobile is not complete.
+• Always use Styles for text and colour — hardcoded one-off values create inconsistency and make future edits very slow.
+• Do not publish without completing the tablet and phone optimisation steps.
+
+TIPS FOR EFFICIENCY
+• Use Framer's component system to build reusable elements (cards, buttons, nav bars) that update globally when edited.
+• Duplicate well-structured sections rather than building from scratch each time.
+• Use the T shortcut constantly — it is faster than reaching for the toolbar.
+• Save named Styles for every text style and colour at the start of each project — this pays off enormously as the design grows.`,
+quiz:{id:"framer1m1l1q",title:"Framer Website Building Quiz",qs:[
+{q:"According to the SOP, what is the correct Large Desktop breakpoint width to design on first, and in what order should you work through breakpoints?",opts:["1920px — design mobile first, then scale up","1440px — Large Desktop first, then Medium Desktop, Tablet, then Phone","1200px — start with medium desktop for the most common screen size","1440px — you can work in any order depending on the project"],ans:1},
+{q:"What are the correct dimensions for the Hero section as specified in the SOP?",opts:["100vw × 500px height","Fill width × 700px height","1440px fixed width × 600px height","Fill width × 100vh height"],ans:1},
+{q:"According to the SOP, what is the correct process for creating a button in Framer?",opts:["Draw a rectangle, add a text layer on top, and group them together","Use the built-in Framer Button component from the insert panel","Add a text element, wrap it in a Stack, add padding to the Stack, then apply a fill colour","Import a button asset from Figma and place it on the canvas"],ans:2},
+{q:"Why does the SOP instruct you to use Styles for text elements rather than setting properties manually each time?",opts:["Because Framer does not allow manual font settings on individual elements","Because Styles are required for the site to be mobile responsive","Because using Styles saves significant time when the design evolves and ensures consistency across repeated elements","Because manually set text properties are not preserved when you publish the site"],ans:2}
+]}}
+
+]}
+]}
+];
+
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+let U=null,P={},AC=null,AM=null,AL=null,AQ=null,EXP={},QS={qi:0,ans:[],sel:null,sub:false};
+
+/* ═══════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════ */
+const allL=c=>c.modules.flatMap(m=>m.lessons);
+const cPct=c=>{const ls=allL(c);return ls.length?Math.round(ls.filter(l=>P[l.id]).length/ls.length*100):0};
+const cDone=c=>allL(c).every(l=>P[l.id]&&(!l.quiz||P[l.quiz.id]?.passed));
+const mDone=m=>m.lessons.every(l=>P[l.id]&&(!l.quiz||P[l.quiz.id]?.passed));
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const set=h=>document.getElementById("app-body").innerHTML=h;
+async function saveLesson(lid){P[lid]=true;await sb.from("progress").upsert({user_id:U.id,lesson_id:lid},{onConflict:"user_id,lesson_id"});}
+async function saveQuiz(qid,score,passed){P[qid]={score,passed};await sb.from("quiz_scores").upsert({user_id:U.id,quiz_id:qid,score,passed},{onConflict:"user_id,quiz_id"});}
+
+function toast(msg,col){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.style.borderColor=col||"var(--green)";t.style.color=col||"var(--green)";
+  t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+async function sendToZapier(data){
+  if(!ZAPIER_WEBHOOK)return;
+  try{await fetch(ZAPIER_WEBHOOK,{method:"POST",mode:"no-cors",body:JSON.stringify({timestamp:new Date().toLocaleString("en-GB"),name:U.name,email:U.email,course:data.course,quiz:data.quiz,score:data.score+"%",status:data.passed?"PASSED":"FAILED",correct:data.correct+"/"+data.total})})}catch(e){}
+}
+
+/* ═══════════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════════ */
+async function doLogin(){
+  const e=document.getElementById("inp-email").value.trim().toLowerCase();
+  const pw=document.getElementById("inp-password").value;
+  const err=document.getElementById("login-err");
+  const btn=document.getElementById("login-btn");
+  if(!e||!pw){err.style.display="block";err.textContent="Please enter your email and password.";return}
+  btn.textContent="Signing in…";btn.disabled=true;
+  const {data,error}=await sb.auth.signInWithPassword({email:e,password:pw});
+  btn.textContent="Enter Academy →";btn.disabled=false;
+  if(error){err.style.display="block";err.textContent="Incorrect email or password. Contact VirtueCore management. ("+error.message+")";return}
+  try{await initUser(data.user);}catch(ex){err.style.display="block";err.textContent="Login error: "+ex.message;console.error(ex);}
+}
+
+async function showForgot(){
+  const e=document.getElementById("inp-email").value.trim().toLowerCase();
+  const err=document.getElementById("login-err");
+  if(!e){err.style.display="block";err.textContent="Enter your email above first, then click Forgot password.";return}
+  const {error}=await sb.auth.resetPasswordForEmail(e,{redirectTo:window.location.origin});
+  if(error){err.style.display="block";err.textContent="Could not send reset email. Check the address and try again.";return}
+  err.style.display="block";err.style.color="var(--green)";err.textContent="Password reset email sent! Check your inbox.";
+}
+
+async function initUser(user){
+  const {data:profile}=await sb.from("profiles").select("*").eq("id",user.id).single();
+  const {data:prog}=await sb.from("progress").select("lesson_id").eq("user_id",user.id);
+  const {data:scores}=await sb.from("quiz_scores").select("quiz_id,score,passed").eq("user_id",user.id);
+  U={id:user.id,name:profile?.full_name||user.email,email:user.email,isAdmin:profile?.is_admin||false};
+  P={};
+  (prog||[]).forEach(r=>P[r.lesson_id]=true);
+  (scores||[]).forEach(r=>P[r.quiz_id]={score:r.score,passed:r.passed});
+  document.getElementById("nav-uname").textContent=U.name;
+  if(U.isAdmin)document.getElementById("tab-admin").classList.remove("hide");
+  document.getElementById("pg-login").style.display="none";
+  document.getElementById("pg-app").style.display="block";
+  renderDashboard();
+}
+
+["inp-email","inp-password"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()}));
+
+async function doLogout(){
+  await sb.auth.signOut();
+  U=null;P={};
+  document.getElementById("pg-app").style.display="none";
+  document.getElementById("pg-login").style.display="flex";
+  ["inp-email","inp-password"].forEach(id=>document.getElementById(id).value="");
+  const err=document.getElementById("login-err");err.style.display="none";err.style.color="var(--red)";
+  document.getElementById("tab-admin").classList.add("hide");
+}
+
+/* Restore session on page load */
+sb.auth.onAuthStateChange(async(event,session)=>{
+  if(session?.user&&!U)await initUser(session.user);
+});
+
+function goHome(){switchTab("courses")}
+
+function switchTab(t){
+  document.querySelectorAll(".nav-tab").forEach(b=>b.classList.remove("on"));
+  document.getElementById("tab-"+t).classList.add("on");
+  t==="courses"?renderDashboard():renderAdmin();
+}
+
+/* ═══════════════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════════════ */
+function renderDashboard(){
+  const total=COURSES.flatMap(c=>allL(c)).length;
+  const done=COURSES.flatMap(c=>allL(c)).filter(l=>P[l.id]).length;
+  const dc=COURSES.filter(c=>cDone(c)).length;
+  const pq=Object.values(P).filter(v=>v?.passed).length;
+  const pct=total?Math.round(done/total*100):0;
+  let h=`<div class="pg-title">Welcome back, ${esc(U.name.split(" ")[0])} 👋</div>
+  <div class="pg-sub">Continue your training or start a new course below.</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-lbl">Overall Progress</div><div class="stat-val">${pct}%</div><div class="stat-sub">${done} of ${total} lessons done</div></div>
+    <div class="stat-card"><div class="stat-lbl">Courses Completed</div><div class="stat-val">${dc}</div><div class="stat-sub">of ${COURSES.length} total</div></div>
+    <div class="stat-card"><div class="stat-lbl">Quizzes Passed</div><div class="stat-val">${pq}</div><div class="stat-sub">assessments passed</div></div>
+  </div><div class="course-grid">`;
+  COURSES.forEach(c=>{
+    const p=cPct(c),d=cDone(c);
+    h+=`<div class="c-card" onclick="openCourse('${c.id}')">
+      ${d?'<div class="done-badge">✓ Complete</div>':""}
+      <div class="c-icon" style="background:${c.color}22">${c.icon}</div>
+      <div class="c-tag" style="background:${c.tagBg};color:${c.tagCol}">${c.tag}</div>
+      <div class="c-title">${esc(c.title)}</div>
+      <div class="c-desc">${esc(c.desc)}</div>
+      <div class="c-meta"><span>${c.modules.length} modules · ${allL(c).length} lessons</span><span style="color:${p>0?"var(--gold)":"var(--muted)"};font-weight:700">${p}%</span></div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${p}%;background:${d?"var(--green)":"var(--gold)"}"></div></div>
+    </div>`;
+  });
+  set(h+"</div>");
+}
+
+/* ═══════════════════════════════════════════════════════
+   COURSE
+═══════════════════════════════════════════════════════ */
+function openCourse(id){AC=COURSES.find(c=>c.id===id);EXP={};AC.modules.forEach(m=>EXP[m.id]=true);renderCourse();}
+
+function renderCourse(){
+  const c=AC,p=cPct(c);
+  let h=`<button class="back-btn" onclick="renderDashboard()">← Back to courses</button>
+  <div class="hero"><div class="hero-icon" style="background:${c.color}22">${c.icon}</div>
+  <div style="flex:1"><div class="c-tag" style="background:${c.tagBg};color:${c.tagCol}">${c.tag}</div>
+  <div class="hero-title">${esc(c.title)}</div><div class="hero-desc">${esc(c.desc)}</div>
+  <div class="hero-stats">
+    <div class="h-stat"><strong>${c.modules.length}</strong>Modules</div>
+    <div class="h-stat"><strong>${allL(c).length}</strong>Lessons</div>
+    <div class="h-stat"><strong style="color:var(--gold)">${p}%</strong>Done</div>
+  </div></div></div><div class="mod-list">`;
+  c.modules.forEach((m,i)=>{
+    const open=EXP[m.id],done=mDone(m);
+    h+=`<div class="mod-box"><div class="mod-head" onclick="toggleMod('${m.id}')">
+      <div class="mod-num ${done?"ok":""}">${done?"✓":i+1}</div>
+      <div style="flex:1"><div class="mod-info-title">${esc(m.title)}</div><div class="mod-info-sub">${m.lessons.length} lesson${m.lessons.length>1?"s":""}</div></div>
+      <div class="chev ${open?"open":""}">▾</div></div>
+    <div class="mod-body ${open?"open":""}">`;
+    m.lessons.forEach(l=>{
+      const ld=P[l.id];
+      const qd=l.quiz&&P[l.quiz.id];
+      const qBadge=l.quiz?(qd?`<span style="font-size:10px;font-weight:700;color:var(--green);margin-left:6px">✓ Quiz</span>`:`<span style="font-size:10px;font-weight:700;color:var(--muted);margin-left:6px">📝 Quiz</span>`):"";
+      h+=`<div class="l-row" onclick="openLesson('${l.id}','${m.id}')">
+        <div class="l-dot ${ld?"ok":""}"></div><span class="l-name ${ld?"ok":""}">${esc(l.title)}</span>
+        ${qBadge}<span class="l-dur" style="margin-left:auto">📖 ${l.mins} min</span></div>`;
+    });
+    h+="</div></div>";
+  });
+  set(h+"</div>");
+}
+
+function toggleMod(id){EXP[id]=!EXP[id];renderCourse();}
+
+/* ═══════════════════════════════════════════════════════
+   LESSON
+═══════════════════════════════════════════════════════ */
+function openLesson(lid,mid){
+  AM=AC.modules.find(m=>m.id===mid);AL=AM.lessons.find(l=>l.id===lid);renderLesson();
+}
+
+function renderLesson(){
+  const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id),ld=P[AL.id];
+  const hasPrev=idx>0,hasNext=idx<ls.length-1;
+  const quizDone=AL.quiz&&P[AL.quiz.id];
+  const quizPassed=AL.quiz&&P[AL.quiz.id]?.passed;
+  const lessonFullyDone=ld&&(!AL.quiz||quizPassed);
+  let sb="";
+  ls.forEach(l=>{
+    const d=P[l.id],on=l.id===AL.id;
+    const mod=AC.modules.find(m=>m.lessons.find(ll=>ll.id===l.id));
+    sb+=`<div class="sb-item ${on?"on":""} ${d?"done":""}" onclick="openLesson('${l.id}','${mod.id}')">
+      <div class="sb-dot ${on?"on":d?"ok":""}"></div>${esc(l.title)}</div>`;
+  });
+  let rb="";
+  if(lessonFullyDone)rb+='<span class="done-text">✓ Complete</span>';
+  else if(!ld)rb+=`<button class="btn-green" onclick="markDone()">Mark complete ✓</button>`;
+  if(ld&&AL.quiz&&!quizPassed)rb+=`<button class="btn-gold-sm" onclick="openQuiz()">Take quiz →</button>`;
+  if(lessonFullyDone&&hasNext)rb+=`<button class="btn-gold-sm" onclick="goNext()">Next lesson →</button>`;
+  const videoHtml=AL.video?`<div class="mod-video" style="margin-bottom:24px"><iframe src="https://www.loom.com/embed/${AL.video}" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>`:"";
+  set(`<button class="back-btn" onclick="renderCourse()">← ${esc(AC.title)}</button>
+  <div class="lesson-layout">
+    <div class="l-sidebar"><div class="sb-ttl">Course contents</div>${sb}</div>
+    <div class="lesson-card">
+      <div class="l-meta">${esc(AM?.title||"")}</div>
+      <div class="l-title">${esc(AL.title)}</div>
+      ${videoHtml}
+      <div class="l-body">${esc(AL.body)}</div>
+      <div class="l-actions">
+        ${hasPrev?'<button class="btn-sec" onclick="goPrev()">← Previous</button>':"<div></div>"}
+        <div class="l-ar">${rb}</div>
+      </div>
+    </div>
+  </div>`);
+}
+
+async function markDone(){await saveLesson(AL.id);toast("✓ Lesson complete!");renderLesson();}
+
+async function goNext(){
+  const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id);
+  if(!P[AL.id])await saveLesson(AL.id);
+  if(idx<ls.length-1){const n=ls[idx+1];AM=AC.modules.find(m=>m.lessons.find(l=>l.id===n.id));AL=n;renderLesson();window.scrollTo(0,0);}
+}
+
+function goPrev(){
+  const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id);
+  if(idx>0){const p=ls[idx-1];AM=AC.modules.find(m=>m.lessons.find(l=>l.id===p.id));AL=p;renderLesson();window.scrollTo(0,0);}
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════════════════ */
+function openQuiz(){AQ=AL.quiz;QS={qi:0,ans:[],sel:null,sub:false};renderQuiz();window.scrollTo(0,0);}
+
+function renderQuiz(){
+  const q=AQ.qs[QS.qi];
+  let opts="";
+  q.opts.forEach((o,i)=>{
+    const correct=QS.sub&&i===q.ans,wrong=QS.sub&&i===QS.sel&&i!==q.ans,sel=!QS.sub&&i===QS.sel;
+    opts+=`<button class="opt ${correct?"correct":wrong?"wrong":sel?"sel":""}" onclick="selOpt(${i})" ${QS.sub?"disabled":""}>${esc(o)}</button>`;
+  });
+  let acts="";
+  if(!QS.sub&&QS.sel!==null)acts='<button class="btn-gold-sm" onclick="subAns()">Submit answer</button>';
+  else if(QS.sub&&QS.qi<AQ.qs.length-1)acts='<button class="btn-gold-sm" onclick="nextQ()">Next →</button>';
+  else if(QS.sub&&QS.qi===AQ.qs.length-1)acts='<button class="btn-gold-sm" onclick="finishQ()">See results →</button>';
+  const pct=Math.round(QS.qi/AQ.qs.length*100);
+  set(`<button class="back-btn" onclick="renderCourse()">← Back to course</button>
+  <div class="quiz-wrap">
+    <div class="q-header"><span class="q-header-title">📝 ${esc(AQ.title)}</span><span class="q-header-sub">Question ${QS.qi+1} of ${AQ.qs.length}</span></div>
+    <div style="margin-bottom:14px"><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:var(--blue)"></div></div></div>
+    <div class="q-card">
+      <div class="q-num">Question ${QS.qi+1}</div>
+      <div class="q-text">${esc(q.q)}</div>
+      <div class="opts">${opts}</div>
+      <div class="q-actions">${acts}</div>
+    </div>
+  </div>`);
+}
+
+function selOpt(i){if(!QS.sub){QS.sel=i;renderQuiz();}}
+function subAns(){QS.sub=true;QS.ans.push(QS.sel);renderQuiz();}
+function nextQ(){QS.qi++;QS.sel=null;QS.sub=false;renderQuiz();window.scrollTo(0,0);}
+
+async function finishQ(){
+  const correct=QS.ans.filter((a,i)=>a===AQ.qs[i].ans).length;
+  const score=Math.round(correct/AQ.qs.length*100),passed=score>=70;
+  await saveQuiz(AQ.id,score,passed);
+  sendToZapier({course:AC.title,quiz:AQ.title,score,passed,correct,total:AQ.qs.length});
+  set(`<div class="result-wrap"><div class="result-card">
+    <div class="res-emo">${passed?"🏆":"📚"}</div>
+    <div class="res-title">${passed?"Quiz Passed!":"Keep Studying"}</div>
+    <div class="res-score ${passed?"pass":"fail"}">${score}%</div>
+    <div class="res-sub">${passed?`You got ${correct} of ${AQ.qs.length} correct. Module complete.`:`You got ${correct} of ${AQ.qs.length} correct. You need 70% to pass. Review the lessons and try again.`}</div>
+    <div class="res-btns">
+      ${!passed?'<button class="btn-sec" onclick="retryQ()">Retry quiz</button>':""}
+      <button class="btn-gold-sm" onclick="renderLesson()">Back to lesson →</button>
+    </div>
+  </div></div>`);
+  window.scrollTo(0,0);
+}
+
+function retryQ(){QS={qi:0,ans:[],sel:null,sub:false};renderQuiz();window.scrollTo(0,0);}
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════════════════════ */
+async function renderAdmin(){
+  set(`<div class="pg-title">Admin Dashboard</div><div class="pg-sub" style="margin-bottom:0">Loading VA data…</div>`);
+  const totalLessons=COURSES.flatMap(c=>allL(c)).length;
+  const totalQuizzes=COURSES.flatMap(c=>allL(c)).filter(l=>l.quiz).length;
+  const {data:profiles}=await sb.from("profiles").select("id,full_name,is_admin,created_at");
+  const {data:prog}=await sb.from("progress").select("user_id,lesson_id");
+  const {data:scores}=await sb.from("quiz_scores").select("user_id,quiz_id,score,passed");
+  const vas=(profiles||[]).filter(p=>!p.is_admin);
+  const avg=vas.length?Math.round(vas.reduce((a,u)=>{
+    const done=(prog||[]).filter(r=>r.user_id===u.id).length;
+    return a+done/totalLessons*100;
+  },0)/vas.length):0;
+  const totalPassed=(scores||[]).filter(r=>r.passed).length;
+  const totalAttempts=(scores||[]).length;
+  const passRate=totalAttempts?Math.round(totalPassed/totalAttempts*100):0;
+
+  const cards=vas.length?vas.map(u=>{
+    const uProg=(prog||[]).filter(r=>r.user_id===u.id).map(r=>r.lesson_id);
+    const uScores=(scores||[]).filter(r=>r.user_id===u.id);
+    const done=uProg.length;
+    const pct=Math.round(done/totalLessons*100);
+    const passed=uScores.filter(r=>r.passed).length;
+    const failed=uScores.filter(r=>!r.passed).length;
+    const courseDone=COURSES.filter(c=>allL(c).every(l=>uProg.includes(l.id)&&(!l.quiz||uScores.find(s=>s.quiz_id===l.quiz.id&&s.passed)))).length;
+    const initials=(u.full_name||u.id).split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+    const col=pct===100?"var(--green)":"var(--gold)";
+    return `<div class="va-card">
+      <div class="va-card-top">
+        <div class="va-avatar">${esc(initials)}</div>
+        <div><div class="va-name">${esc(u.full_name||"Unnamed")}</div><div class="va-email">${esc(u.id.slice(0,16))}…</div></div>
+      </div>
+      <div class="va-stats-row">
+        <div class="va-stat"><div class="va-stat-val" style="color:${col}">${pct}%</div><div class="va-stat-lbl">Complete</div></div>
+        <div class="va-stat"><div class="va-stat-val">${courseDone}/${COURSES.length}</div><div class="va-stat-lbl">Courses</div></div>
+        <div class="va-stat"><div class="va-stat-val" style="color:${passed>0?'var(--green)':'var(--muted)'}">${passed}</div><div class="va-stat-lbl">Quizzes ✓</div></div>
+      </div>
+      <div class="prog-wrap" style="margin-bottom:10px"><div class="prog-fill" style="width:${pct}%;background:${col}"></div></div>
+      ${failed?`<div style="margin-bottom:8px;font-size:11px;color:#FCA5A5;font-weight:700">⚠ ${failed} quiz${failed>1?"zes":""} failed</div>`:""}
+      <button class="btn-detail" onclick="showVADetail('${u.id}')">View Full Breakdown →</button>
+    </div>`;
+  }).join(""):`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);background:var(--s1);border:1px solid var(--border);border-radius:var(--r)">No VAs enrolled yet. Click <strong style="color:var(--gold)">Invite VA</strong> to add your first team member.</div>`;
+
+  set(`<div class="wrap" style="padding-top:24px">
+  <div class="adm-header">
+    <div><div class="pg-title">VA Dashboard</div><div class="pg-sub" style="margin-bottom:0">Track every VA's training progress, quiz results and course completions.</div></div>
+    <button class="btn-invite" onclick="showInviteModal()">+ Invite VA</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-lbl">Total VAs</div><div class="stat-val">${vas.length}</div><div class="stat-sub">enrolled</div></div>
+    <div class="stat-card"><div class="stat-lbl">Avg Completion</div><div class="stat-val">${avg}%</div><div class="stat-sub">across all VAs</div></div>
+    <div class="stat-card"><div class="stat-lbl">Quiz Pass Rate</div><div class="stat-val" style="color:${passRate>=70?'var(--green)':'var(--gold)'}">${passRate}%</div><div class="stat-sub">${totalPassed}/${totalAttempts} attempts</div></div>
+  </div>
+  <div class="va-grid">${cards}</div>
+  </div>`);
+
+  // stash data for detail modal
+  window._admData={profiles,prog,scores};
+}
+
+function showInviteModal(){
+  const el=document.createElement("div");
+  el.className="modal-overlay";
+  el.id="invite-modal";
+  el.innerHTML=`<div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('invite-modal').remove()">✕</button>
+    <div class="modal-title">Invite a VA</div>
+    <div class="modal-sub">They'll receive an email with a link to set their password and access the academy.</div>
+    <div class="field"><label>Full Name</label><input id="inv-name" type="text" placeholder="Jane Smith"></div>
+    <div class="field"><label>Email Address</label><input id="inv-email" type="email" placeholder="jane@example.com"></div>
+    <div id="inv-err" class="err"></div>
+    <button class="btn-gold-full" id="inv-btn" onclick="doInviteVA()">Send Invite →</button>
+  </div>`;
+  document.body.appendChild(el);
+  el.addEventListener("click",e=>{if(e.target===el)el.remove();});
+}
+
+async function doInviteVA(){
+  const name=document.getElementById("inv-name").value.trim();
+  const email=document.getElementById("inv-email").value.trim().toLowerCase();
+  const err=document.getElementById("inv-err");
+  const btn=document.getElementById("inv-btn");
+  if(!name||!email){err.style.display="block";err.textContent="Please enter both name and email.";return;}
+  btn.textContent="Sending…";btn.disabled=true;
+  const {data,error}=await sbAdmin.auth.admin.inviteUserByEmail(email,{
+    data:{full_name:name},
+    redirectTo:window.location.origin
+  });
+  btn.textContent="Send Invite →";btn.disabled=false;
+  if(error){err.style.display="block";err.textContent=error.message;return;}
+  document.getElementById("invite-modal").remove();
+  toast(name+" invited — email sent!");
+  renderAdmin();
+}
+
+function showVADetail(uid){
+  const {profiles,prog,scores}=window._admData||{};
+  if(!profiles)return;
+  const u=profiles.find(p=>p.id===uid);
+  if(!u)return;
+  const uProg=(prog||[]).filter(r=>r.user_id===uid).map(r=>r.lesson_id);
+  const uScores=(scores||[]).filter(r=>r.user_id===uid);
+
+  const courseHtml=COURSES.map(c=>`
+    <div class="detail-course">
+      <div class="detail-course-title">${esc(c.title)}</div>
+      ${c.modules.flatMap(m=>m.lessons).map(l=>{
+        const done=uProg.includes(l.id);
+        const qs=l.quiz?uScores.find(s=>s.quiz_id===l.quiz.id):null;
+        let qBadge="";
+        if(l.quiz){
+          if(qs?.passed)qBadge=`<span class="dl-quiz dl-qpass">✓ ${qs.score}%</span>`;
+          else if(qs&&!qs.passed)qBadge=`<span class="dl-quiz dl-qfail">✗ ${qs.score}%</span>`;
+          else qBadge=`<span class="dl-quiz dl-qnone">Quiz pending</span>`;
+        }
+        return `<div class="detail-lesson">
+          <div class="dl-dot ${done?"dl-done":"dl-todo"}">${done?"✓":"○"}</div>
+          <div class="dl-name">${esc(l.title)}</div>
+          ${qBadge}
+        </div>`;
+      }).join("")}
+    </div>`).join("");
+
+  const el=document.createElement("div");
+  el.className="modal-overlay";
+  el.id="detail-modal";
+  el.innerHTML=`<div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('detail-modal').remove()">✕</button>
+    <div class="modal-title">${esc(u.full_name||"VA")}</div>
+    <div class="modal-sub" style="margin-bottom:20px">Full lesson and quiz breakdown across all courses.</div>
+    ${courseHtml}
+  </div>`;
+  document.body.appendChild(el);
+  el.addEventListener("click",e=>{if(e.target===el)el.remove();});
+}
+</script>
+</body>
+</html>

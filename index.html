@@ -1256,7 +1256,7 @@ STEP 4 — BUILD IN CANVA
 {id:"typeform",icon:"📋",color:"#6366F1",tagBg:"rgba(99,102,241,0.12)",tagCol:"#818CF8",tag:"QUALIFICATION",title:"Typeform for Client Qualification",
 desc:"Build Typeform qualification forms that filter leads, collect data, and connect to Zapier automations for client pipelines.",
 modules:[
-{id:"tf1",title:"Typeform — Full Walkthrough",lessons:[
+{id:"tf1",title:"Module 1: Creating a Typeform for Lead Generation",lessons:[
 {id:"tf1l1",title:"Creating a Typeform for Lead Generation",mins:15,video:"f206f25b1c7049dbb51997b6ee55bb25",body:`CREATING A TYPEFORM FOR LEAD GENERATION — SOP
 
 OBJECTIVE
@@ -1310,8 +1310,17 @@ STEP 9 — REMOVE TYPEFORM BRANDING
 
 CAUTIONARY NOTES
 • Ensure all links are functional before publishing
-• Double-check all required questions are toggled on to avoid incomplete submissions`},
-{id:"tf1l2",title:"Creating a Typeform for Client Filtering — Branding & Theme",mins:5,video:"84fb03a2e6e64e57b2af322034e87dd1",body:`CREATING A TYPEFORM FOR CLIENT FILTERING — BRANDING SOP
+• Double-check all required questions are toggled on to avoid incomplete submissions`}
+],quiz:{id:"tf1q",title:"Module 1 Quiz — Lead Generation Forms",qs:[
+{q:"What is the primary purpose of Typeform in VirtueCore's system?",opts:["To run Facebook ads","To filter leads and qualify prospects before they reach the client's calendar","To send email newsletters","To track time spent on tasks"],ans:1},
+{q:"Which field should ALWAYS be collected first in a lead gen form?",opts:["Budget range","Industry type","Contact information (name, email, phone)","How they heard about you"],ans:2},
+{q:"Why must the budget question appear early in the form?",opts:["Clients prefer to answer budget questions first","To filter out unqualified prospects quickly before they waste time on the rest","Zapier requires budget data to be first","Meta Ads requires it for lead form integration"],ans:1},
+{q:"What should you set up to handle unqualified leads in the end screens?",opts:["A redirect to the client's Instagram","A polite rejection message or alternative resource","An automatic email from the VA","A second form to re-qualify them"],ans:1},
+{q:"What sharing setting must you apply when uploading a lead magnet to Google Drive?",opts:["Restricted — only specific people","Anyone with the link can view","Private — only the client","Editors only"],ans:1}
+]}},
+
+{id:"tf2",title:"Module 2: Typeform Branding & Theme Setup",lessons:[
+{id:"tf2l1",title:"Creating a Typeform for Client Filtering — Branding & Theme",mins:5,video:"84fb03a2e6e64e57b2af322034e87dd1",body:`CREATING A TYPEFORM FOR CLIENT FILTERING — BRANDING SOP
 
 OBJECTIVE
 Build and brand a Typeform that filters clients based on predetermined questions while matching the client's visual identity.
@@ -1352,8 +1361,17 @@ STEP 8 — SAVE, PREVIEW & FINALISE
 
 CAUTIONARY NOTES
 • Ensure all text is legible against the background colour
-• Double-check alignment and positioning of all elements for a professional appearance`},
-{id:"tf1l3",title:"Creating a Client Intake Form with Conditional Logic",mins:10,video:"fb8116e1b13941bbbef9c1a5010f714a",body:`CREATING A CLIENT INTAKE FORM WITH CONDITIONAL LOGIC — SOP
+• Double-check alignment and positioning of all elements for a professional appearance`}
+],quiz:{id:"tf2q",title:"Module 2 Quiz — Branding & Theme",qs:[
+{q:"Where do you go in Typeform to customise the form's visual design?",opts:["Workflow tab","Content tab","Design tab","Settings tab"],ans:2},
+{q:"What is the first branding element you should add to a client's Typeform?",opts:["Choose a background colour","Upload the client's logo","Select a font","Set button colours"],ans:1},
+{q:"Why is font choice important in a client Typeform?",opts:["It affects loading speed","It should reflect the brand's tone and maintain consistency throughout","Meta requires specific fonts for ad forms","Typeform charges extra for custom fonts"],ans:1},
+{q:"What is the recommended button colour combination for a professional form?",opts:["White buttons with black text","Match buttons to background","Brand-appropriate colours — e.g. black with white text","Always use Typeform's default blue"],ans:2},
+{q:"What must you do after customising colours and fonts?",opts:["Immediately publish the form","Save all changes and preview to check for issues","Delete the previous theme","Contact the client for approval before saving"],ans:1}
+]}},
+
+{id:"tf3",title:"Module 3: Conditional Logic & Branching",lessons:[
+{id:"tf3l1",title:"Creating a Client Intake Form with Conditional Logic",mins:10,video:"fb8116e1b13941bbbef9c1a5010f714a",body:`CREATING A CLIENT INTAKE FORM WITH CONDITIONAL LOGIC — SOP
 
 OBJECTIVE
 Build a client intake form with conditional logic that filters responses based on budget and date criteria, routing prospects to the correct ending automatically.
@@ -1397,8 +1415,17 @@ STEP 8 — REMOVE BRANDING & PUBLISH
 
 CAUTIONARY NOTES
 • Ensure all redirect URLs are valid and lead to the correct pages
-• Double-check every logic rule to avoid misrouting respondents`},
-{id:"tf1l4",title:"Full Client Filtering Typeform — End-to-End Walkthrough",mins:28,video:"f153ddf7b53646e293e250ba688a836b",body:`CREATING A TYPEFORM FOR CLIENT FILTERING — FULL WALKTHROUGH SOP
+• Double-check every logic rule to avoid misrouting respondents`}
+],quiz:{id:"tf3q",title:"Module 3 Quiz — Conditional Logic",qs:[
+{q:"Where do you access branching logic in Typeform?",opts:["Settings tab","Design tab","Workflow tab → Branching","Content tab → Logic"],ans:2},
+{q:"What should happen if a respondent selects a budget below the client's threshold?",opts:["They continue to the next question","They are redirected to the Rejection/Ending B screen","The form closes automatically","They receive an email from the VA"],ans:1},
+{q:"Why should the budget question be moved to an early position in the form?",opts:["It is the most important question","To filter out unqualified prospects before they waste time completing the form","Typeform requires budget questions first","It looks more professional"],ans:1},
+{q:"What should you do if a respondent enters a date that is in the past?",opts:["Allow them to continue — past dates are fine","Redirect them to a thank you/rejection page","Ask them to re-enter a correct date","Flag it for the client to review"],ans:1},
+{q:"Before publishing, how many logic paths must you test?",opts:["Only the qualifying path","Only the disqualifying path","Every possible path — qualifying AND disqualifying","Just submit one test response"],ans:2}
+]}},
+
+{id:"tf4",title:"Module 4: Full End-to-End Typeform Build",lessons:[
+{id:"tf4l1",title:"Full Client Filtering Typeform — End-to-End Walkthrough",mins:28,video:"f153ddf7b53646e293e250ba688a836b",body:`CREATING A TYPEFORM FOR CLIENT FILTERING — FULL WALKTHROUGH SOP
 
 OBJECTIVE
 Build a complete client-filtering Typeform from scratch — covering ICP research, question creation using AI, form build, logic, branding, and publishing.
@@ -1454,15 +1481,44 @@ CAUTIONARY NOTES
 • Avoid using too many questions — aim for 5–7 maximum to maintain completion rate
 • Ensure all redirect URLs are live and correct before sharing with the client
 • Use clear, concise language so prospects don't abandon the form midway`}
-],quiz:{id:"tf1q",title:"Typeform Module Quiz",qs:[
-{q:"What is the primary purpose of Typeform in VirtueCore's system?",opts:["To run Facebook ads","To filter leads and qualify prospects before they reach the client's calendar","To send email newsletters","To track time spent on tasks"],ans:1},
-{q:"Why should contact information be collected first in the form?",opts:["It looks more professional","If the prospect drops off, you still have their contact details","Meta requires it","It is easier to fill in"],ans:1},
-{q:"Why should the budget question be positioned early in the form?",opts:["Budgets are the most important data point","To filter out unqualified prospects quickly before they waste time completing the form","Clients prefer to see budget first","Zapier requires budget data first"],ans:1},
-{q:"What tool should you use to generate the question list for a client's Typeform?",opts:["Typeform's built-in AI","Your own judgment only","ChatGPT/Claude with a tailored prompt","Ask the client to write all questions themselves"],ans:2},
-{q:"Where do you configure conditional logic (branching) in Typeform?",opts:["Settings tab","Design tab","Workflow tab → Branching","Content tab → Logic"],ans:2},
-{q:"What should Ending A (qualified leads) do?",opts:["Show a thank you message","Redirect to the client's Calendly or booking page","Send an email to the VA","Ask another qualifying question"],ans:1},
-{q:"What must you do with test responses before the form goes live?",opts:["Leave them as examples for the client","Archive them","Delete them from the Results tab","Share them with the client"],ans:2},
-{q:"What is the recommended maximum number of questions to maintain form completion rate?",opts:["10–15 questions","5–7 questions","As many as needed","3 questions only"],ans:1}
+],quiz:{id:"tf4q",title:"Module 4 Quiz — Full Build Walkthrough",qs:[
+{q:"What should you do before building any questions in the form?",opts:["Start adding questions immediately","Determine the client's ICP and define the filtering criteria first","Copy a previous client's form","Ask the client to build it themselves"],ans:1},
+{q:"What AI tool can you use to generate relevant Typeform questions for a client?",opts:["Typeform's built-in AI only","ChatGPT or Claude with a tailored prompt","Google Sheets","Zapier's question generator"],ans:1},
+{q:"What is a Partial Submit Point and why is it useful?",opts:["A way to pause the form mid-build","It captures contact data even if a respondent drops off before finishing","It pauses the form for review before publishing","It sends a partial response to Zapier"],ans:1},
+{q:"After publishing the form, what should you send the client alongside the share link?",opts:["Nothing — just send the link","A brief explanation of how the logic works","The full Typeform account login","A list of all respondents"],ans:1},
+{q:"What is the FIRST thing to do before hitting Publish?",opts:["Add the client's logo","Delete all test responses from the Results tab","Change the background colour","Add a welcome screen"],ans:1}
+]}},
+
+{id:"tf5",title:"Module 5: Final Assessment",lessons:[
+{id:"tf5l1",title:"Typeform — Final Assessment",mins:5,body:`TYPEFORM FINAL ASSESSMENT
+
+You have now completed all four modules of the Typeform for Client Qualification course. This final assessment covers all key concepts from every module.
+
+Before attempting the quiz, make sure you have:
+✓ Watched all four Loom walkthroughs
+✓ Reviewed the SOP notes for each module
+✓ Passed the quiz for each individual module
+
+The final assessment contains 10 questions drawn from all four modules. A score of 80% or higher is required to complete the course.
+
+WHAT YOU SHOULD NOW BE ABLE TO DO
+• Build a lead generation Typeform from scratch for any client
+• Apply the client's branding (logo, colours, font) to the form
+• Set up conditional logic (branching) to route qualified and unqualified leads
+• Generate relevant filtering questions using AI tools
+• Test all logic paths before publishing
+• Hand over the live form to the client with a clear explanation`}
+],quiz:{id:"tf5q",title:"Typeform — Final Assessment",qs:[
+{q:"What is the primary purpose of a Typeform in VirtueCore's client system?",opts:["To run Facebook ads directly","To filter leads and qualify prospects before they reach the client's calendar","To send automated email sequences","To collect payments from clients"],ans:1},
+{q:"Why should contact information (name, email, phone) be collected first?",opts:["It looks more professional","If the respondent drops off, you still have their details for follow-up","Meta requires contact fields to appear first","It loads faster at the start"],ans:1},
+{q:"Which Typeform tab contains the branching/conditional logic settings?",opts:["Design tab","Settings tab","Workflow tab","Connect tab"],ans:2},
+{q:"What should happen when a respondent selects a budget BELOW the client's minimum threshold?",opts:["They continue to the next question","They are routed to a rejection ending","The form automatically closes","A notification is sent to the client"],ans:1},
+{q:"Where do you upload a client's logo in Typeform?",opts:["Settings → Branding","Design → Logo → Upload","Content → Welcome Screen","Connect → Integrations"],ans:1},
+{q:"What AI prompt technique is used to generate Typeform questions?",opts:["Describe the form layout and ask for templates","Provide business type, budget threshold, and criteria and ask for filtering questions","Ask for a general marketing plan","Use Typeform's built-in AI generator only"],ans:1},
+{q:"What should Ending A route qualified leads to?",opts:["A rejection message","The client's Calendly or booking page","A Google Form","The VirtueCore website"],ans:1},
+{q:"What must you ALWAYS do before the form goes live?",opts:["Add a welcome screen","Delete all test responses from the Results tab","Remove the client's logo","Set the language to English"],ans:1},
+{q:"What is the recommended maximum number of questions for a Typeform to maintain completion rates?",opts:["3 questions","5–7 questions","10–12 questions","As many as the client requests"],ans:1},
+{q:"What should you send to the client alongside the published Typeform share link?",opts:["Nothing — just the link is enough","The Typeform account login credentials","A brief explanation of how the logic and endings work","A list of all test responses"],ans:2}
 ]}}
 ]},
 

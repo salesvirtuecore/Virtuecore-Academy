@@ -947,7 +947,80 @@ Step 5: Turn the Zap ON and monitor the Zap History for the first 24-48 hours.`}
 {q:"Who provides the Zapier login for client automations?",opts:["VirtueCore provides a shared account","The client provides their own Zapier login","You create a new account each time","Zapier provides a free shared account"],ans:1},
 {q:"Where is the most common place errors occur in a multi-step Zap?",opts:["The trigger setup","The filter conditions","The field mapping between apps","The Zap name"],ans:2},
 {q:"How long should you monitor Zap History after turning on a new Zap?",opts:["1 hour","First 24-48 hours","One full week","Only when a client complains"],ans:1}
+]}},
+
+{id:"zap2",title:"Module 2: Live Zap Build — Typeform to Sheets to Gmail",lessons:[
+{id:"zap2l1",title:"Full Automation Walkthrough",mins:28,video:"c9355c2dc10b41a68cd9df966b9210ab",body:`CREATING AUTOMATIONS WITH ZAPIER — SOP
+
+OBJECTIVE
+Build a Zapier automation that captures Typeform lead submissions, logs them into Google Sheets, and sends an instant email notification to the sales team — all without any manual effort.
+
+STEP 1 — ACCESS ZAPIER AND CREATE A NEW ZAP
+• Log in to Zapier using the credentials provided by the client (never create a personal account for client work)
+• Navigate to the Zaps section — this is the main area for creating automations
+• Click Create to start a new Zap
+
+STEP 2 — CHOOSE YOUR CREATION METHOD (AI OR MANUAL)
+• You can build the Zap using Copilot (AI) or manually
+• For AI, type a clear request such as:
+  "Please create an automation that sends Typeform answers into Google Sheets and emails the sales team about the new lead generated."
+• AI will suggest the trigger and actions — review each step carefully before confirming
+
+STEP 3 — CONFIGURE TYPEFORM AS THE TRIGGER
+• Select Typeform as the trigger app
+• Choose the trigger event: New Entry
+• Connect the client's Typeform account and select the specific form you want to use
+• Test the trigger to confirm Zapier can receive a sample submission
+
+STEP 4 — SET UP GOOGLE SHEETS
+• Open Google Sheets and create a new spreadsheet to collect lead data
+• Set up columns for each Typeform question (e.g., Name, Email, Phone Number, Message, Submission Date)
+• Name the sheet clearly (e.g., "Lead Tracker — [Client Name]")
+
+STEP 5 — MAP TYPEFORM RESPONSES TO GOOGLE SHEETS
+• In Zapier, add the action: Google Sheets → Create Spreadsheet Row
+• Use the Mapping feature to connect each Typeform field to the correct Google Sheets column
+• Double-check every field mapping — mismatched fields are the most common source of errors
+• Test this step and confirm the data appears correctly in the spreadsheet
+
+STEP 6 — SET UP EMAIL NOTIFICATIONS VIA GMAIL
+• Add a new action: Gmail → Send Email
+• Configure the email to send to the sales team's email address
+• Include the relevant lead details in the email body using dynamic Typeform fields:
+  — Name
+  — Email address
+  — Phone number
+  — Any qualifying answers
+• Write a clear subject line, e.g., "New Lead: [First Name] [Last Name] — [Form Name]"
+
+STEP 7 — TEST THE FULL AUTOMATION
+• Run a test submission through the Typeform form
+• Confirm the data lands correctly in Google Sheets
+• Confirm the email notification sends to the sales team with accurate information
+• Fix any field mapping issues before publishing
+
+STEP 8 — PUBLISH AND TURN ON THE ZAP
+• Once everything is tested, click Publish to make the Zap live
+• Ensure the Zap toggle is switched ON — a published but inactive Zap will not run
+• Monitor the Zap History tab for the first 24–48 hours to confirm it runs without errors
+
+CAUTIONARY NOTES
+• Always test each step individually before testing the full flow
+• Never use your personal Gmail for client automation emails — always use the client's account
+• Ensure you have the necessary permissions to access the client's Typeform and Google Sheets accounts
+
+TIPS FOR EFFICIENCY
+• Use Zapier's Copilot (AI) for common automation patterns to save setup time
+• Regularly review and update Zaps if connected apps change their form structure or field names
+• Use templates for common automation setups to maintain consistency`}
+],quiz:{id:"zap2q",title:"Module 2 Quiz — Live Zap Build",qs:[
+{q:"What trigger event should you select when using Typeform in Zapier?",opts:["Form Published","New Entry","Response Updated","Form Viewed"],ans:1},
+{q:"After mapping Typeform fields to Google Sheets, what must you always do before publishing?",opts:["Turn on the Zap immediately","Delete test data from the sheet","Test each step to confirm data flows correctly","Ask the client to approve the layout"],ans:2},
+{q:"What is the most common source of errors in a multi-step Zap?",opts:["Using too many steps","Mismatched field mapping between apps","Publishing before naming the Zap","Using AI to build the Zap"],ans:1},
+{q:"What must you check after clicking Publish to ensure the Zap is actually running?",opts:["That the Zap has a name","That the Zap toggle is switched ON","That Google Sheets has at least 10 rows","That Typeform is connected to Gmail directly"],ans:1},
+{q:"Which Gmail account should you use for client automation email notifications?",opts:["Your personal Gmail","A shared VirtueCore Gmail","The client's own Gmail account","A new Gmail created for the Zap"],ans:2}
 ]}}
+
 ]},
 
 {id:"email",icon:"📧",color:"#3B82F6",tagBg:"rgba(59,130,246,0.12)",tagCol:"#60A5FA",tag:"EMAIL MKT",title:"Email Marketing",
@@ -1937,7 +2010,7 @@ Wix, Namecheap, and Google Domains all follow this same pattern with slightly di
 ]}}
 ]},
 
-{id:"imageads",icon:"🖼️",color:"#8B5CF6",tagBg:"rgba(139,92,246,0.12)",tagCol:"#C4B5FD",tag:"IMAGE ADS",title:"Image Ad Creatives",
+{id:"imgcreatives",icon:"🖼️",color:"#8B5CF6",tagBg:"rgba(139,92,246,0.12)",tagCol:"#C4B5FD",tag:"IMAGE ADS",title:"Image Ad Creatives",
 desc:"Master the full image ad workflow — from Canva design and template use, to correct labelling, persona and angle identification, reviewing successful ads, and watching a live silent creation session.",
 modules:[
 

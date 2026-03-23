@@ -1256,123 +1256,213 @@ STEP 4 — BUILD IN CANVA
 {id:"typeform",icon:"📋",color:"#6366F1",tagBg:"rgba(99,102,241,0.12)",tagCol:"#818CF8",tag:"QUALIFICATION",title:"Typeform for Client Qualification",
 desc:"Build Typeform qualification forms that filter leads, collect data, and connect to Zapier automations for client pipelines.",
 modules:[
-{id:"tf1",title:"Setup, ICP & Question Design",lessons:[
-{id:"tf1l1",title:"What Typeform Is For at VirtueCore",mins:6,body:`THE PURPOSE OF TYPEFORM IN OUR SYSTEM
+{id:"tf1",title:"Typeform — Full Walkthrough",lessons:[
+{id:"tf1l1",title:"Creating a Typeform for Lead Generation",mins:15,video:"f206f25b1c7049dbb51997b6ee55bb25",body:`CREATING A TYPEFORM FOR LEAD GENERATION — SOP
 
-Typeform is the connector between our clients' advertising and their sales pipeline. Its job is simple: filter out people who are not a good fit before they reach the client's calendar.
+OBJECTIVE
+Create a Typeform for lead generation that collects the right information and qualifies prospects before they reach the client's calendar.
 
-A well-built Typeform:
-• Identifies whether the prospect has the right budget
-• Qualifies their timeline and intent
-• Collects the exact information the client needs before a sales call
-• Automatically routes qualified leads to a booking page and disqualified leads to a polite rejection
+STEP 1 — LOAD TYPEFORM & NAVIGATE TO THE QUESTION SECTION
+• Go to admin.typeform.com and log into the client's account
+• Navigate to the question section of the form you are building
 
-WHERE IT SITS IN THE CLIENT SYSTEM
-Option A: On the Facebook/Instagram ad as an Instant Form (built inside Meta Ads Manager)
-Option B: Built on Typeform and embedded into the client's website
-Option C: Direct link sent to prospects via DM, email, or ad
+STEP 2 — CONFIGURE YOUR QUESTIONS
+Review the default questions and decide which to keep or modify. Every lead gen form must include:
+• Company name — important for filtering
+• First name, last name, phone number, email — for follow-up
+• "How did you hear about us?" — important for tracking ad source
+• Current monthly revenue — critical for qualifying the lead's budget
 
-In either case, the form data flows through Zapier into the client's CRM (usually GHL), and the client is notified of each new qualified lead.
+STEP 3 — SET REVENUE RANGES
+Add multiple choice options for current monthly revenue:
+• Less than £1k/month
+• £1k–5k/month
+• £5k–10k/month
+• £10k–30k/month
+• £30k–50k/month
+• £50k–100k/month
+• £100k+/month
 
-WHAT YOU NEED BEFORE STARTING
-• Client's Typeform account login — they must provide this
-• The client's ICP (Ideal Customer Profile) — either from their onboarding form or from your own research
-• Budget threshold — the minimum budget/investment level they will accept
-• Desired outcome — what the client wants to achieve for their customers
-• Any specific deal-breakers — dates, locations, industries to exclude`},
-{id:"tf1l2",title:"Generating the Right Questions",mins:7,body:`THE MOST IMPORTANT PART OF TYPEFORM IS THE QUESTIONS
+STEP 4 — ADD BUDGET & INDUSTRY QUESTIONS
+• Include a question about the current budget for setting up systems
+• Add a question regarding the industry of the business
 
-Bad questions = unqualified leads slipping through. Good questions = only the right people reach the client's calendar.
+STEP 5 — MAKE QUESTIONS REQUIRED
+• Toggle "Required" ON for every question to avoid incomplete submissions
 
-QUESTION DESIGN USING AI
-Use this ChatGPT/Claude prompt to generate the question set:
+STEP 6 — CONFIGURE END SCREENS
+Set up two different endings:
+• Ending A: Redirect to a booking URL for qualified leads
+• Ending B: Display a message for unqualified leads
 
-"Create filtering questions for a [BUSINESS TYPE] intake form that will qualify leads based on: [CRITERIA — e.g. budget range, timeline, location, specific requirements]. The form should: filter out anyone with a budget below [AMOUNT], identify their specific needs, and collect full contact information. Format as a list of questions with the question type (multiple choice, short text, etc.) next to each one."
+STEP 7 — UPLOAD LEAD MAGNET TO GOOGLE DRIVE
+• Create a new folder in Google Drive for lead magnets
+• Upload the lead magnet PDF file
+• Set sharing to "Anyone with the link can view" and copy the link
 
-QUESTION STRUCTURE (in order)
-1. Contact information — First name, last name, email, phone (all required)
-   Why first: if they drop off, you still have their contact details
-2. Budget question — Multiple Choice. Position this EARLY to filter quickly
-3. Timeline/date question — when do they need this?
-4. Specific requirements — what exactly are they looking for?
-5. Qualifying questions — niche-specific (varies by client)
+STEP 8 — LINK PDF IN TYPEFORM
+• Paste the Google Drive link into the end screen button URL
+• Ensure the link starts with HTTPS
+• Save and publish the form
 
-QUESTION TYPE GUIDE
-• Multiple Choice — for single-select options (budget ranges, service types)
-• Multiple Selection — when multiple answers are allowed
-• Short Text — for brief written answers (company name, location)
-• Long Text — for detailed descriptions of their needs
-• Date — for event dates or timelines
-• Email / Phone — use the dedicated field types, not short text — they validate format automatically`}
-],quiz:{id:"tf1q",title:"Typeform Setup Quiz",qs:[
-{q:"What is the primary purpose of Typeform in VirtueCore's system?",opts:["To run Facebook ads","To filter leads and qualify prospects before they reach the client","To send email newsletters","To track time spent on tasks"],ans:1},
-{q:"Why should contact information come first in the form?",opts:["It looks more professional","If the prospect drops off, you still have their contact details","Meta requires it","It is easier to fill in"],ans:1},
-{q:"Why should the budget question be positioned early in the form?",opts:["Budgets are the most important data point","To filter out unqualified prospects quickly before they complete the form","Clients prefer to see budget first","Zapier requires budget data first"],ans:1},
-{q:"When building the question list, what tool should you use first?",opts:["Typeform's built-in AI","Your own judgment only","ChatGPT/Claude to generate relevant qualification questions","Ask the client to write all questions themselves"],ans:2}
-]}},
-{id:"tf2",title:"Building, Logic & Publishing",lessons:[
-{id:"tf2l1",title:"Form Structure & Conditional Logic",mins:9,body:`BUILDING THE FORM IN TYPEFORM
+STEP 9 — REMOVE TYPEFORM BRANDING
+• Navigate to Settings → remove "Powered by Typeform" branding (requires paid plan)
 
-CREATING THE FORM
-1. Log into the client's Typeform account at admin.typeform.com
-2. Click "+ Create a new form" → "Start from scratch"
-3. Name it clearly: "[Client Name] — Client Qualification Form"
+CAUTIONARY NOTES
+• Ensure all links are functional before publishing
+• Double-check all required questions are toggled on to avoid incomplete submissions`},
+{id:"tf1l2",title:"Creating a Typeform for Client Filtering — Branding & Theme",mins:5,video:"84fb03a2e6e64e57b2af322034e87dd1",body:`CREATING A TYPEFORM FOR CLIENT FILTERING — BRANDING SOP
 
-FORM SECTIONS
-• Section 1: Contact Information (name, email, phone)
-• Section 2: Qualifying Questions (budget, timeline, specific needs)
-• Section 3: Any niche-specific questions
+OBJECTIVE
+Build and brand a Typeform that filters clients based on predetermined questions while matching the client's visual identity.
 
-SETTING UP CONDITIONAL LOGIC (BRANCHING)
-This is what makes the form intelligent. Without branching, everyone gets the same ending.
+STEP 1 — PREPARE QUESTIONS
+• Gather all questions you will use to filter clients
+• Ensure questions are tailored to the specific needs of each client
 
-How to access: Workflow tab → Branching
+STEP 2 — CREATE A CUSTOM THEME
+• Click "Design" in the top menu
+• Click "New theme" to create a fresh branded theme
+• Name it appropriately (e.g., "[ClientName] Theme")
 
-FOR THE BUDGET QUESTION:
-• Click on the budget question in the workflow view
-• Click "Manage Branching"
-• Add rule: IF answer IS "[low budget option]" THEN go to [Rejection Ending]
-• Set "All other cases go to" → next qualifying question
+STEP 3 — ADD THE CLIENT'S LOGO
+• In Design → Logo tab → Upload the client's logo
+• Adjust size and alignment as needed
 
-FOR DATE/TIMELINE QUESTIONS:
-• Add rule: IF date is in the past THEN redirect to rejection page
-• Add rule: IF date is within 2 weeks THEN route to urgent follow-up
+STEP 4 — SET FONT STYLE
+• Choose a font reflecting the brand's professionalism (e.g., Georgia for professional services)
+• Ensure font is consistent throughout the form
 
-CREATING ENDINGS
-Create at least two endings:
-• Ending A — Qualified leads: redirect to client's Calendly/booking page
-• Ending B — Unqualified leads: polite thank you message, offer an alternative resource
+STEP 5 — CONFIGURE TEXT SIZE & ALIGNMENT
+• Set text size for welcome screen and questions (Medium recommended)
+• Align questions to the side, answers in the middle for clean layout
 
-Every logic path must lead to a defined ending. Test every possible route before publishing.`},
-{id:"tf2l2",title:"Branding, Testing & Publishing",mins:7,body:`APPLYING CLIENT BRANDING
+STEP 6 — CUSTOMISE BUTTON COLOURS
+• Change button colour to match the brand (e.g., black with white text)
+• Set answer option colour to match brand accent (e.g., dark purple)
 
-1. Click "Design" tab in the form editor
-2. Set primary brand colour (use hex code from client's brand guidelines)
-3. Use ChatGPT/Claude to suggest complementary colours if needed: "Suggest two complementary colours for a brand with primary colour [HEX]. The audience is [ICP DESCRIPTION]."
-4. Upload the client's logo: Design → Logo → Upload
-5. Select a font that matches the brand's tone (professional, playful, minimal)
-6. Remove Typeform branding if the client has a paid plan: Settings → Remove Typeform branding
+STEP 7 — ADJUST BACKGROUND COLOUR
+• Select a background colour that matches the brand
+• Ensure strong contrast between text and background for readability
 
-TESTING BEFORE PUBLISHING (NON-NEGOTIABLE)
-Click "Preview" and test every path:
-✓ Submit a QUALIFYING response — verify it routes to the booking page
-✓ Submit a DISQUALIFYING response — verify it routes to the rejection ending
-✓ Test all possible answer combinations that trigger different logic paths
-✓ Test on both desktop and mobile
-✓ Proofread every question for spelling and grammar
-✓ Verify all redirect URLs actually work
+STEP 8 — SAVE, PREVIEW & FINALISE
+• Save all changes
+• Preview the form to check for colour or text issues
+• Make any final adjustments and save the theme
 
-PUBLISHING & HANDOVER
-1. Delete all test responses from Results before going live
-2. Click "Publish"
-3. Copy the direct share link
-4. Share with the client along with a brief explanation of how the logic works
-5. Document any conditional logic rules for your own reference and for the client`}
-],quiz:{id:"tf2q",title:"Typeform Building Quiz",qs:[
-{q:"Where do you set up conditional logic in Typeform?",opts:["Settings tab","Design tab","Workflow tab → Branching","Content tab → Logic"],ans:2},
+CAUTIONARY NOTES
+• Ensure all text is legible against the background colour
+• Double-check alignment and positioning of all elements for a professional appearance`},
+{id:"tf1l3",title:"Creating a Client Intake Form with Conditional Logic",mins:10,video:"fb8116e1b13941bbbef9c1a5010f714a",body:`CREATING A CLIENT INTAKE FORM WITH CONDITIONAL LOGIC — SOP
+
+OBJECTIVE
+Build a client intake form with conditional logic that filters responses based on budget and date criteria, routing prospects to the correct ending automatically.
+
+STEP 1 — CREATE THE INITIAL FORM
+• Navigate to the Workflow section in Typeform
+• Create a form with the following core questions:
+  — Client identification (who are they?)
+  — Date of service / when do they need this?
+  — Budget amount (multiple choice)
+• Include at least one end screen
+
+STEP 2 — ADJUST QUESTION ORDER
+• Move the budget question to an EARLY position in the form
+• Reason: filter out unqualified prospects before they waste time on later questions
+
+STEP 3 — MANAGE BRANCHING LOGIC FOR BUDGET
+• Select the budget question and click "Manage Branching"
+• Add a rule: IF answer IS below threshold (e.g., £500–£1000) THEN go to Rejection Ending
+• "All other cases" should continue to the next qualifying question
+
+STEP 4 — CREATE MULTIPLE ENDINGS
+• Ending A: Redirect to booking/Calendly URL for clients who meet the criteria
+• Ending B: Redirect to a different page for clients who do NOT meet the criteria
+
+STEP 5 — SET UP CONDITIONAL LOGIC FOR DATE RESPONSES
+• Add a rule: IF the date question answer is in the past → redirect to a thank you/rejection page
+• This prevents bookings for past dates
+
+STEP 6 — FINALISE ALL FORM LOGIC
+• Ensure every question path leads to a defined ending
+• Use "See all rules" to audit the full logic map before publishing
+
+STEP 7 — TEST THE FORM
+• Submit test responses to confirm the form behaves as expected
+• Test qualifying AND disqualifying paths
+
+STEP 8 — REMOVE BRANDING & PUBLISH
+• Go to content settings and remove any unwanted branding or progress bars
+• Save and publish the final version
+
+CAUTIONARY NOTES
+• Ensure all redirect URLs are valid and lead to the correct pages
+• Double-check every logic rule to avoid misrouting respondents`},
+{id:"tf1l4",title:"Full Client Filtering Typeform — End-to-End Walkthrough",mins:28,video:"f153ddf7b53646e293e250ba688a836b",body:`CREATING A TYPEFORM FOR CLIENT FILTERING — FULL WALKTHROUGH SOP
+
+OBJECTIVE
+Build a complete client-filtering Typeform from scratch — covering ICP research, question creation using AI, form build, logic, branding, and publishing.
+
+STEP 1 — SET UP THE TYPEFORM ACCOUNT
+• Ensure the client has an active Typeform account
+• Obtain login credentials from the client
+
+STEP 2 — DETERMINE THE CLIENT'S IDEAL CUSTOMER PROFILE (ICP)
+• Identify the ICP from their onboarding Typeform, prior discussions, or your own research
+• Key ICP factors: budget range, location, business type, timeline, deal-breakers
+• Use common sense and niche knowledge to refine the ICP
+
+STEP 3 — GENERATE QUESTIONS USING AI
+Use this ChatGPT/Claude prompt:
+"Create filtering questions for a [BUSINESS TYPE] intake form. The form should qualify leads based on: [budget range, timeline, location, specific needs]. Filter out anyone with a budget below [AMOUNT]. Collect full contact information. Format as a list with question type next to each one."
+
+Review the output and adapt questions to the specific client's niche.
+
+STEP 4 — DECIDE ON FORM STRUCTURE
+• Welcome screen: usually not needed for lead gen (skips friction)
+• Start with contact details (name, phone, email) — so you capture data even if they drop off
+• Follow with qualifying questions in order of importance
+
+STEP 5 — BUILD THE FORM IN TYPEFORM
+• Log into the client's Typeform workspace
+• Create a new form from scratch
+• Add questions sequentially, starting with contact info
+• Mark all questions as required
+• Add a Partial Submit Point early to capture data from drop-offs
+
+STEP 6 — CUSTOMISE THE DESIGN
+• Match colours and fonts to the client's brand
+• Upload the client's logo
+• Ensure the form looks professional on mobile
+
+STEP 7 — IMPLEMENT CONDITIONAL LOGIC
+• Use Workflow → Branching to route based on budget answers
+• Use logic to route past dates to a rejection screen
+• Ensure every path ends at a defined ending
+
+STEP 8 — TEST EVERY PATH
+• Submit a qualifying response → verify booking page redirect
+• Submit a disqualifying response → verify rejection message
+• Test on desktop AND mobile
+
+STEP 9 — PUBLISH & SHARE WITH CLIENT
+• Delete all test responses from Results tab
+• Click Publish
+• Copy the share link and send to the client with a brief explanation
+
+CAUTIONARY NOTES
+• Avoid using too many questions — aim for 5–7 maximum to maintain completion rate
+• Ensure all redirect URLs are live and correct before sharing with the client
+• Use clear, concise language so prospects don't abandon the form midway`}
+],quiz:{id:"tf1q",title:"Typeform Module Quiz",qs:[
+{q:"What is the primary purpose of Typeform in VirtueCore's system?",opts:["To run Facebook ads","To filter leads and qualify prospects before they reach the client's calendar","To send email newsletters","To track time spent on tasks"],ans:1},
+{q:"Why should contact information be collected first in the form?",opts:["It looks more professional","If the prospect drops off, you still have their contact details","Meta requires it","It is easier to fill in"],ans:1},
+{q:"Why should the budget question be positioned early in the form?",opts:["Budgets are the most important data point","To filter out unqualified prospects quickly before they waste time completing the form","Clients prefer to see budget first","Zapier requires budget data first"],ans:1},
+{q:"What tool should you use to generate the question list for a client's Typeform?",opts:["Typeform's built-in AI","Your own judgment only","ChatGPT/Claude with a tailored prompt","Ask the client to write all questions themselves"],ans:2},
+{q:"Where do you configure conditional logic (branching) in Typeform?",opts:["Settings tab","Design tab","Workflow tab → Branching","Content tab → Logic"],ans:2},
 {q:"What should Ending A (qualified leads) do?",opts:["Show a thank you message","Redirect to the client's Calendly or booking page","Send an email to the VA","Ask another qualifying question"],ans:1},
-{q:"What must you do before publishing the form?",opts:["Add the client's logo first","Delete all test responses","Submit one test response","Contact Typeform support"],ans:1},
-{q:"What should you ALWAYS do with test responses before the form goes live?",opts:["Leave them as examples","Archive them","Delete them from Results","Share them with the client"],ans:2}
+{q:"What must you do with test responses before the form goes live?",opts:["Leave them as examples for the client","Archive them","Delete them from the Results tab","Share them with the client"],ans:2},
+{q:"What is the recommended maximum number of questions to maintain form completion rate?",opts:["10–15 questions","5–7 questions","As many as needed","3 questions only"],ans:1}
 ]}}
 ]},
 

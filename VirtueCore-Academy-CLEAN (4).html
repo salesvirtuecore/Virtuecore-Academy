@@ -152,7 +152,7 @@ async function supaFetch(path, opts={}){
 
 const ZAPIER_WEBHOOK="https://hooks.zapier.com/hooks/catch/26321921/uxcjy1e/";
 /* ── Replace with your n8n webhook URL after importing the workflow ── */
-const N8N_LOGIN_WEBHOOK="PASTE_YOUR_N8N_WEBHOOK_URL_HERE";
+const N8N_LOGIN_WEBHOOK="https://ehpnumpupqpwjsvyhrkr.supabase.co/functions/v1/login-notification";
 
 /* ═══════════════════════════════════════════════════════
    COURSES
@@ -2698,6 +2698,427 @@ Identify what has worked well in previous image ads, such as:
 ]}
 
 ]},
+
+{id:"metacomplete",icon:"🎯",color:"#E8A020",tagBg:"rgba(232,160,32,0.12)",tagCol:"#E8A020",tag:"META ADS",title:"Meta Ads Complete",
+desc:"The full step-by-step Meta Ads operating system. Business portfolio setup, pixel installation & testing, client onboarding, market research, and live campaign creation — all with Loom walkthroughs.",
+modules:[
+
+{id:"mc1",title:"Module 1: Meta Business Portfolio & Campaign Setup",lessons:[
+{id:"mc1l1",title:"Creating & Managing Meta Ads — Full Walkthrough",mins:22,video:"9957faeb09f64530837438d1a057dc4c",body:`CREATING AND MANAGING META ADS — FULL WALKTHROUGH SOP
+
+OBJECTIVE
+Create a complete Meta Ads campaign from scratch — from business portfolio setup through to publishing the first ad.
+
+META ADS STRUCTURE
+Three levels you must always remember:
+• Campaign → the objective (what Meta optimises for)
+• Ad Set → the audience, budget, schedule, placements
+• Ad → the actual creative: image/video + copy
+
+STEP 1 — SET UP YOUR META BUSINESS PORTFOLIO
+If starting fresh:
+• Go to business.facebook.com → Create Account
+• Enter your business name, your name, and your business email
+• Connect your Facebook Page and Instagram account (Settings → Accounts → Pages / Instagram)
+• Create your Ad Account: Settings → Accounts → Ad Accounts → Add → Create New
+  Set ad account name, time zone, currency → assign to your business → add payment
+
+STEP 2 — CHOOSE YOUR CAMPAIGN OBJECTIVE
+Go to Ads Manager → Create → choose objective:
+• Awareness — brand visibility only
+• Traffic — driving website visits (not ideal for lead gen)
+• Engagement — post interactions, video views
+• Leads — collecting contacts via forms or website events ← most VirtueCore clients
+• Sales — optimising for purchase events
+
+STEP 3 — AD SET SETUP
+Name format: [Date] | [Persona] | [Angle] | [Settings] | [Audience Type]
+• Location: target the client's specific geography
+• Age & Gender: based on ICP from market research
+• Detailed Targeting: use interests/behaviours or leave broad and let Meta's algorithm work
+• Budget: set at ad set level (ABO) — enough for 1-2 results per day minimum
+• Schedule: set start date to TOMORROW MORNING — never launch same evening
+• Placements: use Advantage+ Placements (automatic optimisation)
+
+STEP 4 — CREATING THE AD
+• Select your Facebook Page and Instagram account
+• Choose format: Single Image, Video, or Carousel
+• Upload your creative asset
+• Write Primary Text (your main copy)
+• Write Headline (5-8 words, punchy)
+• Write Description (short trust tags)
+• Select Call to Action button (e.g., 'Learn More', 'Book Now', 'Sign Up')
+• Preview on all placements before publishing → Hit Publish
+
+STEP 5 — TRACKING PERFORMANCE
+Key metrics to monitor in Ads Manager → Ads Reporting:
+• Cost Per Result (CPR/CPL) — primary scorecard
+• Frequency — how many times each person has seen your ad
+• Reach & Impressions — overall exposure
+• CTR (Click Through Rate) — quality of creative/audience match
+• Hook Rate — 3-second video plays ÷ impressions (video ads only)
+
+CAUTIONARY NOTES
+• Ensure compliance with Meta advertising policies before publishing
+• Avoid over-targeting with narrow audiences — broad often outperforms
+• Always start with a small test budget before scaling`}
+],quiz:{id:"mc1q",title:"Module 1 Quiz — Portfolio & Campaign Setup",qs:[
+{q:"What are the three levels of Meta Ads structure?",opts:["Account, Campaign, Ad Set","Campaign, Ad Set, Ad","Portfolio, Campaign, Creative","Business, Ad Account, Pixel"],ans:1},
+{q:"Which campaign objective should most VirtueCore clients use for generating leads?",opts:["Traffic","Awareness","Leads or Sales","Engagement"],ans:2},
+{q:"What name format should you use for ad sets?",opts:["ClientName_AdSet_Date","[Date] | [Persona] | [Angle] | [Settings] | [Audience Type]","Campaign_Budget_Audience","No specific format required"],ans:1},
+{q:"When should you schedule a new ad set to launch?",opts:["Immediately upon creation","Tonight before midnight","Tomorrow morning — never the same evening","After the client approves the creative"],ans:2},
+{q:"What is ABO in Meta Ads?",opts:["Ad Batch Optimisation","Audience-Based Objectives","Ad Set Budget Optimisation (budget set at ad set level)","Automatic Bid Optimisation"],ans:2}
+]}},
+
+{id:"mc2",title:"Module 2: Setting Up & Testing the Meta Pixel",lessons:[
+{id:"mc2l1",title:"Pixel Installation, Testing & Verification",mins:25,video:"15d64a266ce746cc823c16ac8c5ee719",body:`SETTING UP AND TESTING META PIXEL — SOP
+
+OBJECTIVE
+Set up the Meta Pixel on a client's website and verify it is correctly tracking all key events before any ads go live.
+
+PART 1 — INSTALL THE PIXEL HELPER EXTENSION
+• Open Chrome → navigate to the Chrome Web Store
+• Search for 'Meta Pixel Helper' → Add to Chrome → Pin the extension
+• This shows you exactly which pixels are firing on any webpage
+
+PART 2 — CHECK IF THE CLIENT ALREADY HAS A PIXEL
+• Visit the client's website
+• Click the Pixel Helper extension icon in your browser toolbar
+• If it shows a pixel with events firing → pixel is already installed
+• If it shows 'No Pixels Found on this page' → you need to install one
+
+PART 3 — TEST AN EXISTING PIXEL VIA ADS MANAGER
+• Go to Meta Ads Manager → Events Manager (left sidebar)
+• Select the client's Dataset (pixel)
+• Click 'Test Events' tab
+• Enter the client's website URL → click Open Website
+• Navigate the site as a customer (fill out a form, visit the thank-you page)
+• Confirm each action appears in the Test Events panel exactly once
+• If events fire twice → double-firing issue (see Module 4 — Pixel Settings)
+
+PART 4 — CREATE A NEW PIXEL (if none exists)
+• Go to Events Manager → click 'Connect Data' → Web → Get Started
+• Choose partner integration:
+  — WordPress: install the Meta Pixel plugin
+  — Shopify: connect via the Meta sales channel in Shopify Settings
+  — GHL (GoHighLevel): paste pixel ID into Settings → Integrations → Facebook Pixel
+  — Other: use Google Tag Manager (15% lower cost per result according to Meta)
+• Name the pixel: [ClientName] Pixel → click Create
+• Follow the prompts for your chosen platform
+
+PART 5 — VERIFY INSTALLATION
+• Return to Events Manager → Test Events
+• Repeat the customer journey on the client's website
+• Confirm all key events fire correctly: PageView, Lead, Schedule, Purchase
+• Check Event Match Quality (EMQ) score — aim for 5+ out of 9.3
+
+CAUTIONARY NOTES
+• Always confirm the pixel is firing correctly BEFORE launching any ads
+• If the client is on Shopify, GHL, or WordPress — do NOT use manual code AND automatic matching together (causes double-firing)
+• Use the correct live website URL when testing — staging sites may not match the live pixel`}
+],quiz:{id:"mc2q",title:"Module 2 Quiz — Pixel Setup & Testing",qs:[
+{q:"What Chrome extension do you use to check if a pixel is installed on a website?",opts:["Pixel Inspector","Meta Pixel Helper","Facebook Tracker","Google Tag Assistant"],ans:1},
+{q:"Where do you test whether a pixel is firing correctly inside Meta Ads Manager?",opts:["Campaigns tab → Ad Preview","Events Manager → Test Events","Audiences → Custom Audiences","Business Settings → Pixels"],ans:1},
+{q:"What does it mean if a pixel event fires twice during testing?",opts:["The pixel is working perfectly","There is a double-firing issue — automatic and manual tracking are both active","The website has two domains","The pixel ID is incorrect"],ans:1},
+{q:"Which platform integration method does Meta recommend for a 15% lower cost per result?",opts:["Direct code installation","Shopify native channel","Google Tag Manager","Meta Pixel plugin"],ans:3},
+{q:"What EMQ score should you aim for?",opts:["At least 1","At least 3","At least 5 out of 9.3","Exactly 9.3"],ans:2}
+]}},
+
+{id:"mc3",title:"Module 3: Client Onboarding — Attaching a Client's Meta ID",lessons:[
+{id:"mc3l1",title:"Attaching a Client's Meta Ad Account to Your Portfolio",mins:6,video:"8d9833c4b2654f6f85991a89eccb4e84",body:`ATTACHING A CLIENT'S META ID — SOP
+
+OBJECTIVE
+Attach a client's Meta Ad Account to VirtueCore's Business Portfolio so you have full access to manage their campaigns.
+
+STEP 1 — ACCESS THE CLIENT MANAGEMENT SHEET
+• Locate the client's management sheet in the shared drive
+• Navigate to the 'Client' section to find their Meta Ad Account ID
+• If the ID is not there, log into Typeform using the provided credentials and go to: Content → Forms → Passwords Form
+
+STEP 2 — COPY THE META AD ACCOUNT ID
+• Find the client's Meta Ad ID in the management sheet
+• Copy the full numeric ID — it looks like a 15-digit number
+
+STEP 3 — OPEN META ADS MANAGER → BUSINESS SETTINGS
+• Go to Ads Manager and select the VirtueCore portfolio (top-left dropdown)
+• Navigate to Business Settings (gear icon in the left sidebar)
+
+STEP 4 — ADD THE AD ACCOUNT
+• In Business Settings, go to Accounts → Ad Accounts
+• Click + Add → Request Access to an Ad Account in Another Business Portfolio
+• Paste the copied Meta Ad ID → click Next
+• Request Full Control → click Done
+
+STEP 5 — NOTIFY THE CLIENT TO APPROVE
+• Inform the client to check their Meta Business Suite notifications or email
+• They must click Approve on the access request before you can manage the account
+
+STEP 6 — REQUEST ACCESS TO PAGES & INSTAGRAM
+Once the ad account is accepted:
+• Go to Accounts → Pages → Add → Request Shared Access to a Facebook Page
+• Enter the client's Facebook page URL → request all access → Done
+• Go to Accounts → Instagram Accounts → Add → Claim Instagram Account
+• Follow the same process
+
+STEP 7 — TROUBLESHOOT ACCESS ISSUES
+If the client can't see the request, guide them to:
+• Go to their Facebook Page or Instagram → Settings → Assign Partner / Assign People → select VirtueCore and grant Full Control
+
+STEP 8 — THIRD-PARTY PLATFORMS
+If the client uses Shopify, WordPress, WooCommerce or Wix:
+• Log into their website backend using credentials from the management sheet
+• Confirm you have access before setting up pixel integrations
+
+CAUTIONARY NOTES
+• Always double-check all IDs and URLs — one wrong digit causes the request to fail
+• Handle all client credentials confidentially — never store passwords outside approved systems
+• Never create ad accounts on behalf of clients — always access the one they already own`}
+],quiz:{id:"mc3q",title:"Module 3 Quiz — Client Onboarding",qs:[
+{q:"Where do you find a client's Meta Ad Account ID if it's not in the management sheet?",opts:["Ask the client directly","Log into Typeform → Content → Forms → Passwords Form","Search for it in Meta Business Manager","It's on the client's Facebook page"],ans:1},
+{q:"When requesting access to a client's ad account, what level should you request?",opts:["View Only","Partial Access","Full Control","Admin Override"],ans:2},
+{q:"What must the client do after you send an access request?",opts:["Nothing — it grants automatically","Log into Typeform and approve","Check their Meta Business Suite notifications or email and click Approve","Send you their password"],ans:2},
+{q:"What should you do before setting up pixel integrations for a client using Shopify or WordPress?",opts:["Create a new ad account for them","Confirm you have access to their website backend","Ask them to install the pixel themselves","Skip the pixel — it's optional"],ans:1},
+{q:"Why must you never create an ad account on behalf of a client?",opts:["It violates GDPR","You should always access the ad account they already own","It costs extra","Meta doesn't allow agencies to create accounts"],ans:1}
+]}},
+
+{id:"mc4",title:"Module 4: Pixel Settings & Data Quality",lessons:[
+{id:"mc4l1",title:"Configuring Pixel Settings for Maximum Data Quality",mins:10,video:"6c2a6308cf6440a5a2427c6409e19e9a",body:`PIXEL SETTINGS STANDARD OPERATING PROCEDURE
+
+OBJECTIVE
+Configure pixel settings correctly to maximise data quality and prevent tracking errors on every new client account.
+
+THE THREE KEY SETTINGS TO CHECK
+
+1. AUTOMATIC WEBSITE MATCHING — TURN ON
+• In Events Manager → select your Dataset → Settings tab
+• Find 'Automatic Website Matching' and ensure it is ON
+• Expand 'Show customer information parameters' and turn ALL toggles ON
+• This passes maximum customer data to Meta (hashed for privacy) and dramatically improves Event Match Quality (EMQ)
+
+2. TRACK EVENTS AUTOMATICALLY WITHOUT CODE — TURN OFF
+• This setting is ON by default and causes double-firing on Shopify, GHL, and WordPress
+• Find it in Settings and switch it OFF
+• COMMON MISTAKE: If events fire twice, this is almost always the cause
+
+3. EVENT MATCH QUALITY (EMQ) SCORE
+• Check this score for key events: Lead, Purchase, Schedule
+• Maximum score is 9.3 — higher is always better
+• Score below 5 = insufficient data reaching Meta. Investigate immediately.
+• Score above 7 = excellent. Maintain it.
+• Low EMQ is caused by: cookie blocking, privacy updates, insufficient user data from forms
+
+HOW TO IMPROVE A LOW EMQ SCORE
+• Ensure your Typeform/intake form collects: first name, last name, email, phone number
+• These fields should be sent directly to Meta via Zapier or native integration
+• Consider implementing a Conversions API (CAPI) gateway if EMQ stays below 5
+
+CHECKING THE CONVERSIONS API STATUS
+• In Events Manager → Settings → scroll to 'Conversions API' section
+• It should show Active with a recent 'Last received' timestamp
+• If using GHL/Shopify/WordPress plugins, CAPI is usually included automatically
+
+SHARING THE PIXEL WITH YOUR AD ACCOUNT
+• If a pixel doesn't appear in your ad account, you may need to share it
+• Go to Events Manager → your Dataset → Settings → scroll to 'Sharing'
+• Click 'Share with an Ad Account' and add your VirtueCore ad account ID
+
+MONITORING REGULARLY
+• Check pixel settings whenever a new client is onboarded
+• Review EMQ scores monthly — they can drop if a client changes their website platform
+• Watch the event history graph — sudden drops in events = pixel issue`}
+],quiz:{id:"mc4q",title:"Module 4 Quiz — Pixel Settings",qs:[
+{q:"What does 'Automatic Website Matching' do when turned ON?",opts:["Automatically creates ads based on website content","Passes customer data (hashed) to Meta to improve Event Match Quality","Automatically installs the pixel on your website","Connects your website to Instagram"],ans:1},
+{q:"Why must 'Track Events Automatically Without Code' be turned OFF?",opts:["It slows down the website","It is too expensive","It causes double-firing of events on platforms like Shopify, GHL, and WordPress","It conflicts with the Conversions API"],ans:2},
+{q:"What is the maximum possible Event Match Quality (EMQ) score?",opts:["10","100","9.3","5"],ans:2},
+{q:"What typically causes a low EMQ score?",opts:["High campaign budget","Insufficient data passing to Meta per conversion event — e.g. forms missing name, email, phone","The pixel is installed correctly","The campaign learning phase hasn't ended"],ans:1},
+{q:"How often should you check pixel settings and EMQ scores for existing clients?",opts:["Only at initial onboarding","Every day","Monthly — EMQ can drop if a client changes their website platform","Only when issues arise"],ans:2}
+]}},
+
+{id:"mc5",title:"Module 5: Market Research for Meta Ads",lessons:[
+{id:"mc5l1",title:"Market Research SOP — The Ad Library Method",mins:27,video:"365a5557b2994779a9707b0fcb85b163",body:`MARKET RESEARCH SOP FOR META ADS
+
+OBJECTIVE
+Conduct structured market research for every new client before creating any ads. Research informs everything: who you target, what you say, and how you say it.
+
+WHAT YOUR RESEARCH MUST ANSWER
+• Who are the top 1-4 ideal customer personas (ICPs)?
+• What are the top 1-4 angles — the main reasons people buy?
+• What are the top hesitations — what almost stops them buying?
+• What awareness/sophistication level is the audience at?
+• What tone, language, and copy length should you use?
+• What visuals/imagery will they relate to?
+• What emotional triggers will get them to act?
+
+STEP 1 — ACCESS THE META ADS PLAYBOOK
+• Locate the Meta Ads Playbook in your Google Drive
+• Familiarise yourself with the research checklist before starting
+
+STEP 2 — IDENTIFY THE TARGET AUDIENCE
+• Review the client's onboarding Typeform for ICP details
+• Goal: identify "hot leads" — people most likely to convert, not just interested people
+
+STEP 3 — ANALYSE COMPETITOR ADS IN THE META AD LIBRARY
+• Go to Meta Ad Library: facebook.com/ads/library
+• Search for competitors similar to the client's business
+• Filter by: country, platform (Facebook/Instagram), media type (Images or Video)
+• Focus on ads running 3+ months — longevity usually means profitability
+• Note: angles, headlines, offers, copy length, visual style, CTA
+
+STEP 4 — INSPECT ADS FOR DEEPER DATA
+• Right-click on a competitor ad → Inspect → Network tab
+• Click the video to play it → right-click the video file in the Network list → Open in new tab
+• Study: what angles are used? What makes this ad run for months?
+
+STEP 5 — RESEARCH COMPETITOR REVIEWS
+• Search the competitor on Google, Trustpilot, Reddit
+• Read 3-star reviews — they give the most nuanced insight (both praise and pain points)
+• Note exact language customers use — these become your ad headlines and copy
+
+STEP 6 — COMPILE INTO A CLAUDE DOCUMENT
+• Open Claude.ai
+• Paste in: competitor ad details, customer reviews, client background info
+• Ask: "Act as a Senior Creative Strategist. Give me a full breakdown of angles, pain points, hooks, emotions, and techniques used in these ads."
+• Organise the output into a structured Market Research doc
+
+STEP 7 — ORGANISE FINDINGS
+• Document: top 3 personas, top 4 angles, top hesitations, recommended tone, sticky phrases
+• Store in the client's shared drive folder
+• This document feeds all creative work
+
+CAUTIONARY NOTES
+• Avoid confirmation bias — research to understand the customer, not to validate existing beliefs
+• Avoid using only examples from large established brands — find comparable-sized competitors
+• This research must be completed BEFORE any ads are written or designed`},
+{id:"mc5l2",title:"Market Research into Ad Creation",mins:12,video:"ac717542f0654b75a9b9520b77efb297",body:`MARKET RESEARCH AND AD CREATION — COMBINED SOP
+
+OBJECTIVE
+Use market research findings to create effective, diverse ad content that targets the right people with the right message.
+
+STEP 1 — UNDERSTAND CUSTOMER AWARENESS LEVELS
+Before writing anything, identify where on the awareness scale your audience sits:
+• Unaware — educate them about the problem. Don't sell yet.
+• Problem Aware — acknowledge their pain. Make them feel seen. UGC and founder stories work best.
+• Solution Aware — show why YOUR solution is different. Features vs benefits, us vs them.
+• Product Aware — prove it works. Testimonials, case studies, results with numbers.
+• Most Aware — they know you. Give them a reason to act NOW. Offers, retargeting, urgency.
+
+STEP 2 — DEFINE YOUR ICPs (Ideal Customer Profiles)
+Identify 1-4 specific customer personas:
+• What do they do? What do they earn?
+• What problem keeps them up at night?
+• What have they already tried that didn't work?
+• What words do they actually use to describe their problem?
+• What would the ideal outcome look like for them?
+
+STEP 3 — GATHER MARKET RESEARCH DATA
+Sources to use:
+• Meta Ad Library — competitor ads running 3+ months
+• Google Reviews and Trustpilot — for the client AND their competitors
+• Comments on competitor ads — real customer sentiment in their own words
+• Reddit, Facebook Groups — community discussions about the niche
+
+STEP 4 — APPLY CREATIVE DIVERSITY
+Meta's algorithm groups similar ads. Avoid this with diversity across four dimensions:
+1. Message — different personas, angles, emotions, awareness levels, offers
+2. Media Type — static image, video/reel, carousel, collection
+3. Creative Framework — benefits, us vs them, before/after, UGC, founder story, case study, PAS, AIDA
+4. Style — lo-fi/raw/authentic, hi-fi/polished, AI-generated
+
+STEP 5 — CREATE 3-5 AD VARIATIONS PER ANGLE
+For each angle identified in research:
+• Create 3-5 variations (different headlines, different visuals, different hooks)
+• Ensure both image and video format are covered for each angle
+• Use the 4 U's to score every headline: Urgent, Unique, Ultra-Specific, Useful (aim for 3+ out of 4)
+
+AD CREATION GUIDELINES
+• Use 7th-grade reading level — accessible language wins
+• Focus on benefits, not features
+• Write in present tense and address the reader directly ("You")
+• Always include social proof and a clear call to action
+• Keep headlines to 5-8 words
+
+CAUTIONARY NOTES
+• Never start creating ads before market research is complete
+• Avoid overly complex language — clarity beats cleverness
+• Templates speed up creation — use the VirtueCore template library`}
+],quiz:{id:"mc5q",title:"Module 5 Quiz — Market Research",qs:[
+{q:"How long should a competitor's ad have been running before you use it for inspiration?",opts:["At least 1 week","At least 1 month","3+ months — longevity usually signals profitability","Only the most recent 7 days"],ans:2},
+{q:"Which review rating gives the most nuanced customer insights?",opts:["5-star reviews only","1-star reviews only","3-star reviews — both praise and pain points","Only verified purchase reviews"],ans:2},
+{q:"What are the four dimensions of Creative Diversity?",opts:["Budget, Audience, Placement, Objective","Message, Media Type, Creative Framework, Style","Headline, Hook, Body, CTA","Platform, Format, Language, Location"],ans:1},
+{q:"A prospect who doesn't yet know they have a problem is at which awareness level?",opts:["Most Aware","Product Aware","Solution Aware","Unaware"],ans:3},
+{q:"How many ad variations should you create per angle?",opts:["1 — perfect the best one","Exactly 2","3-5 variations per angle","As many as the client requests"],ans:2},
+{q:"What is the 4 U's framework used for?",opts:["Scoring campaign performance","Evaluating audience targeting","Scoring the quality of your headlines","Budgeting across ad sets"],ans:2}
+]}},
+
+{id:"mc6",title:"Module 6: Creating Effective Ad Campaigns — Live Build",lessons:[
+{id:"mc6l1",title:"Audience Research & Campaign Strategy",mins:13,video:"7996eb00c1a94883953fadd77acfc354",body:`CREATING EFFECTIVE AD CAMPAIGNS — SOP
+
+OBJECTIVE
+Build effective Meta ad campaigns by deeply understanding your client's goals and target audience before touching Ads Manager.
+
+STEP 1 — UNDERSTAND THE CLIENT'S GOALS
+Before creating anything, clarify:
+• What is the campaign objective? (leads, sales, bookings, awareness?)
+• What does success look like for this client?
+• What is the minimum acceptable cost per result?
+• Is there a specific offer, deadline, or promotion to feature?
+
+STEP 2 — IDENTIFY THE IDEAL CUSTOMER
+Answer before writing a single word:
+Who is the ideal customer? Not a vague group — a specific person:
+• What do they do for work?
+• What do they earn?
+• What keeps them up at night?
+• What words do they actually use?
+• What have they already tried that failed?
+
+STEP 3 — APPLY THE 5 AWARENESS LEVELS
+Use Eugene Schwartz's framework to determine how to write the ad:
+• Level 1 — UNAWARE: Educate or entertain. Don't sell yet.
+• Level 2 — PROBLEM AWARE: Call out their pain. UGC, founder story, tutorials.
+• Level 3 — SOLUTION AWARE: Show why YOU are different. Us vs them, features/benefits.
+• Level 4 — PRODUCT AWARE: Prove it works. Testimonials, 3 reasons why.
+• Level 5 — MOST AWARE: Give them an offer. Create urgency. Retargeting.
+
+STEP 4 — RUN MARKET RESEARCH
+Use the Market Research SOP to identify:
+• Top 1-4 ICPs
+• Top 1-4 buying angles
+• Main hesitations and objections
+• Tone and language preferences
+
+STEP 5 — IMPLEMENT CREATIVE DIVERSITY
+For each persona × angle combination:
+• Write 3-5 ad variations
+• Mix image and video format
+• Score every headline using the 4 U's framework
+• Aim for at least 3 out of 4 U's on each headline
+
+STEP 6 — BUILD IN ADS MANAGER
+Pre-launch checklist before hitting Publish:
+✓ Market research document complete and approved
+✓ Client's Meta Ad Account connected to VirtueCore portfolio
+✓ Pixel installed and verified — all key events fire once in Test Events
+✓ Pixel Settings configured: Automatic Website Matching ON, Auto-Track Events OFF
+✓ Event Match Quality (EMQ) score above 5
+✓ Creative assets ready and exported in correct dimensions
+✓ Ad copy written for all angle/persona combinations
+✓ Facebook Page and Instagram account connected
+
+CAUTIONARY NOTES
+• Ensure all ads comply with Meta's advertising policies before publishing
+• Review and adjust campaigns regularly based on performance data
+• Document all research findings — future campaigns on the same account benefit from this`}
+],quiz:{id:"mc6q",title:"Module 6 Quiz — Campaign Creation",qs:[
+{q:"Before building any campaign, what must be completed first?",opts:["The ad creative must be designed","The campaign objective must be selected in Ads Manager","The market research document must be complete and approved","The client must approve the budget"],ans:2},
+{q:"A prospect at awareness Level 2 (Problem Aware) responds best to which ad type?",opts:["Offer-based retargeting","Educational or humour content","UGC or founder story that makes them feel seen","Testimonials and case studies"],ans:2},
+{q:"What must the pre-launch checklist confirm about the pixel?",opts:["Just installed — no testing required","Installed AND verified in Test Events with all key events firing once","Pixel settings don't affect campaign performance","Only the PageView event needs to be tested"],ans:1},
+{q:"What should you do if a client wants to make changes 2 days after launch?",opts:["Agree immediately","Make the changes and reset the learning phase","Advise them to wait 3-5 days minimum to avoid disrupting the learning phase","Pause the campaign and restart it"],ans:2},
+{q:"What does the 4 U's framework help you evaluate?",opts:["Ad set budget allocation","Audience targeting quality","Headline quality — Urgent, Unique, Ultra-Specific, Useful","Campaign objective selection"],ans:2}
+]}}
+
+]},
+
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -2769,7 +3190,7 @@ async function doLogin(){
     // Fire login notification to n8n (non-blocking)
     if(N8N_LOGIN_WEBHOOK&&N8N_LOGIN_WEBHOOK!=="PASTE_YOUR_N8N_WEBHOOK_URL_HERE"){
       const now=new Date();
-      fetch(N8N_LOGIN_WEBHOOK,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},
+      fetch(N8N_LOGIN_WEBHOOK,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+SUPA_KEY,"apikey":SUPA_KEY},
         body:JSON.stringify({
           name,email:e,isAdmin,
           loginDate:now.toLocaleDateString("en-GB",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),

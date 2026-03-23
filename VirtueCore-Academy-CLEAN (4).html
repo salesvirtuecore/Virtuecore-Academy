@@ -115,14 +115,13 @@ nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,.93);backdrop-filt
   <div class="login-card">
     <div class="brand"><div class="brand-icon">V</div><div class="brand-name">VirtueCore <em>Academy</em></div></div>
     <div class="login-h1">Team Login</div>
-    <div class="login-sub">This platform is for VirtueCore team members only. Enter your details and team access code to continue.</div>
+    <div class="login-sub">This platform is for VirtueCore team members only. Sign in with your email and password to continue.</div>
     <div class="lock-note">🔒 Private — do not share this platform outside the team.</div>
-    <div class="field"><label>Full Name</label><input type="text" id="inp-name" placeholder="e.g. Sarah Williams"/></div>
-    <div class="field"><label>Email Address</label><input type="email" id="inp-email" placeholder="e.g. sarah@email.com"/></div>
-    <div class="field"><label>Access Code</label><input type="password" id="inp-code" placeholder="Enter team access code"/></div>
+    <div class="field"><label>Email Address</label><input type="email" id="inp-email" placeholder="e.g. sarah@email.com" autocomplete="email"/></div>
+    <div class="field"><label>Password</label><input type="password" id="inp-password" placeholder="Enter your password" autocomplete="current-password"/></div>
     <div class="err" id="login-err"></div>
-    <button class="btn-gold-full" onclick="doLogin()">Enter Academy →</button>
-    <div class="login-note">Access code provided by VirtueCore management · Admin: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3b0a2afa6b083b5aab1b7b6a6a0acb1a6eda0acedb6a8">[email&#160;protected]</a></div>
+    <button class="btn-gold-full" id="login-btn" onclick="doLogin()">Enter Academy →</button>
+    <div class="login-note">Access managed by VirtueCore · Contact <a href="mailto:sales@virtuecore.co.uk">sales@virtuecore.co.uk</a> for access</div>
   </div>
 </div>
 <div id="pg-app">
@@ -138,12 +137,19 @@ nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,.93);backdrop-filt
 </div>
 <script>
 /* ═══════════════════════════════════════════════════════
-   ACCESS CONTROL
-   VA access code:    VCTEAM2024
-   Admin access code: VCAdmin2024!  (for sales@virtuecore.co.uk only)
-   To change: update VA_CODE and ADMIN_CODE strings below
+   SUPABASE CONFIG
 ═══════════════════════════════════════════════════════ */
-const VA_CODE="VCTEAM2024", ADMIN_CODE="VCAdmin2024!", ADMIN_EMAIL="sales@virtuecore.co.uk";
+const SUPA_URL="https://ehpnumpupqpwjsvyhrkr.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVocG51bXB1cHFwd2pzdnlocmtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMjA5MjAsImV4cCI6MjA4OTY5NjkyMH0.Q28O_iXVTSdnA0XPzMOsWSQBB8-avqzeqmVn1yFy-hQ";
+
+async function supaFetch(path, opts={}){
+  const res=await fetch(SUPA_URL+path,{
+    ...opts,
+    headers:{"apikey":SUPA_KEY,"Content-Type":"application/json",...(opts.headers||{})}
+  });
+  return res.json();
+}
+
 const ZAPIER_WEBHOOK="https://hooks.zapier.com/hooks/catch/26321921/uxcjy1e/";
 
 /* ═══════════════════════════════════════════════════════
@@ -2722,32 +2728,49 @@ async function sendToZapier(data){
 /* ═══════════════════════════════════════════════════════
    AUTH
 ═══════════════════════════════════════════════════════ */
-function doLogin(){
-  const n=document.getElementById("inp-name").value.trim();
+async function doLogin(){
   const e=document.getElementById("inp-email").value.trim().toLowerCase();
-  const c=document.getElementById("inp-code").value.trim();
+  const pw=document.getElementById("inp-password").value;
   const err=document.getElementById("login-err");
-  if(!n||!e||!c){err.style.display="block";err.textContent="Please fill in all fields.";return}
-  if(!/\S+@\S+\.\S+/.test(e)){err.style.display="block";err.textContent="Please enter a valid email.";return}
-  const isAdmin=e===ADMIN_EMAIL&&c===ADMIN_CODE;
-  const isVA=c===VA_CODE;
-  if(!isAdmin&&!isVA){err.style.display="block";err.textContent="Incorrect access code. Contact VirtueCore management.";return}
-  U={name:n,email:e,isAdmin};
+  const btn=document.getElementById("login-btn");
+  err.style.display="none";
+  if(!e||!pw){err.style.display="block";err.textContent="Please enter your email and password.";return}
+  btn.disabled=true;btn.textContent="Signing in…";
   try{
-    const raw=localStorage.getItem("vc_p_"+e);P=raw?JSON.parse(raw):{};
-    const us=JSON.parse(localStorage.getItem("vc_users")||"[]");
-    const idx=us.findIndex(u=>u.email===e);
-    if(idx>=0)us[idx].name=n;else us.push({name:n,email:e,joined:new Date().toLocaleDateString("en-GB")});
-    localStorage.setItem("vc_users",JSON.stringify(us));
-  }catch(ex){P={}}
-  document.getElementById("nav-uname").textContent=n;
-  if(isAdmin)document.getElementById("tab-admin").classList.remove("hide");
-  document.getElementById("pg-login").style.display="none";
-  document.getElementById("pg-app").style.display="block";
-  renderDashboard();
+    // Sign in via Supabase Auth
+    const authRes=await fetch(SUPA_URL+"/auth/v1/token?grant_type=password",{
+      method:"POST",
+      headers:{"apikey":SUPA_KEY,"Content-Type":"application/json"},
+      body:JSON.stringify({email:e,password:pw})
+    });
+    const authData=await authRes.json();
+    if(authData.error||!authData.access_token){
+      err.style.display="block";
+      err.textContent=authData.error_description||"Incorrect email or password. Contact sales@virtuecore.co.uk for access.";
+      btn.disabled=false;btn.textContent="Enter Academy →";return;
+    }
+    // Fetch profile (is_admin flag)
+    const profRes=await fetch(SUPA_URL+"/rest/v1/profiles?id=eq."+authData.user.id+"&select=full_name,is_admin",{
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+authData.access_token}
+    });
+    const profData=await profRes.json();
+    const prof=profData[0]||{};
+    const name=prof.full_name||authData.user.user_metadata?.full_name||e.split("@")[0];
+    const isAdmin=!!prof.is_admin;
+    U={name,email:e,isAdmin,token:authData.access_token,uid:authData.user.id};
+    try{const raw=localStorage.getItem("vc_p_"+e);P=raw?JSON.parse(raw):{};}catch(ex){P={}}
+    document.getElementById("nav-uname").textContent=name;
+    if(isAdmin)document.getElementById("tab-admin").classList.remove("hide");
+    document.getElementById("pg-login").style.display="none";
+    document.getElementById("pg-app").style.display="block";
+    renderDashboard();
+  }catch(ex){
+    err.style.display="block";err.textContent="Connection error. Please try again.";
+  }
+  btn.disabled=false;btn.textContent="Enter Academy →";
 }
 
-["inp-name","inp-email","inp-code"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()}));
+["inp-email","inp-password"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()}));
 
 function doLogout(){
   U=null;P={};

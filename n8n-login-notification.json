@@ -1,0 +1,182 @@
+{
+  "name": "VirtueCore Academy — Login Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vc-academy-login",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Login Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "vc-academy-login"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-name",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "field-email",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "field-role",
+              "name": "role",
+              "value": "={{ $json.body.isAdmin ? 'Admin' : 'VA / Team Member' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-time",
+              "name": "loginTime",
+              "value": "={{ $json.body.loginTime }}",
+              "type": "string"
+            },
+            {
+              "id": "field-date",
+              "name": "loginDate",
+              "value": "={{ $json.body.loginDate }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-0002-0002-000000000002",
+      "name": "Extract Login Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-subject",
+              "name": "subject",
+              "value": "=🔐 Academy Login — {{ $json.name }} ({{ $json.role }})",
+              "type": "string"
+            },
+            {
+              "id": "field-html",
+              "name": "htmlBody",
+              "value": "=<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Academy Login Notification</title>\n</head>\n<body style=\"margin:0;padding:0;background-color:#0f0f0f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0f0f0f;padding:40px 16px;\">\n    <tr>\n      <td align=\"center\">\n        <table width=\"580\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:580px;width:100%;\">\n\n          <!-- Header -->\n          <tr>\n            <td style=\"background:linear-gradient(135deg,#1a1a1a 0%,#222 100%);border:1px solid #2a2a2a;border-radius:16px 16px 0 0;padding:32px 40px;text-align:center;\">\n              <div style=\"display:inline-block;width:48px;height:48px;background:#E8A020;border-radius:12px;line-height:48px;font-size:22px;font-weight:900;color:#0f0f0f;margin-bottom:16px;\">V</div>\n              <h1 style=\"margin:0;font-size:20px;font-weight:800;color:#ffffff;letter-spacing:-0.3px;\">VirtueCore <em style=\"font-style:normal;color:#E8A020;\">Academy</em></h1>\n              <p style=\"margin:6px 0 0;font-size:12px;color:#666;letter-spacing:1px;text-transform:uppercase;\">Login Notification</p>\n            </td>\n          </tr>\n\n          <!-- Body -->\n          <tr>\n            <td style=\"background:#161616;border-left:1px solid #2a2a2a;border-right:1px solid #2a2a2a;padding:36px 40px;\">\n\n              <p style=\"margin:0 0 8px;font-size:13px;color:#888;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;\">Team Member Login Detected</p>\n              <h2 style=\"margin:0 0 28px;font-size:24px;font-weight:800;color:#ffffff;line-height:1.3;\">{{ $json.name }} just signed in</h2>\n\n              <!-- Login details card -->\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#1d1d1d;border:1px solid #2a2a2a;border-radius:12px;overflow:hidden;margin-bottom:28px;\">\n                <tr>\n                  <td style=\"padding:0;\">\n                    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                      <tr>\n                        <td style=\"padding:18px 24px;border-bottom:1px solid #2a2a2a;\">\n                          <p style=\"margin:0;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;\">Name</p>\n                          <p style=\"margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:600;\">{{ $json.name }}</p>\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"padding:18px 24px;border-bottom:1px solid #2a2a2a;\">\n                          <p style=\"margin:0;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;\">Email</p>\n                          <p style=\"margin:4px 0 0;font-size:15px;color:#E8A020;font-weight:500;\">{{ $json.email }}</p>\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"padding:18px 24px;border-bottom:1px solid #2a2a2a;\">\n                          <p style=\"margin:0;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;\">Role</p>\n                          <p style=\"margin:4px 0 0;\">\n                            <span style=\"display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:{{ $json.role === 'Admin' ? 'rgba(232,160,32,0.15)' : 'rgba(62,123,250,0.15)' }};color:{{ $json.role === 'Admin' ? '#E8A020' : '#6B9EFF' }};\">{{ $json.role }}</span>\n                          </p>\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"padding:18px 24px;border-bottom:1px solid #2a2a2a;\">\n                          <p style=\"margin:0;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;\">Date</p>\n                          <p style=\"margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;\">{{ $json.loginDate }}</p>\n                        </td>\n                      </tr>\n                      <tr>\n                        <td style=\"padding:18px 24px;\">\n                          <p style=\"margin:0;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;\">Time</p>\n                          <p style=\"margin:4px 0 0;font-size:15px;color:#ffffff;font-weight:500;\">{{ $json.loginTime }}</p>\n                        </td>\n                      </tr>\n                    </table>\n                  </td>\n                </tr>\n              </table>\n\n              <p style=\"margin:0;font-size:13px;color:#555;line-height:1.6;\">This is an automated notification from VirtueCore Academy. If this login was not expected, please contact your system administrator immediately.</p>\n\n            </td>\n          </tr>\n\n          <!-- Footer -->\n          <tr>\n            <td style=\"background:#111;border:1px solid #2a2a2a;border-top:none;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;\">\n              <p style=\"margin:0 0 6px;font-size:12px;color:#444;\">VirtueCore · Birmingham, UK</p>\n              <p style=\"margin:0;font-size:11px;color:#333;\">This is an automated system notification — please do not reply to this email.</p>\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-0003-0003-000000000003",
+      "name": "Build Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "sales@virtuecore.co.uk",
+        "toEmail": "sales@virtuecore.co.uk",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.htmlBody }}",
+        "options": {
+          "replyTo": "sales@virtuecore.co.uk"
+        }
+      },
+      "id": "a1b2c3d4-0004-0004-0004-000000000004",
+      "name": "Send Login Notification",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [960, 300],
+      "credentials": {
+        "smtp": {
+          "id": "REPLACE_WITH_YOUR_SMTP_CREDENTIAL_ID",
+          "name": "VirtueCore SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"ok\":true}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0005-0005-0005-000000000005",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1200, 300]
+    }
+  ],
+  "connections": {
+    "Login Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Login Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Login Data": {
+      "main": [
+        [
+          {
+            "node": "Build Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email": {
+      "main": [
+        [
+          {
+            "node": "Send Login Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Login Notification": {
+      "main": [
+        [
+          {
+            "node": "Respond OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": ["virtuecore", "academy", "notifications"],
+  "triggerCount": 1,
+  "updatedAt": "2026-03-23T00:00:00.000Z",
+  "versionId": "vc-login-notify-v1"
+}

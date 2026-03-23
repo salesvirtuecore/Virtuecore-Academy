@@ -151,6 +151,8 @@ async function supaFetch(path, opts={}){
 }
 
 const ZAPIER_WEBHOOK="https://hooks.zapier.com/hooks/catch/26321921/uxcjy1e/";
+/* ── Replace with your n8n webhook URL after importing the workflow ── */
+const N8N_LOGIN_WEBHOOK="PASTE_YOUR_N8N_WEBHOOK_URL_HERE";
 
 /* ═══════════════════════════════════════════════════════
    COURSES
@@ -2764,6 +2766,17 @@ async function doLogin(){
     document.getElementById("pg-login").style.display="none";
     document.getElementById("pg-app").style.display="block";
     renderDashboard();
+    // Fire login notification to n8n (non-blocking)
+    if(N8N_LOGIN_WEBHOOK&&N8N_LOGIN_WEBHOOK!=="PASTE_YOUR_N8N_WEBHOOK_URL_HERE"){
+      const now=new Date();
+      fetch(N8N_LOGIN_WEBHOOK,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          name,email:e,isAdmin,
+          loginDate:now.toLocaleDateString("en-GB",{weekday:"long",year:"numeric",month:"long",day:"numeric"}),
+          loginTime:now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZoneName:"short"})
+        })
+      }).catch(()=>{});
+    }
   }catch(ex){
     err.style.display="block";err.textContent="Connection error. Please try again.";
   }

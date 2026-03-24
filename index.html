@@ -167,6 +167,42 @@ textarea.notes-ta:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,1
 /* ── Print ── */
 @media print{#pg-login,nav,.back-btn,.l-sidebar,.l-actions,.notes-wrap,.btn-feedback,.btn-dl-sop,.lesson-btns-row{display:none!important}.lesson-card{border:none;padding:0}.l-title{font-size:18pt}.l-body{color:#000;font-size:10pt;white-space:pre-wrap}}
 @media(max-width:480px){.cert-card{padding:28px 16px}.badges-row{gap:7px}.badge-chip{padding:7px 9px}}
+/* ── Practical Assessments ── */
+.practical-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.18);margin-top:6px;cursor:pointer;transition:background .2s}
+.practical-row.locked{opacity:.4;cursor:default;background:var(--s1);border-color:var(--border);pointer-events:none}
+.practical-row:not(.locked):hover{background:rgba(234,179,8,0.12)}
+.prac-ico{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+.prac-status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.prac-status-badge.pending{background:rgba(234,179,8,0.12);color:var(--gold)}
+.prac-status-badge.passed{background:rgba(34,197,94,0.12);color:var(--green)}
+.prac-status-badge.failed{background:rgba(239,68,68,0.12);color:var(--red)}
+.practical-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-top:0}
+.prac-scenario{background:var(--s2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:16px 18px;margin:16px 0;font-size:13px;line-height:1.75;color:var(--dim);white-space:pre-wrap}
+.prac-tips{margin:14px 0 20px;padding-left:18px;font-size:12px;color:var(--muted);line-height:1.8}
+.prac-submit-section{margin-top:20px;display:flex;flex-direction:column;gap:14px}
+.prac-field-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.prac-url-input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-size:13px;font-family:inherit;outline:none;transition:border-color .2s;box-sizing:border-box}
+.prac-url-input:focus{border-color:var(--gold)}
+.prac-divider{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.4px}
+.prac-divider::before,.prac-divider::after{content:"";flex:1;height:1px;background:var(--border)}
+.prac-file-label{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;border:1px dashed var(--border);background:var(--s2);color:var(--dim);font-size:13px;cursor:pointer;transition:all .2s}
+.prac-file-label:hover{border-color:var(--gold);color:var(--gold)}
+.prac-file-input{display:none}
+.prac-file-name{font-size:12px;color:var(--green);margin-top:6px}
+.prac-reviewed-box{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-top:16px}
+/* ── Admin submission review cards ── */
+.sub-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:12px}
+.sub-card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.sub-card-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:12px}
+.sub-card-score{width:70px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-size:13px;text-align:center;font-family:inherit;outline:none}
+.sub-card-score:focus{border-color:var(--gold)}
+.sub-card-fb{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--s2);color:var(--text);font-size:12px;resize:vertical;min-height:72px;font-family:inherit;outline:none;margin-top:10px;box-sizing:border-box}
+.sub-card-fb:focus{border-color:var(--gold)}
+.sub-card-actions{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-top:12px}
+.btn-pass{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,.3);padding:8px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-pass:hover{background:rgba(34,197,94,0.22)}
+.btn-fail{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,.25);padding:8px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-fail:hover{background:rgba(239,68,68,0.18)}
 </style>
 </head>
 <body>
@@ -5617,6 +5653,22 @@ function renderCourse(){
           <div class="q-row-title">${esc(m.quiz.title)}</div><div class="q-row-sub">${m.quiz.qs.length} questions</div></div>
         ${qd?`<span style="font-size:12px;color:var(--green);font-weight:800">✓ ${qd.score}%</span>`:'<span style="font-size:11px;color:var(--muted)">Not taken</span>'}
       </div>`;
+      // Practical assessment row
+      if(PRACTICALS[m.id]){
+        const qPassed=qd&&qd.passed;
+        const ps=P[m.id+"_prac"];
+        let pBadge="";
+        if(ps&&ps.status==="passed")pBadge=`<span class="prac-status-badge passed">✓ Passed</span>`;
+        else if(ps&&ps.status==="failed")pBadge=`<span class="prac-status-badge failed">✗ Not passed</span>`;
+        else if(ps)pBadge=`<span class="prac-status-badge pending">⏳ Under review</span>`;
+        h+=`<div class="practical-row ${qPassed?"":"locked"}" onclick="${qPassed?`renderPractical('${m.id}')`:""}" title="${qPassed?"":"Pass the quiz to unlock this practical"}">
+          <div class="prac-ico">🎯</div><div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:var(--text)">${esc(PRACTICALS[m.id].title)}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Practical assessment ${qPassed?"":"— complete quiz first"}</div>
+          </div>
+          ${pBadge||`<span style="font-size:11px;color:var(--muted)">${qPassed?"Start →":"🔒"}</span>`}
+        </div>`;
+      }
     }
     h+="</div></div>";
   });
@@ -5737,19 +5789,27 @@ function nextQ(){QS.qi++;QS.sel=null;QS.sub=false;renderQuiz();window.scrollTo(0
 function finishQ(){
   const correct=QS.ans.filter((a,i)=>a===AQ.qs[i].ans).length;
   const score=Math.round(correct/AQ.qs.length*100),passed=score>=70;
-  P[AQ.id]={score,passed};saveP();
+  const prev=P[AQ.id]||{};
+  const failCount=passed?0:(prev.failCount||0)+1;
+  P[AQ.id]={score,passed,failCount};saveP();
   sendToZapier({course:AC.title,quiz:AQ.title,score,passed,correct,total:AQ.qs.length});
+  if(!passed&&failCount>=2){
+    sendToZapier({type:"quiz_fail_warning",course:AC.title,quiz:AQ.title,score,failCount,
+      message:`${U.name} has failed the "${AQ.title}" quiz ${failCount} times (latest score: ${score}%). They need extra support — please follow up.`});
+  }
   if(passed&&cDone(AC)&&AC.badge){
     setTimeout(()=>toast(`🏆 "${AC.badge.name}" badge earned — course complete!`,"var(--gold)"),900);
   }
+  const practicalAvail=passed&&PRACTICALS[AM.id];
   set(`<div class="result-wrap"><div class="result-card">
     <div class="res-emo">${passed?"🏆":"📚"}</div>
     <div class="res-title">${passed?"Quiz Passed!":"Keep Studying"}</div>
     <div class="res-score ${passed?"pass":"fail"}">${score}%</div>
-    <div class="res-sub">${passed?`You got ${correct} of ${AQ.qs.length} correct. Module complete.`:`You got ${correct} of ${AQ.qs.length} correct. You need 70% to pass. Review the lessons and try again.`}</div>
+    <div class="res-sub">${passed?`You got ${correct} of ${AQ.qs.length} correct. Module complete.`:`You got ${correct} of ${AQ.qs.length} correct. You need 70% to pass.${failCount>=2?" Our team has been notified and will be in touch to support you.":""} Review the lessons and try again.`}</div>
     <div class="res-btns">
       ${!passed?'<button class="btn-sec" onclick="retryQ()">Retry quiz</button>':""}
-      <button class="btn-gold-sm" onclick="renderCourse()">Back to course →</button>
+      ${practicalAvail?`<button class="btn-gold-sm" onclick="renderPractical('${AM.id}')">Practical assessment →</button>`:""}
+      <button class="${practicalAvail?"btn-sec":"btn-gold-sm"}" onclick="renderCourse()">Back to course →</button>
     </div>
   </div></div>`);
   window.scrollTo(0,0);
@@ -5758,12 +5818,138 @@ function finishQ(){
 function retryQ(){QS={qi:0,ans:[],sel:null,sub:false};renderQuiz();window.scrollTo(0,0);}
 
 /* ═══════════════════════════════════════════════════════
+   PRACTICAL ASSESSMENTS
+═══════════════════════════════════════════════════════ */
+function renderPractical(mid){
+  AM=AC.modules.find(m=>m.id===mid);
+  const pr=PRACTICALS[mid];if(!pr)return renderCourse();
+  const ps=P[mid+"_prac"];
+  let statusHtml="";
+  if(ps){
+    if(ps.status==="passed"){
+      statusHtml=`<div class="prac-reviewed-box" style="border-color:rgba(34,197,94,.3)">
+        <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px">✓ Practical Passed — Score: ${ps.score??"-"}/100</div>
+        ${ps.feedback?`<div style="font-size:12px;color:var(--dim);line-height:1.6"><strong>Admin feedback:</strong> ${esc(ps.feedback)}</div>`:""}
+      </div>`;
+    } else if(ps.status==="failed"){
+      statusHtml=`<div class="prac-reviewed-box" style="border-color:rgba(239,68,68,.3)">
+        <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:6px">✗ Not passed — Score: ${ps.score??"-"}/100</div>
+        ${ps.feedback?`<div style="font-size:12px;color:var(--dim);line-height:1.6"><strong>Feedback:</strong> ${esc(ps.feedback)}</div><div style="margin-top:10px"><button class="btn-gold-sm" onclick="renderPracticalForm('${mid}')">Resubmit →</button></div>`:""}
+      </div>`;
+    } else {
+      statusHtml=`<div class="prac-reviewed-box" style="border-color:rgba(234,179,8,.25)">
+        <div style="font-size:13px;font-weight:700;color:var(--gold)">⏳ Submission received — your assessor will review it shortly</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Submitted: ${esc(ps.submittedAt||"")}</div>
+      </div>`;
+    }
+  }
+  set(`<button class="back-btn" onclick="renderCourse()">← Back to course</button>
+  <div class="practical-card">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+      <span style="font-size:28px">${pr.icon}</span>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px">Practical Assessment</div>
+        <div style="font-size:18px;font-weight:800;color:var(--text)">${esc(pr.title)}</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Module: ${esc(AM.title)}</div>
+    <div class="prac-scenario">${esc(pr.scenario)}</div>
+    ${pr.tips&&pr.tips.length?`<div style="font-size:12px;font-weight:700;color:var(--dim);margin:12px 0 4px">💡 Tips</div><ul class="prac-tips">${pr.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:""}
+    ${statusHtml}
+    ${!ps||ps.status==="failed"?`<div id="prac-form-${mid}"></div>`:""}
+  </div>`);
+  if(!ps||ps.status==="failed")renderPracticalForm(mid);
+  window.scrollTo(0,0);
+}
+
+function renderPracticalForm(mid){
+  const el=document.getElementById("prac-form-"+mid);if(!el)return;
+  el.innerHTML=`<div class="prac-submit-section">
+    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px">Submit your work</div>
+    <div>
+      <div class="prac-field-lbl">Loom video URL</div>
+      <input class="prac-url-input" id="prac-loom-${mid}" type="text" placeholder="https://www.loom.com/share/..."/>
+    </div>
+    <div class="prac-divider">or upload a video file</div>
+    <div>
+      <label class="prac-file-label" for="prac-file-${mid}">📎 Choose video file (.mp4, .mov)</label>
+      <input class="prac-file-input" id="prac-file-${mid}" type="file" accept="video/*,.mp4,.mov,.avi" onchange="pracFileChosen('${mid}')"/>
+      <div class="prac-file-name" id="prac-fname-${mid}"></div>
+    </div>
+    <div id="prac-err-${mid}" style="font-size:12px;color:var(--red);display:none"></div>
+    <button class="btn-gold-sm" style="margin-top:6px" onclick="submitPractical('${mid}')">Submit for assessment →</button>
+  </div>`;
+}
+
+function pracFileChosen(mid){
+  const f=document.getElementById("prac-file-"+mid).files[0];
+  const el=document.getElementById("prac-fname-"+mid);
+  if(f&&el)el.textContent="📎 "+f.name;
+}
+
+async function submitPractical(mid){
+  const loomInp=document.getElementById("prac-loom-"+mid);
+  const fileInp=document.getElementById("prac-file-"+mid);
+  const errEl=document.getElementById("prac-err-"+mid);
+  const loomUrl=(loomInp&&loomInp.value.trim())||"";
+  const file=fileInp&&fileInp.files[0];
+  if(!loomUrl&&!file){errEl.style.display="block";errEl.textContent="Please provide a Loom URL or upload a video file.";return;}
+  errEl.style.display="none";
+  const btn=document.querySelector(`#prac-form-${mid} .btn-gold-sm`);
+  if(btn){btn.disabled=true;btn.textContent="Submitting…";}
+  let fileUrl="";
+  try{
+    if(file){
+      const ext=file.name.split(".").pop();
+      const path=`${U.uid}/${mid}_${Date.now()}.${ext}`;
+      const upRes=await fetch(`${SUPA_URL}/storage/v1/object/practical-uploads/${path}`,{
+        method:"POST",
+        headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token,"Content-Type":file.type,"x-upsert":"true"},
+        body:file
+      });
+      if(upRes.ok){
+        fileUrl=`${SUPA_URL}/storage/v1/object/public/practical-uploads/${path}`;
+      } else {
+        const er=await upRes.json().catch(()=>({}));
+        throw new Error(er.error||"File upload failed");
+      }
+    }
+    const module=AC.modules.find(m=>m.id===mid);
+    const payload={user_id:U.uid,user_email:U.email,user_name:U.name,
+      course_id:AC.id,module_id:mid,module_title:module?.title||mid,
+      practical_title:PRACTICALS[mid]?.title||mid,
+      submission_type:loomUrl&&fileUrl?"both":loomUrl?"loom":"upload",
+      loom_url:loomUrl||null,file_url:fileUrl||null,status:"pending"};
+    const saveRes=await fetch(SUPA_URL+"/rest/v1/practical_submissions",{
+      method:"POST",
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token,"Content-Type":"application/json","Prefer":"return=representation"},
+      body:JSON.stringify(payload)
+    });
+    if(!saveRes.ok){const er=await saveRes.json().catch(()=>({}));throw new Error(er.message||"Failed to save submission");}
+    const saved=await saveRes.json();
+    const subId=Array.isArray(saved)?saved[0]?.id:saved?.id;
+    // Notify admins via Zapier
+    sendToZapier({type:"practical_submission",submissionId:subId,user:U.name,email:U.email,
+      course:AC.title,module:module?.title||mid,practicalTitle:PRACTICALS[mid]?.title||mid,
+      loomUrl:loomUrl||null,fileUrl:fileUrl||null,
+      message:`${U.name} has submitted their practical for "${module?.title||mid}" in ${AC.title}. Please review and mark it in the Admin panel.`});
+    const now=new Date().toLocaleString("en-GB");
+    P[mid+"_prac"]={status:"pending",submittedAt:now,loomUrl,fileUrl};saveP();
+    toast("✓ Submission received! Your assessor will review it shortly.","var(--green)");
+    renderPractical(mid);
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent="Submit for assessment →";}
+    errEl.style.display="block";errEl.textContent="Submission failed: "+e.message;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
    ADMIN
 ═══════════════════════════════════════════════════════ */
 async function renderAdmin(){
   const thS="padding:11px 17px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--s2)";
   set(`<div class="pg-title">Admin Dashboard</div>
-  <div class="pg-sub">Manage team members and track training progress.</div>
+  <div class="pg-sub">Manage team members, review practical submissions, and track training progress.</div>
   <div class="adm-section">
     <div class="adm-section-title">➕ Add Team Member</div>
     <div class="adm-invite-row">
@@ -5774,7 +5960,11 @@ async function renderAdmin(){
     </div>
     <div id="adm-msg" style="margin-top:8px;font-size:12px;color:var(--dim)"></div>
   </div>
-  <div id="adm-tbl" style="margin-top:4px"><div style="text-align:center;padding:36px;color:var(--muted)">Loading team members…</div></div>`);
+  <div id="adm-tbl" style="margin-top:4px"><div style="text-align:center;padding:36px;color:var(--muted)">Loading team members…</div></div>
+  <div class="adm-section" style="margin-top:24px">
+    <div class="adm-section-title">🎯 Practical Assessment Submissions</div>
+    <div id="adm-submissions"><div style="text-align:center;padding:24px;color:var(--muted)">Loading…</div></div>
+  </div>`);
   try{
     const res=await fetch(SUPA_URL+"/rest/v1/profiles?select=id,full_name,email,is_admin,created_at&order=created_at.asc",{
       headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token}
@@ -5806,6 +5996,92 @@ async function renderAdmin(){
   }catch(e){
     const el=document.getElementById("adm-tbl");
     if(el)el.innerHTML=`<div style="padding:16px;color:var(--red)">Failed to load team data. Confirm your Supabase token is valid and profiles table is accessible.</div>`;
+  }
+  // Load practical submissions
+  adminLoadSubmissions();
+}
+
+async function adminLoadSubmissions(){
+  const wrap=document.getElementById("adm-submissions");
+  if(!wrap)return;
+  wrap.innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted)">Loading submissions…</div>`;
+  try{
+    const res=await fetch(SUPA_URL+"/rest/v1/practical_submissions?order=submitted_at.desc&limit=100",{
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token}
+    });
+    const subs=await res.json();
+    if(!Array.isArray(subs)||subs.length===0){
+      wrap.innerHTML=`<div style="padding:20px;color:var(--muted);font-size:13px">No practical submissions yet.</div>`;return;
+    }
+    const pending=subs.filter(s=>s.status==="pending");
+    const reviewed=subs.filter(s=>s.status!=="pending");
+    const renderCard=(s)=>{
+      const statusBadge=s.status==="passed"?`<span class="prac-status-badge passed">✓ Passed</span>`:
+        s.status==="failed"?`<span class="prac-status-badge failed">✗ Failed</span>`:
+        `<span class="prac-status-badge pending">⏳ Pending</span>`;
+      const viewLinks=(s.loom_url?`<a href="${esc(s.loom_url)}" target="_blank" style="font-size:12px;color:var(--blue)">▶ View Loom</a>`:"")
+        +(s.file_url?`<a href="${esc(s.file_url)}" target="_blank" style="font-size:12px;color:var(--blue);margin-left:10px">📎 View File</a>`:"");
+      const alreadyReviewed=s.status!=="pending";
+      return `<div class="sub-card">
+        <div class="sub-card-head">
+          <div style="font-size:13px;font-weight:800;color:var(--text)">${esc(s.user_name||"Unknown")} <span style="font-weight:400;color:var(--muted)">— ${esc(s.user_email||"")}</span></div>
+          ${statusBadge}
+        </div>
+        <div class="sub-card-meta">
+          <span>📚 ${esc(s.module_title||s.module_id||"")}</span>
+          <span>🎯 ${esc(s.practical_title||"")}</span>
+          <span>📅 ${s.submitted_at?new Date(s.submitted_at).toLocaleDateString("en-GB"):""}</span>
+          ${viewLinks}
+        </div>
+        ${alreadyReviewed&&s.admin_feedback?`<div style="font-size:12px;color:var(--dim);margin-bottom:8px"><strong>Previous feedback:</strong> ${esc(s.admin_feedback)}</div>`:""}
+        <div class="sub-card-actions">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div>
+                <div class="prac-field-lbl" style="margin-bottom:4px">Score / 100</div>
+                <input class="sub-card-score" id="rev-score-${s.id}" type="number" min="0" max="100" placeholder="0–100" value="${s.admin_score??""}" />
+              </div>
+            </div>
+            <textarea class="sub-card-fb" id="rev-fb-${s.id}" placeholder="Feedback for the student…">${esc(s.admin_feedback||"")}</textarea>
+            <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+              <button class="btn-pass" onclick="adminReviewSubmission('${s.id}','passed','${s.module_id}','${s.user_id}')">✓ Mark Passed</button>
+              <button class="btn-fail" onclick="adminReviewSubmission('${s.id}','failed','${s.module_id}','${s.user_id}')">✗ Mark Failed</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    };
+    wrap.innerHTML=`
+      <div class="adm-section-title" style="margin-bottom:12px">⏳ Pending Review (${pending.length})</div>
+      ${pending.length?pending.map(renderCard).join(""):
+        `<div style="font-size:13px;color:var(--muted);padding:12px 0">No pending submissions.</div>`}
+      ${reviewed.length?`<div class="adm-section-title" style="margin:20px 0 12px">✓ Reviewed (${reviewed.length})</div>${reviewed.map(renderCard).join("")}`:""}`;
+  }catch(e){
+    wrap.innerHTML=`<div style="padding:16px;color:var(--red);font-size:13px">Failed to load submissions: ${esc(e.message)}</div>`;
+  }
+}
+
+async function adminReviewSubmission(subId, status, moduleId, targetUserId){
+  const scoreEl=document.getElementById("rev-score-"+subId);
+  const fbEl=document.getElementById("rev-fb-"+subId);
+  const score=scoreEl?parseInt(scoreEl.value)||null:null;
+  const feedback=fbEl?fbEl.value.trim():"";
+  if(!score&&score!==0){alert("Please enter a score (0–100) before marking.");return;}
+  try{
+    const res=await fetch(SUPA_URL+"/rest/v1/practical_submissions?id=eq."+subId,{
+      method:"PATCH",
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token,"Content-Type":"application/json","Prefer":"return=minimal"},
+      body:JSON.stringify({status,admin_score:score,admin_feedback:feedback,reviewed_at:new Date().toISOString(),reviewed_by:U.name})
+    });
+    if(!res.ok){const er=await res.json().catch(()=>({}));throw new Error(er.message||"Update failed");}
+    // Notify student via Zapier
+    sendToZapier({type:"practical_reviewed",submissionId:subId,moduleId,status,score,feedback,
+      reviewedBy:U.name,
+      message:`Your practical submission has been reviewed. Result: ${status.toUpperCase()} (${score}/100).${feedback?" Feedback: "+feedback:""}`});
+    toast(`✓ Submission marked as ${status}.`,status==="passed"?"var(--green)":"var(--red)");
+    adminLoadSubmissions();
+  }catch(e){
+    alert("Error saving review: "+e.message);
   }
 }
 
@@ -6320,6 +6596,720 @@ COURSES.forEach(c=>c.modules.forEach(m=>{
     m.quiz.qs=[...m.quiz.qs,...QUIZ_EX[m.quiz.id]];
   }
 }));
+
+/* ═══════════════════════════════════════════════════════
+   PRACTICAL ASSESSMENTS — one real-world task per module
+   Submission → Supabase table `practical_submissions`
+   Storage bucket: `practical-uploads`
+═══════════════════════════════════════════════════════ */
+const PRACTICALS={
+/* ── TYPEFORM ── */
+"tf1":{title:"Build a Real Lead-Gen Typeform",icon:"📋",
+scenario:`Your client is Vist, a wedding videographer specialising in Asian weddings based in Birmingham.
+
+Task: Build a fully working Typeform lead-gen flow for Vist with the following requirements:
+• Welcome screen with Vist's name and a clear value proposition
+• Partial Submit Point after the email question (so partial data is captured if the form is abandoned)
+• Questions: name, email, phone number, wedding date (date picker), wedding location, guest count, and budget (multiple choice: Under £2K / £2K–£4K / £4K–£6K / £6K+)
+• Conditional logic: Budget "Under £2K" → Ending A (polite rejection message). All other budgets → Ending B (Calendly booking link placeholder)
+• At least one required question toggle correctly enabled
+
+Submit a Loom video walking through your completed form — show all questions, logic flow, and both endings live in preview mode.`,
+tips:["Add the Partial Submit Point immediately after the email field","Test BOTH ending paths before recording","The booking link in Ending B can be a placeholder URL — the logic is what matters"]},
+
+"tf2":{title:"Brand the Vist Typeform",icon:"🎨",
+scenario:`Using the Vist Typeform you built in Module 1, create a fully branded custom theme.
+
+Task:
+• Background colour: deep navy #0D1B2A
+• Button & accent colour: gold #C9A84C
+• Font: a clean sans-serif (Montserrat or similar)
+• Add a logo placeholder at the top (use a simple text logo "VIST" if you don't have an image)
+• Ensure strong contrast between background and all text
+• Preview the full form on both desktop and mobile view before recording
+
+Submit a Loom walkthrough showing your theme settings panel and the final branded form in preview mode.`,
+tips:["Check the Design → New Theme panel","Mobile preview is under the eye icon top-right","Text on dark backgrounds must be white or very light grey"]},
+
+"tf3":{title:"Conditional Logic — Qualify & Route Leads",icon:"🔀",
+scenario:`Add advanced conditional logic to the Vist form from Modules 1 & 2.
+
+Task:
+• Budget "Under £2K" → routes to Ending A: "Thank you for your interest — unfortunately we're not the right fit at this time."
+• Budget £2K–£4K → routes to Ending B: "Perfect! We'd love to chat — book your discovery call here." (placeholder Calendly link)
+• Budget £4K–£6K and £6K+ → route to Ending C: "Excellent — you qualify for our premium package. Let's talk." (same or different placeholder)
+• Add a date validation: if the wedding date entered is in the past, show a note or re-route to a relevant ending
+• Use the "See all rules" view to audit your logic before recording
+
+Submit a Loom showing all three budget paths tested live in preview mode.`,
+tips:["Use the Workflow tab to build and audit all rules","Test each path one by one — don't skip any","'See all rules' is your quality-check tool before going live"]},
+
+"tf4":{title:"Full Lead-Gen Form for a New Client",icon:"🚀",
+scenario:`Build a complete Typeform lead-gen qualification form for a local personal trainer named Alex Carter.
+
+Requirements:
+• Business name: AC Fitness
+• Questions: name, email, phone, primary goal (Weight Loss / Muscle Gain / General Fitness / Athletic Performance), current training frequency (Never / 1–2x/week / 3–4x/week / 5+x/week), available budget per month (Under £100 / £100–£200 / £200–£350 / £350+)
+• Conditional ending: Under £100/month → polite rejection. All others → qualification success + booking CTA
+• Partial Submit Point after email
+• Custom theme: use AC Fitness brand colours of your choice (state what you chose in your Loom)
+• At least one required field enabled
+
+Submit a Loom walkthrough of the complete form including theme, all questions, logic, and both endings tested.`,
+tips:["Re-use your Vist workflow — the structure is near-identical","Choose a clean, fitness-appropriate colour palette","Briefly explain your colour choices at the start of your Loom"]},
+
+/* ── ZAPIER ── */
+"zap2":{title:"Automate the Vist Lead Notifications",icon:"⚡",
+scenario:`Connect the Vist Typeform (built in tf1/tf3) to Google Sheets and Gmail using Zapier.
+
+Task:
+• Trigger: New qualifying submission in the Vist Typeform (budget £2K+)
+• Action 1: Create a new row in a Google Sheet called "Vist Leads" with columns: Name, Email, Phone, Budget, Wedding Date, Submitted At
+• Action 2: Send a Gmail confirmation to the lead's email: "Hi [Name], thanks for reaching out to Vist! We'll be in touch within 24 hours."
+• Test the full Zap with a live test submission before recording
+• Show the Zap History tab confirming a successful run
+
+Submit a Loom showing: the Zap configuration, a live test submission, the Google Sheet updating, and the Gmail confirmation landing in a test inbox.`,
+tips:["Use Zapier Copilot to scaffold the Zap quickly — then verify each field mapping","NEVER use your personal Gmail — use a client-dedicated account","Monitor Zap History for 24 hours after go-live"]},
+
+/* ── LEAD MAGNET ── */
+"lm1":{title:"Generate & Expand a Lead Magnet Idea with AI",icon:"🤖",
+scenario:`Your client is PeakRoof — a local roofing company targeting homeowners in the UK.
+
+Task:
+• Use Claude or ChatGPT to generate 5 lead magnet ideas for PeakRoof (use the SOP prompt structure)
+• Choose the strongest idea and explain why you chose it
+• Use the SOP's AI prompt to fully expand that idea: include a title, cover page concept, 3–5 section headings, key content bullet points for each section, and a CTA at the end
+• The lead magnet should address a real homeowner pain point (e.g. "10 Warning Signs Your Roof Needs Replacing Before Winter")
+
+Submit a Loom screen recording of your AI session showing: the prompt you used, the 5 ideas generated, your reasoning for the choice, and the expanded outline.`,
+tips:["Be specific in your prompt — include PeakRoof's target customer and the problem they solve","Strong magnets are hyper-specific; avoid generic titles","Show your reasoning out loud in the Loom — this is part of the assessment"]},
+
+"lm2":{title:"Design the Lead Magnet Cover & Content Pages in Canva",icon:"🎨",
+scenario:`Using your expanded PeakRoof lead magnet outline from Module 1, design the first two pages in Canva.
+
+Task:
+• Page 1 — Cover: bold headline, subheadline, PeakRoof logo placeholder, brand colours (your choice — state them in your Loom), a relevant background image or graphic
+• Page 2 — First content section: section heading, 3–4 bullet points with key content, a supporting icon or image
+• Use consistent fonts (max 2 typefaces), spacing, and brand colour throughout
+• Apply at least one Canva Frame to display an image cleanly
+• Check for spelling errors and alignment before recording
+
+Submit a Loom walkthrough of your Canva design showing both pages, your design choices, and the layers/elements panel.`,
+tips:["Use Canva's grid guides for alignment","Keep the design clean — less is more","Use free Canva stock images if you don't have brand assets"]},
+
+"lm3":{title:"Complete the Full Lead Magnet PDF",icon:"📄",
+scenario:`Finish the complete PeakRoof lead magnet from Modules 1 & 2 — a polished, client-ready PDF.
+
+Task:
+• Minimum 4 pages: Cover, 2 content/tip pages, CTA/back page
+• All pages must share consistent branding (colours, fonts, logo placement)
+• The CTA back page must include: a clear next step ("Book your free roof inspection"), a contact method, and PeakRoof branding
+• Export as PDF from Canva
+• Do a final pass: check all spelling, alignment, and that no placeholder text remains
+
+Submit the exported PDF file as your upload, OR a Loom doing a final walkthrough of the complete document and showing the export step.`,
+tips:["Use 'Add page' in Canva — don't start a new file","CTA pages convert better with a single clear action","Export as 'PDF Print' for best quality"]},
+
+/* ── META CAMPAIGNS ── */
+"mc1":{title:"Set Up a Meta Business Portfolio",icon:"📘",
+scenario:`Your fictional client is Bloom Skincare — a UK beauty brand launching their first Meta ad campaigns.
+
+Task:
+• Create a Meta Business Manager (Business Portfolio) for Bloom Skincare
+• Add a new Ad Account named "Bloom Skincare Ads"
+• Connect or create a Facebook Page for the brand
+• Configure business details: address, website URL placeholder, business category (Beauty/Personal Care)
+• Assign yourself as an Admin user
+
+Submit a Loom walkthrough of the completed Business Manager showing: the Business Portfolio overview, the Ad Account, and the connected Facebook Page.`,
+tips:["Use your own Meta account as the business owner for this exercise","Business name should clearly identify it as a training/test account","Never use a client's live account for practice tasks"]},
+
+"mc2":{title:"Install & Verify the Meta Pixel",icon:"🔬",
+scenario:`Install the Meta Pixel for Bloom Skincare and verify that key events are firing correctly.
+
+Task:
+• Generate the Bloom Skincare Pixel in Events Manager
+• Install the base Pixel code on a test page (you can use a free platform like Carrd, Notion page, or a local HTML file)
+• Set up at least 2 standard events: PageView (automatic) and Lead (on a button click or form submit)
+• Use the Meta Pixel Helper Chrome extension to verify both events fire correctly
+• Check the Events Manager for incoming test events
+
+Submit a Loom showing: the Pixel code installation, the Pixel Helper confirming PageView fires on load, and the Lead event firing on the test action.`,
+tips:["The Pixel Helper extension is free in the Chrome Web Store","Use 'Test Events' in Events Manager for real-time confirmation","A local HTML file with the pixel embedded is sufficient for this exercise"]},
+
+"mc3":{title:"Client Onboarding — Asset Access Request",icon:"🤝",
+scenario:`Walk through the full client onboarding process for Bloom Skincare as if they are a new client providing access.
+
+Task:
+• Navigate to Business Settings → Accounts → Ad Accounts
+• Demonstrate how you would request access to a client's existing ad account (use a fictional Meta Business ID: 123456789)
+• Show where you would request Page access (People → Add People or Partners)
+• Explain what access level (Admin/Advertiser/Analyst) you would request and why
+• Show where the client would receive and approve the request (screenshot or explain)
+
+Submit a Loom walkthrough talking through each step — explain your reasoning for the access level chosen.`,
+tips:["Always request the minimum necessary permissions","Advertiser access is usually sufficient — only request Admin if truly needed","Show the full Settings panel so the assessor can follow along"]},
+
+"mc4":{title:"Configure Pixel Data Quality & Advanced Matching",icon:"📊",
+scenario:`Improve Bloom Skincare's Pixel data quality using Advanced Matching.
+
+Task:
+• Open Events Manager → Bloom Skincare Pixel → Settings
+• Enable Automatic Advanced Matching
+• Toggle on at least 4 customer parameters: email, phone, first name, last name
+• Check the Event Match Quality (EMQ) score — note the current score and explain what would improve it
+• Enable the 'Website' data source and confirm it is active
+
+Submit a Loom showing the Advanced Matching settings panel, all enabled parameters, and the EMQ score with a brief verbal explanation of what EMQ means and how to improve it.`,
+tips:["Higher EMQ = better ad targeting and conversion attribution","Each additional parameter you pass improves the match","EMQ won't be perfect on a test install — explain the theory"]},
+
+"mc5":{title:"Market Research for Meta Ads",icon:"🔍",
+scenario:`Conduct market research before building the Bloom Skincare campaign.
+
+Task:
+• Identify 3 distinct Meta audiences for Bloom Skincare:
+  1. A broad demographic audience (age, gender, location only)
+  2. An interest-based audience (relevant beauty/skincare interests)
+  3. A lookalike audience strategy (based on website visitors or customer list)
+• For each audience, document: estimated size, targeting rationale, and what stage of the funnel it targets (TOF/MOF/BOF)
+• Use Meta Ads Manager Audience Insights or the ad set targeting tool for your research
+
+Submit a Loom or a written brief (screenshot + narration) explaining your 3 audiences and your full campaign audience strategy.`,
+tips:["Interest stacking can over-narrow — keep broad audiences broad","Lookalike audiences require a source — explain what source you'd use","State the funnel stage for each audience clearly"]},
+
+"mc6":{title:"Live Campaign Build — Lead Generation",icon:"🎯",
+scenario:`Build a live Meta lead generation campaign for Bloom Skincare (use a test/sandbox ad account — do NOT spend real money).
+
+Task:
+• Campaign objective: Lead Generation
+• 2 Ad Sets with different audiences (use two of the audiences from Module 5)
+• 1 ad creative per ad set — write headline, primary text, and CTA
+• Pixel event: Lead
+• Daily budget: £10 per ad set (set but do not publish)
+• Review screen: check for any warnings before recording
+
+Submit a Loom walkthrough of the full campaign build — show Campaign, Ad Set, and Ad levels for both ad sets. Do NOT publish.`,
+tips:["Duplicate the first ad set to build the second faster","Write ad copy that speaks to a specific pain point","The Review screen warnings are part of the assessment — explain any you see"]},
+
+"mc7":{title:"Sales-Focused Retargeting Campaign",icon:"💰",
+scenario:`Build a bottom-of-funnel retargeting campaign for Bloom Skincare targeting website visitors.
+
+Task:
+• Campaign objective: Sales (Conversions)
+• Custom Audience: Website Visitors — Last 30 Days (show how you would create this audience even if pixel data is minimal)
+• Exclusion: Purchasers in last 30 days (explain why)
+• Creative: write a retargeting ad focused on social proof or urgency (e.g. "Still thinking it over? Here's what customers say…")
+• Conversion event: Purchase
+• Show the full campaign setup including budget and schedule
+
+Submit a Loom walkthrough with verbal explanation of your retargeting logic.`,
+tips:["Always exclude recent purchasers from retargeting","Retargeting ads need less awareness — lead with proof or offer","Explain the exclusion audience out loud — this demonstrates understanding"]},
+
+"mc8":{title:"ABO vs CBO — Set Up Both Campaign Types",icon:"⚖️",
+scenario:`Create both an ABO (Ad Set Budget Optimisation) and a CBO (Campaign Budget Optimisation) campaign structure for Bloom Skincare.
+
+Task:
+• ABO Campaign: 2 ad sets, each with a manual budget of £15/day. Different audiences. Explain why you chose ABO for this scenario.
+• CBO Campaign: 1 campaign budget of £30/day split across 2 ad sets. Same or different audiences. Explain why you chose CBO.
+• For both: objective = Lead Generation, same or comparable creative
+• Show side-by-side in Ads Manager (duplicate tab or record both)
+
+Submit a Loom comparing both structures and explaining when you would recommend each to a client.`,
+tips:["ABO gives you control; CBO gives Meta's algorithm more freedom","New accounts with no data typically benefit from ABO","Explain your recommendation clearly — the reasoning matters more than the setup"]},
+
+"mc9":{title:"Full Campaign in a Client Ad Account",icon:"🏗️",
+scenario:`Demonstrate the full process of creating a campaign inside a client ad account structure.
+
+Task:
+• Using your Bloom Skincare Business Manager, create a new campaign from scratch
+• Objective: Traffic (use this to avoid spending requirements)
+• Show: selecting the correct ad account, naming conventions (Campaign_[Objective]_[Date]), UTM parameters on the destination URL, ad set targeting, and creative
+• Apply a naming convention to the campaign, ad set, and ad
+• Show the campaign in draft state in Ads Manager
+
+Submit a Loom showing the complete setup with commentary on the naming convention you used and why it matters for reporting.`,
+tips:["Naming conventions matter for reporting at scale","Always add UTM parameters for Google Analytics tracking","Draft state means the campaign won't go live — safe to build freely"]},
+
+"mc10":{title:"Explain Meta's Algorithm",icon:"🧠",
+scenario:`Record a teaching video demonstrating your understanding of how Meta's algorithm works.
+
+Task:
+• Explain in your own words (3–5 minutes):
+  1. What the Learning Phase is, how long it lasts, and what causes a reset
+  2. Why campaign structure affects delivery (too many ad sets can fragment learning)
+  3. What 'Exit Learning Phase' means and what it indicates
+  4. How budget impacts learning speed
+  5. One mistake advertisers commonly make that prevents the algorithm from optimising
+
+No slides required — you can use screen share of Ads Manager to illustrate points, or simply talk to camera.
+
+Submit your Loom video.`,
+tips:["Speak naturally — this is a teaching exercise, not a script read","Real examples from the course (or your own experience) make explanations stronger","3–5 minutes is the target — under 2 minutes is too brief"]},
+
+"mc11":{title:"Instagram DM Ad Campaign",icon:"💬",
+scenario:`Create an Instagram DM campaign for Bloom Skincare using a promotional offer.
+
+Task:
+• Campaign objective: Messages (Instagram Direct)
+• Target audience: Women 18–35, UK, interested in beauty/skincare
+• Ad creative: Write a headline and primary text for a promotional offer ("Get 20% off your first order — DM us 'GLOW' to claim")
+• Set up a basic DM automation: when someone messages with "GLOW", auto-reply with the discount code and a link
+• Show the Instant Form or Messenger setup for the automated response
+• Budget: £10/day (do not publish)
+
+Submit a Loom walkthrough of the full campaign and DM automation setup.`,
+tips:["DM campaigns work best with a clear, low-friction offer","The automated reply should deliver the value immediately — no extra steps","Show the automation flow clearly — this is the most complex part"]},
+
+/* ── GOOGLE SHOPPING (ga) ── */
+"ga1":{title:"Set Up Google Ads & Merchant Center",icon:"🛒",
+scenario:`Your fictional client is Zenith Outdoor — a UK e-commerce brand selling hiking and camping gear.
+
+Task:
+• Create a Google Ads account for Zenith Outdoor (use your own Google account for this exercise)
+• Create or open a Google Merchant Center account
+• Link both accounts
+• Configure business information in Merchant Center: website URL, country, currency (GBP)
+• Enable Auto-tagging in Google Ads
+
+Submit a Loom showing both accounts configured and the Merchant Center → Google Ads link confirmed.`,
+tips:["Auto-tagging is in Google Ads Settings → Account Settings","The link is confirmed in Merchant Center under 'Linked accounts'","Use a real Google account — you can delete the campaigns after the exercise"]},
+
+"ga2":{title:"Set Up Conversion Tracking",icon:"📍",
+scenario:`Configure conversion tracking for Zenith Outdoor's Google Ads account.
+
+Task:
+• In Google Ads, create a conversion action: Purchase (website)
+• Set the conversion value to "Use different values for each conversion" with a default of £0
+• Install the conversion tag via Google Tag Manager on a test page (or show the manual tag installation method)
+• Verify the tag fires using Tag Assistant or Google Ads Conversion Diagnostics
+• Show the conversion action status in Google Ads (it may show 'Unverified' — explain what this means)
+
+Submit a Loom walkthrough showing the conversion action setup and the tag installation/verification step.`,
+tips:["Tag Assistant Chrome extension confirms tag fires on page load","'Unverified' simply means no data has flowed yet — this is normal for new tags","A local test HTML page with the conversion tag embedded is sufficient"]},
+
+"ga3":{title:"Create & Optimise Product Listings",icon:"📦",
+scenario:`Set up and optimise product listings for Zenith Outdoor in Google Merchant Center.
+
+Task:
+• Add at least 3 test products manually in Merchant Center (fictional products: e.g. "Zenith TrailPack 40L", "Zenith Summit Tent 2P", "Zenith All-Weather Jacket")
+• For each product include: title, description, price (GBP), availability (in stock), Google Product Category, and a placeholder image URL
+• Fix any disapproval warnings (common: missing GTIN — explain why GTIN matters)
+• Check the Diagnostics tab and explain any issues you see
+
+Submit a Loom showing the product feed in Merchant Center, the 3 products, any warnings/fixes, and the Diagnostics tab.`,
+tips:["Titles should lead with key attributes: brand + product name + key spec","GTIN (barcode) is required for branded products — use a placeholder or explain the exception","Diagnostics tab is your ongoing feed health dashboard"]},
+
+"ga4":{title:"Upload Product Reviews",icon:"⭐",
+scenario:`Walk through the Google Merchant Center product reviews upload process for Zenith Outdoor.
+
+Task:
+• Navigate to Marketing → Reviews in Merchant Center
+• Create a sample review feed file (XML or CSV format per Google's schema — include 3 fictional reviews for the TrailPack 40L)
+• Submit the feed or show the upload interface
+• Explain what the review badge looks like in Shopping results and why it matters for CTR
+• Show the review program settings and eligibility requirements
+
+Submit a Loom walking through the review feed process, your sample file, and a verbal explanation of why product reviews improve Shopping ad performance.`,
+tips:["Reviews require a minimum number before badges show — explain the threshold","The review feed schema is documented in Google Merchant Center Help","You can show the upload interface without actually submitting — explain each field"]},
+
+"ga5":{title:"Branded Search Campaign",icon:"🔎",
+scenario:`Create a branded search campaign for Zenith Outdoor.
+
+Task:
+• Campaign type: Search
+• Targeting: branded keywords only (e.g. "zenith outdoor", "zenith trail pack", "zenith camping gear")
+• Write 1 Responsive Search Ad: 5 headlines (including brand name), 2 descriptions
+• Match type: Phrase or Exact Match for all branded keywords
+• Add generic category terms as negatives (e.g. "hiking gear", "camping equipment")
+• Budget: £5/day (do not publish)
+
+Submit a Loom showing the full campaign setup, your ad copy, and the negative keyword list.`,
+tips:["Branded campaigns protect your SERP position when competitors bid on your name","Keep CPCs low — branded terms are rarely competitive for your own brand","Negatives keep the campaign pure — no generic traffic diluting the data"]},
+
+"ga6":{title:"YouTube Campaign for Product Sales",icon:"▶️",
+scenario:`Build a YouTube ad campaign for Zenith Outdoor targeting outdoor enthusiasts.
+
+Task:
+• Campaign type: Video (YouTube)
+• Subtype: Video reach or Drive conversions
+• Audience: Custom intent audience based on keywords like "best hiking backpack UK", "camping gear review", "trail running gear"
+• Geographic targeting: United Kingdom
+• Write the ad script for a 30-second skippable in-stream ad — core message must land in the first 5 seconds before the skip
+• Budget: £10/day
+
+Submit a Loom showing the campaign setup AND reading your 30-second ad script to demonstrate you understand the hook structure.`,
+tips:["The first 5 seconds are critical — lead with the problem or the hook","Custom intent audiences target people actively researching relevant topics","You don't need to produce the actual video — the script and setup are the assessment"]},
+
+"ga7":{title:"Performance Max Campaign Setup",icon:"🚀",
+scenario:`Create a Performance Max (PMax) campaign for Zenith Outdoor targeting product sales.
+
+Task:
+• Campaign type: Performance Max
+• Goal: Sales
+• Asset group: Provide 5 headlines, 2 long headlines, 3 descriptions, 1 logo URL (placeholder), 1 image URL (placeholder)
+• Audience signal: Add a custom audience signal based on search terms (hiking/camping/outdoor gear)
+• Budget: £20/day, Target ROAS: 300%
+• Explain in your Loom: what PMax is, how it differs from Standard Shopping, and when you would recommend it
+
+Submit a Loom showing the full PMax campaign setup and your verbal explanation of how it works.`,
+tips:["PMax uses Google's AI to allocate budget across all channels automatically","More asset variety = better performance — Google needs options to test","ROAS targets should be realistic — 300% means £3 revenue per £1 spent"]},
+
+/* ── GOOGLE LEAD GEN (glg) ── */
+"glg1":{title:"Set Up Google Ads for a Local Business",icon:"🔧",
+scenario:`Your client is PeakRoof — a local roofing company in Manchester.
+
+Task:
+• Create a Google Ads account for PeakRoof
+• Create or link a Google Merchant Center account (even though this is a service business — show the setup and explain what Merchant Center offers for local businesses)
+• Enable Auto-tagging
+• Set up billing information (you can show the billing section without adding a real card — explain each field)
+• Navigate to the account settings and configure business information
+
+Submit a Loom showing both accounts and explaining the purpose of each for a local service business like PeakRoof.`,
+tips:["Local service businesses don't typically need Merchant Center for Shopping — explain why you'd still link it (Local Inventory Ads, etc.)","Auto-tagging connects Google Ads to Google Analytics — always enable it","Walk through the interface slowly — the assessor needs to see each setting"]},
+
+"glg2":{title:"Call Extensions & Google Maps Listing",icon:"📍",
+scenario:`Set up Call Extensions and a Google Business Profile for PeakRoof.
+
+Task:
+• In Google Ads, add a Call Extension for PeakRoof:
+  - Phone number: 0161 000 0000 (fictional)
+  - Schedule: Mon–Fri 8am–6pm only
+  - Enable call reporting
+• Navigate to Google Business Profile (business.google.com) and explain the setup process:
+  - Business name, category, address, phone, website, opening hours
+  - How to verify the listing
+• Explain in your Loom: why consistency between Google Ads, Business Profile, and website is critical for local SEO (NAP consistency)
+
+Submit a Loom showing the Call Extension configured in Google Ads and walking through the Google Business Profile setup steps.`,
+tips:["Call Extensions only show when staff can answer — always schedule them","NAP = Name, Address, Phone — inconsistency confuses Google and lowers local rankings","Call reporting gives you data on which ads drive actual phone calls"]},
+
+"glg3":{title:"Local Search Campaign for a Service Business",icon:"📢",
+scenario:`Create a Google Search campaign for PeakRoof targeting emergency roofing enquiries in Manchester.
+
+Task:
+• Campaign type: Search
+• Goal: Leads (phone calls + form submissions)
+• Geographic targeting: Manchester city + 20-mile radius
+• 2 Ad Groups:
+  1. "Emergency Roofing" — keywords: "emergency roof repair Manchester", "urgent roof fix", "roof leaking repair"
+  2. "General Roofing" — keywords: "roofing company Manchester", "roof replacement Manchester", "local roofer"
+• Write 1 Responsive Search Ad per ad group (5 headlines, 2 descriptions each)
+• Bidding: Maximise Conversions
+
+Submit a Loom walking through both ad groups, the geo-targeting map, and both RSAs.`,
+tips:["Lead with urgency in the Emergency ad group — 'Same-Day Repairs Available'","Geo radius should reflect PeakRoof's realistic service area","Include the city name in at least one headline for relevance"]},
+
+"glg4":{title:"Branded Search Campaign",icon:"🏷️",
+scenario:`Create a branded search campaign for PeakRoof.
+
+Task:
+• Keywords: brand name variants ("peakroof", "peak roof manchester", "peakroof roofing")
+• Match types: Phrase and Exact Match
+• Write 1 Responsive Search Ad: headlines must include the brand name in at least 3
+• Add generic roofing terms as negative keywords (e.g. "roofing company", "roofer near me") to keep this campaign purely branded
+• Budget: £3/day
+• Explain in your Loom: why a roofing company would run branded ads even if they rank organically for their own name
+
+Submit a Loom showing the campaign, ad copy, negative keywords, and your verbal explanation.`,
+tips:["Competitors can bid on your brand name — branded ads protect your position","Branded CPCs are usually very low (£0.10–£0.30) — cheap protection","The explanation of 'why brand campaigns' is a key part of this assessment"]},
+
+"glg5":{title:"Non-Branded Search Campaign",icon:"🌐",
+scenario:`Build a non-branded search campaign for PeakRoof targeting homeowners actively searching for roofing services.
+
+Task:
+• Campaign type: Search, Goal: Leads
+• 3 Ad Groups covering different intents:
+  1. Roof Repair — "emergency roof repair", "fix roof leak", "broken roof tiles"
+  2. Roof Replacement — "new roof installation", "roof replacement cost UK", "how much does a new roof cost"
+  3. Local Roofing — "roofing company near me", "local roofer Manchester", "trusted roofer"
+• Write at least 1 RSA per ad group
+• Add a negative keyword list (include branded terms, DIY terms, competitor names as negatives)
+• Bidding: Maximise Conversions
+
+Submit a Loom walking through all 3 ad groups, the RSAs, and the negative keyword strategy.`,
+tips:["Each ad group = one theme — keep it tight","Non-branded campaigns are more expensive — strong negatives protect budget","Include price-related keywords in Roof Replacement — high purchase intent"]},
+
+"glg6":{title:"Account-Level Negative Keyword List",icon:"🚫",
+scenario:`Create and apply a comprehensive account-level negative keyword list for PeakRoof.
+
+Task:
+• Navigate to Shared Library → Negative Keyword Lists in Google Ads
+• Create a new list called "PeakRoof — Account Negatives"
+• Add at least 20 negative keywords covering:
+  - DIY terms: "diy roof repair", "how to fix roof myself", "roof repair kit"
+  - Irrelevant services: "solar panels", "loft conversion", "gutter cleaning"
+  - Non-commercial intent: "roofing jobs", "roofing apprenticeship", "roofing training"
+  - Geographic mismatches (cities outside Manchester)
+• Apply the list to ALL active campaigns
+• Explain in your Loom why each category of negative is important
+
+Submit a Loom showing the list, all negatives, and the campaigns it is applied to.`,
+tips:["Account-level negatives save you from adding the same terms in every campaign","Review the Search Terms report weekly to find new irrelevant queries","Match types matter for negatives — broad match negative blocks the widest range"]},
+
+"glg7":{title:"YouTube Campaign for a Local Business",icon:"▶️",
+scenario:`Set up a YouTube ad campaign for PeakRoof targeting homeowners in Manchester.
+
+Task:
+• Campaign type: Video
+• Format: Skippable in-stream
+• Audience: Custom intent based on search terms ("roof repair uk", "is my roof damaged", "roofing quotes") + geographic targeting (Manchester + 20-mile radius)
+• Write a 30-second ad script:
+  - First 5 seconds (pre-skip): State the problem homeowners face
+  - Middle 15 seconds: PeakRoof's solution + one proof point
+  - Final 10 seconds: CTA + contact details
+• Budget: £8/day
+
+Submit a Loom showing the campaign configuration AND delivering your 30-second script to camera or in voice-over.`,
+tips:["For local YouTube ads, hyper-local references ('Manchester homeowners') increase relevance","The script is as important as the campaign setup — assess both","You don't need to produce a video — the script delivery in Loom is the creative assessment"]},
+
+"glg8":{title:"Media Buying Metrics Report",icon:"📈",
+scenario:`Analyse the following fictional PeakRoof campaign data and produce a brief performance report.
+
+Campaign data (Month 1):
+• Impressions: 45,000
+• Clicks: 1,800
+• Leads (form + calls): 72
+• Ad Spend: £900
+• Average job value: £1,800
+• Jobs won from leads: 8
+
+Task:
+• Calculate: CTR, Conversion Rate (lead), CPL, Revenue generated, ROAS
+• Identify: 2 areas of strong performance and 2 areas needing improvement
+• Recommend: 2 specific actions you would take in Month 2 to improve results
+• Present your findings clearly (you can use a spreadsheet, Google Doc, or Loom whiteboard)
+
+Submit a Loom presenting your calculations and recommendations, as if you were presenting to PeakRoof.`,
+tips:["CTR = Clicks ÷ Impressions × 100. CPL = Spend ÷ Leads. ROAS = Revenue ÷ Spend","Talk through your numbers confidently — the maths is simple, the interpretation matters","Frame recommendations as specific actions, not vague suggestions"]},
+
+"glg9":{title:"Write Effective Google Ad Copy",icon:"✍️",
+scenario:`Write Google Search ad copy for PeakRoof using the AIDA framework and create two variations.
+
+Task:
+• Variation A — Pain-point focused: Headlines and description targeting the fear/urgency angle (e.g. storm damage, leaking roofs, winter protection)
+• Variation B — Aspirational: Headlines and description targeting the outcome/peace of mind angle (e.g. protect your home, trusted experts, quality guaranteed)
+• Each variation: 5 headlines (max 30 characters each), 2 descriptions (max 90 characters each)
+• Explain in your Loom:
+  1. Which variation you would test first and why
+  2. How you would A/B test these in Google Ads
+  3. After 2 weeks of data, what metric would determine the winner
+
+Submit your two sets of ad copy as a text document OR walk through them in your Loom.`,
+tips:["Character limits are strict — Google will reject headlines over 30 characters","Pain-point and aspiration copy perform differently across demographics — testing both is essential","The explanation of your testing methodology is part of the mark"]},
+
+/* ── FIGMA ── */
+"fig1":{title:"Design a Landing Page in Figma",icon:"🖌️",
+scenario:`Design a landing page in Figma for Vist — the Asian wedding videographer from the Typeform modules.
+
+Task:
+• Hero section: Full-width background (placeholder image or gradient), bold headline "Capturing the Beauty of Asian Weddings", subheadline, and a primary CTA button "Book Your Discovery Call"
+• Services section: 3 package cards (Silver £2K / Gold ��4K / Platinum £6K) with a brief description of each
+• Testimonials section: 2 fictional testimonials with quote, name, and wedding type
+• Footer: Contact email, Instagram link, copyright
+
+Submit a Loom walkthrough of your completed Figma file — show the layers panel, all sections, and any components you created.`,
+tips:["Use Figma's frame tool to start with a 1440px desktop frame","Auto Layout on the package cards makes them easy to resize","Keep spacing consistent — use 8px or 16px grid multiples"]},
+
+"fig2":{title:"Organise Layers & Apply Auto Layout",icon:"🗂️",
+scenario:`Take your Vist landing page from Module 1 and fully organise the file structure.
+
+Task:
+• Name every layer and group descriptively (no 'Frame 12' or 'Rectangle 4')
+• Organise into sections: Hero / Services / Testimonials / Footer
+• Convert the 3 package cards into a Figma Component and apply it 3 times
+• Apply Auto Layout to the testimonials section so cards reflow when content changes
+• Apply Auto Layout to the navigation bar
+
+Submit a Loom showing your layers panel (fully named and organised), the component, and a demo of Auto Layout resizing when text content changes.`,
+tips:["Double-click a layer to rename it","Components use the purple diamond icon — master component controls all instances","Auto Layout padding: use 24px inner padding on cards for clean spacing"]},
+
+"fig3":{title:"Redesign the Hero Section",icon:"🎨",
+scenario:`Redesign the Vist landing page hero section as a premium, editorial-quality header.
+
+Task:
+• Full-bleed background: use a dark overlay over a placeholder wedding photo (or a rich gradient: deep navy to deep purple)
+• Large typographic headline (min 56px) with a gold accent word
+• Subheadline in a lighter weight font
+• Primary CTA button and a secondary "See our work ↓" ghost button
+• Add a floating video mockup frame (use a rectangle as a video placeholder) positioned to the right
+• The hero must be visually striking at first glance
+
+Submit a Loom walking through your redesigned hero, explaining your design decisions (colour, typography, layout).`,
+tips:["Editorial heroes use large type and strong contrast — avoid medium/muted palettes","The floating video mockup adds depth — use a subtle drop shadow","Explain your choices out loud — design decisions are part of the mark"]},
+
+"fig4":{title:"Add Mobile Frames & Finalise Design",icon:"📱",
+scenario:`Complete the Vist landing page by adding mobile-responsive frames.
+
+Task:
+• Duplicate the desktop hero (1440px) and adapt it to a 375px mobile frame
+• Adapt the services section: stack the 3 package cards vertically on mobile
+• Adapt the testimonials: single column on mobile
+• Ensure font sizes are legible on mobile (minimum 16px body text)
+• Export the desktop hero frame as a PNG at 2x resolution
+• Export the full desktop page as a PDF
+
+Submit a Loom showing: the mobile frames side-by-side with desktop, the adapted layouts, and the export process.`,
+tips:["Mobile-first thinking: what's most important? Show that above the fold","Use Figma's 'Copy to frame' to duplicate sections for mobile adaptation","Export is under the Design panel on the right — check 2x for retina quality"]},
+
+/* ── FRAMER ── */
+"fw1":{title:"Build a Responsive Framer Website",icon:"🌐",
+scenario:`Build a single-page responsive website in Framer for Clarity by Maya — a fictional life coach.
+
+Task:
+• Hero: Full-screen background, headline "Unlock Your Clarity, Transform Your Life", subheadline, and a CTA button "Book a Free Session"
+• About: Short bio (2-3 sentences), circular photo placeholder
+• Services: 3 service cards (1:1 Sessions, Group Workshops, Online Course) with icon, title, and 2-line description
+• Contact: Simple form (name, email, message) or a Calendly embed placeholder
+• Publish to Framer's free domain
+
+Submit a Loom showing: the Framer canvas, the responsive behaviour (desktop → mobile preview), and the published live URL.`,
+tips:["Use Framer's built-in CMS or static components — both work for this exercise","Mobile responsiveness is automatic if you use Framer's stacks correctly","Publish to the free .framer.app domain — no custom domain required for this assessment"]},
+
+/* ── SQUARESPACE ── */
+"sq1":{title:"Build a Squarespace Website",icon:"🏗️",
+scenario:`Build a complete Squarespace website for a local baker called Sweet by Sia.
+
+Task:
+• Homepage: hero image/banner with bakery name, headline, and CTA
+• Services/Menu page: List at least 4 products or services with a brief description and price
+• Gallery page: Add at least 6 placeholder images in a gallery layout
+• Contact page: Contact form with name, email, message fields
+• Apply a consistent colour theme (warm tones appropriate for a bakery) and font pairing
+• Preview the site on mobile before recording
+
+Submit a Loom walkthrough of all four pages on desktop and a brief mobile preview.`,
+tips:["Use Squarespace's template library — start with a food/beverage template","Keep the colour palette warm: creams, terracottas, dusty pinks","The mobile preview button is at the bottom left of the editor"]},
+
+"sq2":{title:"Connect a GoDaddy Domain",icon:"🌐",
+scenario:`Walk through the complete process of connecting a GoDaddy domain to the Sweet by Sia Squarespace website.
+
+Task:
+• In Squarespace: Settings → Domains → Connect a domain → enter a fictional domain "sweetbysia.co.uk"
+• Show the Squarespace-provided DNS records (CNAME and/or A records) that you would need to add
+• In GoDaddy DNS Manager (or a screenshot walkthrough): show where you would add the CNAME record and where you'd update the A record
+• Explain: what TTL means, how long DNS propagation takes, and how to verify propagation using a tool like whatsmydns.net
+• Show the SSL certificate section in Squarespace and explain when it activates
+
+Submit a Loom walking through both sides of the connection (Squarespace + GoDaddy) and explaining the DNS propagation process.`,
+tips:["You don't need a real domain — walk through both interfaces and explain each field","Squarespace provides specific records — show them clearly","DNS propagation takes 0–48 hours — explain why and how to check"]},
+
+/* ── VIDEO EDITING ── */
+"ve1":{title:"Basic Edit — Import, Trim & Export",icon:"✂️",
+scenario:`Record a basic edit in CapCut demonstrating your core editing workflow.
+
+Task:
+• Import a short video clip (30–90 seconds — can be footage you shoot on your phone or a free stock video)
+• Trim the clip to remove any dead time at the start and end
+• Add a background music track from CapCut's audio library (volume: 20–30%)
+• Add a simple text title at the start (3 seconds, fades in)
+• Export at 1080p, 30fps
+
+Submit the exported video file AND/OR a Loom showing your CapCut timeline with all elements visible.`,
+tips:["Import video first, then audio — keeps the timeline clean","Use CapCut's 'Fade' option on the music to avoid abrupt endings","Export settings: 1080p / 30fps / H.264 for best compatibility"]},
+
+"ve2":{title:"Auto Captions — Generate, Edit & Style",icon:"💬",
+scenario:`Apply and style Auto Captions on a short talking-head or voiceover clip.
+
+Task:
+• Import a clip with clear speech (minimum 30 seconds — can be you talking or a downloaded clip with speech)
+• Generate Auto Captions in CapCut
+• Manually correct at least 3 transcription errors (show the corrections)
+• Style the captions: font, colour, background (semi-transparent pill is recommended), size (ensure legible on mobile)
+• Preview in the vertical (9:16) canvas
+
+Submit the captioned clip or a Loom showing the caption editing process, corrections made, and final styled output.`,
+tips:["CapCut Auto Captions are under 'Text → Auto Captions'","Always review captions manually — AI makes errors on accents and technical terms","Semi-transparent black background behind white text is the safest legibility choice"]},
+
+"ve3":{title:"Text Animations for Captions",icon:"🔤",
+scenario:`Apply dynamic text animations to a clip using CapCut's text animation library.
+
+Task:
+• Import a 30–60 second clip
+• Add at least 3 animated text elements (not auto-captions — manually placed text)
+  1. An animated hook/title that appears at the 1-second mark
+  2. A mid-clip stat or key point with an entry animation
+  3. An outro CTA ("Follow for more" or similar) with a fade-out exit animation
+• Use at least 2 different animation styles
+• Ensure all text is readable (contrast, size, duration — minimum 1.5 seconds on screen)
+
+Submit the edited clip or a Loom showing the timeline with all three text elements and their animations.`,
+tips:["Text duration: 1.5–3 seconds for short facts; 3–5 seconds for longer phrases","Animation duration: 0.3–0.5s entry/exit keeps the pace snappy","Test on a small screen — if you can't read it on your phone it's too small"]},
+
+"ve4":{title:"Blur & Keyframe Effects",icon:"🔦",
+scenario:`Use CapCut's blur and keyframe tools to create a focused, dynamic clip.
+
+Task:
+• Import a 30–60 second clip
+• Apply a Gaussian blur to the background of a section (use CapCut's blur effect for at least 5 seconds)
+• Create a smooth zoom-in effect using keyframes: start at 100% scale, end at 125% scale over 3 seconds
+• Add a keyframe-driven audio volume fade: full volume for first 20 seconds, fade to 30% in the final 5 seconds
+• Export the finished clip
+
+Submit the exported clip AND a Loom showing your keyframe timeline for the zoom and volume fade.`,
+tips:["Keyframes: tap the diamond icon at the desired timestamp, adjust the value","Zoom scale above 140% degrades quality on most clips — stay in the 110–130% range","Show the keyframe panel clearly in your Loom — this is the most technical part of the assessment"]},
+
+"ve5":{title:"Social Media Cut — Vertical Format",icon:"📱",
+scenario:`Create a 30-second social media clip optimised for Instagram Reels or TikTok.
+
+Task:
+• Source material: use any available footage (your own phone video, screen recording, or free stock)
+• Format: 9:16 vertical (1080×1920)
+• Structure: hook in first 3 seconds (text + visual hook), valuable middle 20 seconds, strong CTA in final 7 seconds ("Follow", "Save this", "Comment below")
+• Add captions, at least one animated text element, and background music
+• Colour grade: apply one colour filter or LUT for visual consistency
+• Export at 1080p
+
+Submit the final clip. In your upload or Loom, briefly explain your hook choice and why you chose it.`,
+tips:["Hooks that start mid-action outperform talking-head openers","Colour grading: CapCut's Film/Vintage filters are quick and effective","The CTA must be visual (text on screen) AND verbal (spoken) for best results"]},
+
+"ve6":{title:"Keyframe Transitions",icon:"🔄",
+scenario:`Use CapCut keyframes to create smooth scene-to-scene transitions in a short clip.
+
+Task:
+• Import at least 2 video clips and arrange them in sequence
+• Create a zoom-out-to-zoom-in transition between clips using keyframes:
+  - Last 0.5 seconds of Clip 1: zoom in (scale 100% → 130%)
+  - First 0.5 seconds of Clip 2: zoom out (scale 130% → 100%)
+• Create a second transition using opacity keyframes: Clip 1 fades to 0% opacity, Clip 2 fades in from 0%
+• Add a subtle sound effect to coincide with each transition
+• Export the full sequence
+
+Submit the exported clip and a Loom showing both keyframe transitions in the timeline.`,
+tips:["Keyframe transitions feel most natural when kept under 0.5 seconds","Opacity fade transition is the safest for any clip style","Sound effects for transitions should be subtle (30–40% volume)"]},
+
+"ve7":{title:"Video Cleaning Edit",icon:"🧹",
+scenario:`Take a raw, unedited talking-head video and clean it for publishing.
+
+Task:
+• Source: Record 2–3 minutes of raw footage of yourself talking (it can be on any topic — keep it simple)
+• Edit in 3 passes:
+  1. Pass 1: Remove all silences longer than 0.5 seconds
+  2. Pass 2: Remove filler words ("um", "uh", "like", "you know") — show these cuts in the timeline
+  3. Pass 3: Colour correction (brightness +10, contrast +5 or similar) and audio normalise
+• The final cut should feel natural — no jump cuts that feel jarring
+• Target output: 60–90 seconds from 2–3 minutes of raw footage
+
+Submit your raw clip AND the finished clean edit. In your Loom, show one before/after comparison of a filler word removal.`,
+tips:["Edit silences first — this cuts 30–40% of most raw talking-head footage immediately","After filler removal, watch the whole clip at 1.5x speed to catch jarring cuts","Audio normalise is under 'Audio → Normalise' — use it on every talking-head clip"]},
+
+"ve8":{title:"High-Engagement Short-Form Edit",icon:"🎬",
+scenario:`Edit a polished, high-engagement 30–60 second short-form video using all the techniques from Module 8.
+
+Task:
+• Source: use footage from a previous module or record new content
+• Apply ALL of the following:
+  1. Dynamic zoom: at least 2 zoom events on key moments (keyframe-driven)
+  2. Sound effects: at least 2 (whoosh on zoom, reaction sound on a key point) at 30–40% volume
+  3. Styled captions: readable, contrasting, consistent throughout
+  4. Scroll-stopping hook: visual + text hook in first 3 seconds
+  5. CTA: clear call to action in final 5 seconds
+• Export in 9:16 vertical format at 1080p
+
+Submit the final video AND a Loom walking through your editing timeline explaining each technique used.`,
+tips:["This is your showcase edit — apply everything you've learned","Dynamic zoom + sound effect on a key moment is the single highest-engagement technique","Walk through your timeline in the Loom — the assessor wants to see your process, not just the output"]}
+};
 
 async function adminCreateUser(){
   const name=document.getElementById("adm-nm")?.value.trim();

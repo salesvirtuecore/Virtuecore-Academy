@@ -168,6 +168,21 @@ textarea.notes-ta:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,1
 /* ── Print ── */
 @media print{#pg-login,nav,.back-btn,.l-sidebar,.l-actions,.notes-wrap,.btn-feedback,.btn-dl-sop,.lesson-btns-row{display:none!important}.lesson-card{border:none;padding:0}.l-title{font-size:18pt}.l-body{color:#000;font-size:10pt;white-space:pre-wrap}}
 @media(max-width:480px){.cert-card{padding:28px 16px}.badges-row{gap:7px}.badge-chip{padding:7px 9px}}
+/* ── Admin notification dot ── */
+.admin-dot{display:inline-block;width:8px;height:8px;background:var(--red);border-radius:50%;margin-left:5px;vertical-align:middle;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+/* ── My Certificates dashboard section ── */
+.certs-section{margin-bottom:28px}
+.certs-section-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.cert-earned-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.cert-earned-card{background:linear-gradient(135deg,var(--s1) 0%,rgba(232,160,32,0.06) 100%);border:1px solid rgba(232,160,32,0.25);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s}
+.cert-earned-card:hover{border-color:rgba(232,160,32,0.5)}
+.cert-earned-icon{font-size:22px}
+.cert-earned-module{font-size:13px;font-weight:700;color:var(--text);line-height:1.35}
+.cert-earned-course{font-size:11px;color:var(--muted);margin-top:1px}
+.cert-earned-meta{display:flex;align-items:center;gap:8px;margin-top:2px}
+.cert-earned-score{font-size:11px;font-weight:700;color:var(--green);background:rgba(34,197,94,0.1);padding:2px 8px;border-radius:20px}
+.cert-earned-distinction{font-size:11px;font-weight:700;color:var(--gold);background:rgba(232,160,32,0.1);padding:2px 8px;border-radius:20px}
 /* ── Practical Assessments ── */
 .practical-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.18);margin-top:6px;cursor:pointer;transition:background .2s}
 .practical-row.locked{opacity:.4;cursor:default;background:var(--s1);border-color:var(--border);pointer-events:none}
@@ -226,7 +241,7 @@ textarea.notes-ta:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,1
     <div class="nav-logo" onclick="goHome()"><div class="nav-logo-icon">V</div><span class="nav-logo-text">VirtueCore <em>Academy</em></span></div>
     <div class="nav-tabs">
       <button class="nav-tab on" id="tab-courses" onclick="switchTab('courses')">Courses</button>
-      <button class="nav-tab hide" id="tab-admin" onclick="switchTab('admin')">Admin</button>
+      <button class="nav-tab hide" id="tab-admin" onclick="switchTab('admin')">Admin<span id="admin-dot" class="admin-dot hide"></span></button>
     </div>
     <div class="nav-right"><span class="nav-user" id="nav-uname"></span><button class="btn-so" onclick="doLogout()">Sign out</button></div>
   </nav>
@@ -5634,6 +5649,12 @@ function showModuleCertificate(mid){
   else{toast("Please allow pop-ups to open your certificate.","var(--gold)");}
 }
 
+function showModuleCertificateFromDash(mid,moduleTitle,courseTitle){
+  const course=COURSES.find(c=>c.modules.some(m=>m.id===mid));
+  if(course)AC=course;
+  showModuleCertificate(mid);
+}
+
 function showCertificate(cid){
   const c=COURSES.find(x=>x.id===cid);if(!c)return;
   const d=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
@@ -5713,6 +5734,7 @@ async function doLogin(){
     document.getElementById("pg-app").style.display="block";
     renderDashboard();
     syncPracticalStatuses(); // non-blocking — refreshes practical review results from Supabase
+    if(isAdmin)adminLoadSubmissions(); // prime the notification dot
     // Fire login notification to n8n (non-blocking)
     if(N8N_LOGIN_WEBHOOK&&N8N_LOGIN_WEBHOOK!=="PASTE_YOUR_N8N_WEBHOOK_URL_HERE"){
       const now=new Date();
@@ -5786,6 +5808,43 @@ function renderDashboard(){
       h+=`<div class="badge-chip ${e?"earned":"locked"}" title="${e?"✓ Earned — "+c.title:"Complete "+c.title+" to earn this badge"}">
         <div class="badge-chip-icon">${c.badge.icon}</div>
         <div><div class="badge-chip-name">${c.badge.name}</div><div class="badge-chip-sub">${e?"✓ Earned":"Locked"}</div></div>
+      </div>`;
+    });
+    h+="</div></div>";
+  }
+  // My Certificates — modules where practical passed + quiz ≥ 80%
+  const earnedCerts=[];
+  COURSES.forEach(c=>{
+    c.modules.forEach(m=>{
+      if(!PRACTICALS[m.id])return;
+      const ps=P[m.id+"_prac"];
+      const qd=m.quiz?P[m.quiz.id]:null;
+      if(ps?.status==="passed"&&qd?.score>=80){
+        earnedCerts.push({mid:m.id,moduleTitle:m.title,courseTitle:c.title,courseColor:c.color,icon:c.icon,score:qd.score,practicalScore:ps.score,reviewedAt:ps.reviewedAt});
+      }
+    });
+  });
+  if(earnedCerts.length){
+    h+=`<div class="certs-section">
+      <div class="certs-section-title">🏆 My Certificates (${earnedCerts.length})</div>
+      <div class="cert-earned-grid">`;
+    earnedCerts.forEach(cert=>{
+      const distinction=cert.practicalScore>=90;
+      const dateStr=cert.reviewedAt?new Date(cert.reviewedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}):"";
+      h+=`<div class="cert-earned-card">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="cert-earned-icon" style="background:${cert.courseColor}22;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${cert.icon}</div>
+          <div style="flex:1;min-width:0">
+            <div class="cert-earned-module">${esc(cert.moduleTitle)}</div>
+            <div class="cert-earned-course">${esc(cert.courseTitle)}</div>
+          </div>
+        </div>
+        <div class="cert-earned-meta">
+          <span class="cert-earned-score">Quiz ${cert.score}%</span>
+          ${distinction?`<span class="cert-earned-distinction">✦ Distinction</span>`:`<span class="cert-earned-score" style="background:rgba(232,160,32,0.1);color:var(--gold)">Practical ${cert.practicalScore}/100</span>`}
+        </div>
+        ${dateStr?`<div style="font-size:11px;color:var(--muted)">Completed ${dateStr}</div>`:""}
+        <button class="btn-cert" style="margin-top:4px;width:100%;text-align:center" onclick="showModuleCertificateFromDash('${cert.mid}','${esc(cert.moduleTitle)}','${esc(cert.courseTitle)}')">🏆 Download Certificate</button>
       </div>`;
     });
     h+="</div></div>";
@@ -6277,6 +6336,7 @@ async function adminLoadSubmissions(){
       ${pending.length?pending.map(renderCard).join(""):
         `<div style="font-size:13px;color:var(--muted);padding:12px 0">No pending submissions.</div>`}
       ${reviewed.length?`<div class="adm-section-title" style="margin:20px 0 12px">✓ Reviewed (${reviewed.length})</div>${reviewed.map(renderCard).join("")}`:""}`;
+    updateAdminDot(pending.length);
   }catch(e){
     wrap.innerHTML=`<div style="padding:16px;color:var(--red);font-size:13px">Failed to load submissions: ${esc(e.message)}</div>`;
   }
@@ -6285,9 +6345,15 @@ async function adminLoadSubmissions(){
 async function adminReviewSubmission(subId, status, moduleId, targetUserId){
   const scoreEl=document.getElementById("rev-score-"+subId);
   const fbEl=document.getElementById("rev-fb-"+subId);
+  // Pull the submission row for student details
+  const cardEl=scoreEl?.closest(".sub-card");
+  const studentName=cardEl?.querySelector("strong")?.textContent?.split("—")[0]?.trim()||"";
+  const studentEmail=cardEl?.querySelector("strong")?.nextSibling?.textContent?.replace(/^[—\s]+/,"").trim()||"";
+  const moduleTitle=cardEl?.querySelectorAll(".sub-card-meta span")[0]?.textContent?.replace(/^📚\s*/,"")||moduleId;
+  const courseTitle=cardEl?.querySelectorAll(".sub-card-meta span")[0]?.textContent||"";
   const score=scoreEl?parseInt(scoreEl.value)||null:null;
   const feedback=fbEl?fbEl.value.trim():"";
-  if(!score&&score!==0){alert("Please enter a score (0–100) before marking.");return;}
+  if(score===null||isNaN(score)){alert("Please enter a score (0–100) before marking.");return;}
   try{
     const res=await fetch(SUPA_URL+"/rest/v1/practical_submissions?id=eq."+subId,{
       method:"PATCH",
@@ -6295,14 +6361,34 @@ async function adminReviewSubmission(subId, status, moduleId, targetUserId){
       body:JSON.stringify({status,admin_score:score,admin_feedback:feedback,reviewed_at:new Date().toISOString(),reviewed_by:U.name})
     });
     if(!res.ok){const er=await res.json().catch(()=>({}));throw new Error(er.message||"Update failed");}
-    // Notify student via Zapier
-    sendToZapier({type:"practical_reviewed",submissionId:subId,moduleId,status,score,feedback,
-      reviewedBy:U.name,
-      message:`Your practical submission has been reviewed. Result: ${status.toUpperCase()} (${score}/100).${feedback?" Feedback: "+feedback:""}`});
-    toast(`✓ Submission marked as ${status}.`,status==="passed"?"var(--green)":"var(--red)");
+    const dateStr=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+    // Always notify student of the review result
+    sendToZapier({type:"practical_reviewed",submissionId:subId,moduleId,moduleTitle,status,score,
+      feedback,reviewedBy:U.name,studentName,studentEmail,
+      message:`Your practical for "${moduleTitle}" has been reviewed. Result: ${status.toUpperCase()} — Score: ${score}/100.${feedback?" Feedback: "+feedback:""}`});
+    // If passed with 80%+ quiz score, fire a certificate_issued event so Zapier can email the cert
+    if(status==="passed"&&score>=80){
+      sendToZapier({type:"certificate_issued",submissionId:subId,moduleId,moduleTitle,
+        studentName,studentEmail,score,
+        dateIssued:dateStr,
+        distinction:score>=90,
+        message:`🏆 Certificate issued to ${studentName} for "${moduleTitle}". Score: ${score}/100${score>=90?" (With Distinction)":""}. They can log in to the VirtueCore Academy to download their certificate.`});
+    }
+    toast(`✓ Marked as ${status}${status==="passed"&&score>=80?" — certificate email sent 🏆":"."}`  ,status==="passed"?"var(--green)":"var(--red)");
     adminLoadSubmissions();
   }catch(e){
     alert("Error saving review: "+e.message);
+  }
+}
+
+function updateAdminDot(pendingCount){
+  const dot=document.getElementById("admin-dot");
+  if(!dot)return;
+  if(pendingCount>0){
+    dot.classList.remove("hide");
+    dot.title=`${pendingCount} practical${pendingCount>1?"s":""} awaiting review`;
+  } else {
+    dot.classList.add("hide");
   }
 }
 
@@ -7634,132 +7720,6 @@ async function syncPracticalStatuses(){
   }catch(e){}
 }
 
-/* ═══════════════════════════════════════════════════════
-   MODULE CERTIFICATE — generated when quiz ≥ 80% + practical passed
-═══════════════════════════════════════════════════════ */
-function showModuleCertificate(mid){
-  const mod=PRACTICALS[mid];
-  const module=AC?AC.modules.find(m=>m.id===mid):null;
-  const moduleTitle=module?.title||mod?.title||mid;
-  const studentName=U?.name||"Student";
-  const dateStr=new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
-  const courseTitle=AC?.title||"";
-
-  const cornerSVG=`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4 L4 76 M4 4 L76 4" stroke="#D4A843" stroke-width="1.5" opacity="0.8"/><path d="M11 11 L11 69 M11 11 L69 11" stroke="#D4A843" stroke-width="0.6" opacity="0.4"/><circle cx="4" cy="76" r="2.5" fill="#D4A843" opacity="0.9"/><circle cx="76" cy="4" r="2.5" fill="#D4A843" opacity="0.9"/><circle cx="4" cy="4" r="4" fill="#D4A843" opacity="0.15"/><circle cx="4" cy="4" r="2.5" fill="#D4A843" opacity="0.6"/><path d="M18 11 L11 18" stroke="#D4A843" stroke-width="0.5" opacity="0.5"/><path d="M26 11 L11 26" stroke="#D4A843" stroke-width="0.5" opacity="0.3"/><path d="M34 11 L11 34" stroke="#D4A843" stroke-width="0.5" opacity="0.2"/><rect x="10" y="10" width="4" height="4" transform="rotate(45 12 12)" fill="#D4A843" opacity="0.7"/><rect x="23" y="3" width="3" height="3" transform="rotate(45 24.5 4.5)" fill="#D4A843" opacity="0.5"/><rect x="3" y="23" width="3" height="3" transform="rotate(45 4.5 24.5)" fill="#D4A843" opacity="0.5"/></svg>`;
-
-  const uid=mid.replace(/[^a-z0-9]/gi,"");
-  const sealSVG=`<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs><radialGradient id="sg${uid}" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#F5D98A" stop-opacity="0.15"/><stop offset="100%" stop-color="#A07428" stop-opacity="0"/></radialGradient></defs>
-    ${Array.from({length:24},(_,i)=>{const a=(i/24)*360,r1=47,r3=38,rad=a*Math.PI/180,rad2=((a+7.5)*Math.PI/180);return`<line x1="${50+Math.cos(rad)*r1}" y1="${50+Math.sin(rad)*r1}" x2="${50+Math.cos(rad2)*r3}" y2="${50+Math.sin(rad2)*r3}" stroke="#D4A843" stroke-width="0.5" opacity="0.6"/>`;}).join("")}
-    <circle cx="50" cy="50" r="44" stroke="#D4A843" stroke-width="1" opacity="0.7"/>
-    <circle cx="50" cy="50" r="40" stroke="#D4A843" stroke-width="0.4" opacity="0.4"/>
-    <circle cx="50" cy="50" r="39" fill="url(#sg${uid})"/>
-    <circle cx="50" cy="50" r="33" stroke="#D4A843" stroke-width="0.7" opacity="0.5"/>
-    <circle cx="50" cy="50" r="28" fill="#D4A843" fill-opacity="0.08"/>
-    <path d="M37 36 L50 62 L63 36" stroke="#D4A843" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
-    <path id="at${uid}" d="M 14 50 A 36 36 0 0 1 86 50" fill="none"/>
-    <path id="ab${uid}" d="M 18 58 A 33 33 0 0 0 82 58" fill="none"/>
-    <text font-family="Cinzel,serif" font-size="6.5" fill="#D4A843" opacity="0.85" letter-spacing="2.5" font-weight="600"><textPath href="#at${uid}" startOffset="10%">VIRTUECORE</textPath></text>
-    <text font-family="Cinzel,serif" font-size="5.5" fill="#D4A843" opacity="0.65" letter-spacing="2"><textPath href="#ab${uid}" startOffset="8%">CERTIFIED</textPath></text>
-    <circle cx="35" cy="76" r="1.2" fill="#D4A843" opacity="0.6"/>
-    <circle cx="50" cy="79" r="1.2" fill="#D4A843" opacity="0.6"/>
-    <circle cx="65" cy="76" r="1.2" fill="#D4A843" opacity="0.6"/>
-  </svg>`;
-
-  const html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
-<title>Certificate — ${studentName}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#111;display:flex;flex-direction:column;align-items:center;padding:28px 20px;font-family:'Cormorant Garamond',Georgia,serif;gap:16px}
-.print-bar{font-family:system-ui,sans-serif;font-size:13px;color:#aaa;text-align:center}
-.print-btn{background:#D4A843;color:#0A0A12;border:none;padding:9px 22px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;margin-left:12px}
-.cw{width:297mm;height:210mm;display:flex;align-items:center;justify-content:center}
-.cert{width:297mm;height:210mm;background:#0A0A12;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 50%,#1a1430 0%,transparent 70%),radial-gradient(ellipse 80% 60% at 20% 80%,#0d1520 0%,transparent 60%),linear-gradient(135deg,#0A0A12 0%,#12101E 40%,#0A0A12 100%)}
-.bo{position:absolute;inset:10mm;border:1.5px solid #D4A843;box-shadow:0 0 0 1px rgba(212,168,67,.15)}
-.bi{position:absolute;inset:13mm;border:.5px solid rgba(212,168,67,.35)}
-.co{position:absolute;width:28mm;height:28mm}.co svg{width:100%;height:100%}
-.co.tl{top:8mm;left:8mm}.co.tr{top:8mm;right:8mm;transform:scaleX(-1)}
-.co.bl{bottom:8mm;left:8mm;transform:scaleY(-1)}.co.br{bottom:8mm;right:8mm;transform:scale(-1,-1)}
-.rl{position:absolute;left:18mm;right:18mm;height:2px;display:flex;align-items:center}
-.rl.t{top:22mm}.rl.b{bottom:22mm}
-.rll{flex:1;height:1px;background:linear-gradient(90deg,transparent,#D4A843,transparent)}
-.rld{width:5px;height:5px;border-radius:50%;background:#D4A843;flex-shrink:0;margin:0 4px;box-shadow:0 0 6px #D4A843}
-.sl{position:absolute;top:30mm;bottom:30mm;width:1px}
-.sl.l{left:20mm;background:linear-gradient(180deg,transparent,#D4A843 30%,#D4A843 70%,transparent)}
-.sl.r{right:20mm;background:linear-gradient(180deg,transparent,#D4A843 30%,#D4A843 70%,transparent)}
-.cnt{position:relative;z-index:10;width:calc(297mm - 52mm);text-align:center;padding:0 8mm}
-.acad{font-family:'Cinzel Decorative','Cinzel',serif;font-size:9pt;font-weight:700;letter-spacing:.45em;color:#D4A843;text-transform:uppercase;margin-bottom:2mm;opacity:.9}
-.ds{display:flex;align-items:center;justify-content:center;gap:6px;margin:2mm auto 4mm}
-.dsl{width:40px;height:.5px;background:linear-gradient(90deg,transparent,#D4A843)}
-.dsl.r{background:linear-gradient(90deg,#D4A843,transparent)}
-.dsd{width:5px;height:5px;background:#D4A843;transform:rotate(45deg);box-shadow:0 0 6px #D4A843}
-.hdr{font-family:'Cinzel',serif;font-size:7pt;font-weight:400;letter-spacing:.6em;color:#C8C0B0;text-transform:uppercase;margin-bottom:2mm;opacity:.8}
-.mtitle{font-family:'Cinzel Decorative',serif;font-size:24pt;font-weight:700;color:#F5D98A;line-height:1.1;margin-bottom:3mm;text-shadow:0 0 40px rgba(212,168,67,.3);letter-spacing:.04em}
-.pt{font-family:'Cormorant Garamond',Georgia,serif;font-size:8pt;font-weight:300;letter-spacing:.35em;color:#C8C0B0;text-transform:uppercase;margin-bottom:2mm;opacity:.75}
-.rec{font-family:'Great Vibes',cursive;font-size:32pt;color:#F5D98A;margin-bottom:2mm;text-shadow:0 0 30px rgba(212,168,67,.25);line-height:1.2}
-.for{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:8pt;font-weight:300;letter-spacing:.25em;color:#C8C0B0;opacity:.7;margin-bottom:3mm}
-.cn{font-family:'Cinzel',serif;font-size:13pt;font-weight:600;color:#F5D98A;letter-spacing:.05em;line-height:1.3;margin-bottom:1mm;text-shadow:0 0 30px rgba(212,168,67,.2)}
-.cnsub{font-family:'Cormorant Garamond',Georgia,serif;font-size:8pt;color:#C8C0B0;letter-spacing:.2em;opacity:.65;margin-bottom:1mm}
-.dm{display:flex;align-items:center;justify-content:center;gap:8px;margin:3mm auto 4mm}
-.dml{width:70px;height:.5px;background:linear-gradient(90deg,transparent,#D4A843)}
-.dml.r{background:linear-gradient(90deg,#D4A843,transparent)}
-.dmo{color:#D4A843;font-size:10pt;line-height:1}
-.bot{display:flex;align-items:flex-end;justify-content:space-between;margin-top:2mm;padding:0 8mm;gap:6mm}
-.sb,.db{flex:1;text-align:center}
-.sigl{width:100%;height:.5px;background:linear-gradient(90deg,transparent 5%,#A07428 20%,#A07428 80%,transparent 95%);margin-bottom:2mm}
-.sig{font-family:'Great Vibes',cursive;font-size:20pt;color:#F5D98A;line-height:1.1;margin-bottom:1mm;text-shadow:0 0 20px rgba(212,168,67,.2)}
-.sigtitle{font-family:'Cinzel',serif;font-size:5.5pt;letter-spacing:.3em;color:#C8C0B0;opacity:.7;text-transform:uppercase}
-.sc{flex-shrink:0;display:flex;flex-direction:column;align-items:center}
-.sc svg{width:26mm;height:26mm;filter:drop-shadow(0 0 8px rgba(212,168,67,.35))}
-.dv{font-family:'Cinzel',serif;font-size:8pt;font-weight:600;color:#D4A843;letter-spacing:.1em;margin-bottom:2mm}
-.dl{font-family:'Cinzel',serif;font-size:5.5pt;letter-spacing:.3em;color:#C8C0B0;opacity:.7;text-transform:uppercase}
-.foot{font-family:'Cinzel',serif;font-size:5.5pt;letter-spacing:.4em;color:rgba(212,168,67,.55);text-transform:uppercase;margin-top:3mm}
-@media print{body{background:white;padding:0}.print-bar{display:none}.cw{width:297mm;height:210mm}}
-</style></head><body>
-<div class="print-bar">Open in Chrome → File → Print → A4 Landscape → Save as PDF <button class="print-btn" onclick="window.print()">🖨️ Save as PDF</button></div>
-<div class="cw"><div class="cert">
-<div class="bg"></div>
-<div class="bo"></div><div class="bi"></div>
-<div class="sl l"></div><div class="sl r"></div>
-<div class="co tl">${cornerSVG}</div><div class="co tr">${cornerSVG}</div>
-<div class="co bl">${cornerSVG}</div><div class="co br">${cornerSVG}</div>
-<div class="rl t"><div class="rll"></div><div class="rld"></div><div class="rll" style="flex:2;background:#D4A843;opacity:.4"></div><div class="rld"></div><div class="rll" style="background:linear-gradient(90deg,#D4A843,transparent)"></div></div>
-<div class="rl b"><div class="rll"></div><div class="rld"></div><div class="rll" style="flex:2;background:#D4A843;opacity:.4"></div><div class="rld"></div><div class="rll" style="background:linear-gradient(90deg,#D4A843,transparent)"></div></div>
-<div class="cnt">
-  <div class="acad">Skills Academy</div>
-  <div class="ds"><div class="dsl"></div><div class="dsd"></div><div class="dsl r"></div></div>
-  <div class="hdr">Certificate of Completion</div>
-  <div class="mtitle">CERTIFICATE</div>
-  <div class="pt">This is to certify that</div>
-  <div class="rec">${studentName}</div>
-  <div class="for">has successfully completed the module</div>
-  <div class="cn">${moduleTitle}</div>
-  ${courseTitle?`<div class="cnsub">${courseTitle}</div>`:""}
-  <div class="dm"><div class="dml"></div><div class="dmo">✦</div><div class="dml r"></div></div>
-  <div class="bot">
-    <div class="sb">
-      <div class="sig">VirtueCore</div>
-      <div class="sigl"></div>
-      <div class="sigtitle">Director of Learning · Virtuecore Academy</div>
-    </div>
-    <div class="sc">${sealSVG}</div>
-    <div class="db">
-      <div class="dv">${dateStr}</div>
-      <div class="sigl"></div>
-      <div class="dl">Date of Completion</div>
-    </div>
-  </div>
-  <div class="foot">Issued &amp; Certified by Virtuecore Company · Skills Academy</div>
-</div>
-</div></div>
-</body></html>`;
-
-  const win=window.open("","_blank","width=1180,height=860");
-  if(win){win.document.write(html);win.document.close();}
-  else{toast("Please allow pop-ups to view your certificate.","var(--gold)");}
-}
 
 async function adminCreateUser(){
   const name=document.getElementById("adm-nm")?.value.trim();

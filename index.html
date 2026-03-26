@@ -107,7 +107,24 @@ nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,.93);backdrop-filt
 #toast{position:fixed;bottom:22px;right:22px;background:var(--s2);border:1px solid var(--green);border-radius:var(--rs);padding:12px 18px;font-size:13px;font-weight:700;color:var(--green);z-index:999;opacity:0;transform:translateY(10px);transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 #toast.show{opacity:1;transform:translateY(0)}
 .adm-actions{margin-top:16px;padding:14px 18px;background:var(--s1);border:1px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--dim)}
-@media(max-width:720px){.lesson-layout{grid-template-columns:1fr}.l-sidebar{position:static;max-height:none}.stats-row{grid-template-columns:1fr}.hero{flex-direction:column}nav{padding:0 14px}.wrap{padding:22px 14px}.lesson-card{padding:22px 18px}}
+@media(max-width:720px){
+  .lesson-layout{grid-template-columns:1fr}
+  .l-sidebar{position:static;max-height:none}
+  .stats-row{grid-template-columns:1fr}
+  .hero{flex-direction:column}
+  nav{padding:0 14px}
+  .wrap{padding:22px 14px}
+  .lesson-card{padding:22px 18px}
+  .adm-invite-row{flex-direction:column}
+  .adm-invite-row input,.adm-invite-row button{width:100%;box-sizing:border-box}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .sub-card{padding:14px}
+  .practical-row{flex-direction:column;align-items:flex-start;gap:10px}
+  .cert-earned-grid{grid-template-columns:1fr}
+  .pg-title{font-size:20px}
+  .course-grid{grid-template-columns:1fr}
+  .nav-right .nav-user{display:none}
+}
 /* ── Certificate ── */
 .cert-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
 .cert-card{background:var(--s1);border:2px solid var(--gold);border-radius:20px;padding:44px 48px;max-width:560px;width:100%;text-align:center;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.6)}
@@ -233,7 +250,19 @@ textarea.notes-ta:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,1
     <div class="field"><label>Password</label><input type="password" id="inp-password" placeholder="Enter your password" autocomplete="current-password"/></div>
     <div class="err" id="login-err"></div>
     <button class="btn-gold-full" id="login-btn" onclick="doLogin()">Enter Academy →</button>
+    <div style="text-align:center;margin-top:10px"><button onclick="showForgotPassword()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0">Forgot your password?</button></div>
     <div class="login-note">Access managed by VirtueCore · Contact <a href="mailto:sales@virtuecore.co.uk">sales@virtuecore.co.uk</a> for access</div>
+  </div>
+
+  <!-- Forgot password panel (hidden by default) -->
+  <div class="login-card" id="forgot-card" style="display:none;margin-top:16px">
+    <div class="login-h1" style="font-size:18px">Reset Password</div>
+    <div class="login-sub">Enter your email and we'll send you a link to reset your password.</div>
+    <div class="field"><label>Email Address</label><input type="email" id="inp-forgot-email" placeholder="e.g. sarah@email.com" autocomplete="email"/></div>
+    <div class="err" id="forgot-err"></div>
+    <div id="forgot-ok" style="display:none;padding:10px 14px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;font-size:13px;color:#22c55e;margin-bottom:12px"></div>
+    <button class="btn-gold-full" id="forgot-btn" onclick="doResetPassword()">Send Reset Link →</button>
+    <div style="text-align:center;margin-top:10px"><button onclick="hideForgotPassword()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;padding:0">← Back to login</button></div>
   </div>
 </div>
 <div id="pg-app">
@@ -5755,6 +5784,41 @@ async function doLogin(){
 }
 
 ["inp-email","inp-password"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()}));
+document.getElementById("inp-forgot-email")?.addEventListener("keydown",e=>{if(e.key==="Enter")doResetPassword()});
+
+function showForgotPassword(){
+  document.getElementById("forgot-card").style.display="block";
+  document.getElementById("forgot-err").style.display="none";
+  document.getElementById("forgot-ok").style.display="none";
+  const loginEmail=document.getElementById("inp-email")?.value;
+  if(loginEmail)document.getElementById("inp-forgot-email").value=loginEmail;
+  document.getElementById("inp-forgot-email")?.focus();
+}
+function hideForgotPassword(){
+  document.getElementById("forgot-card").style.display="none";
+}
+async function doResetPassword(){
+  const email=document.getElementById("inp-forgot-email").value.trim().toLowerCase();
+  const err=document.getElementById("forgot-err");
+  const ok=document.getElementById("forgot-ok");
+  const btn=document.getElementById("forgot-btn");
+  err.style.display="none";ok.style.display="none";
+  if(!email){err.style.display="block";err.textContent="Please enter your email address.";return;}
+  btn.disabled=true;btn.textContent="Sending…";
+  try{
+    const res=await fetch(SUPA_URL+"/auth/v1/recover",{
+      method:"POST",
+      headers:{"apikey":SUPA_KEY,"Content-Type":"application/json"},
+      body:JSON.stringify({email})
+    });
+    // Supabase returns 200 even for unknown emails (security best practice)
+    ok.style.display="block";
+    ok.textContent="✓ If that email is registered, a reset link is on its way. Check your inbox (and spam folder).";
+  }catch(e){
+    err.style.display="block";err.textContent="Connection error. Please try again.";
+  }
+  btn.disabled=false;btn.textContent="Send Reset Link →";
+}
 
 function doLogout(){
   U=null;P={};
@@ -6226,21 +6290,22 @@ async function renderAdmin(){
     <div id="adm-submissions"><div style="text-align:center;padding:24px;color:var(--muted)">Loading…</div></div>
   </div>`);
   try{
-    const res=await fetch(SUPA_URL+"/rest/v1/profiles?select=id,full_name,email,is_admin,created_at&order=created_at.asc",{
+    const res=await fetch(SUPA_URL+"/functions/v1/admin-users",{
       headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token}
     });
-    const users=await res.json();
+    const data=await res.json();
     const total=COURSES.flatMap(c=>allL(c)).length;
-    const arr=Array.isArray(users)?users:[];
+    const arr=Array.isArray(data.users)?data.users:[];
     const rows=arr.length?arr.map(u=>{
       const joined=u.created_at?new Date(u.created_at).toLocaleDateString("en-GB"):"—";
+      const lastSeen=u.last_sign_in_at?new Date(u.last_sign_in_at).toLocaleDateString("en-GB"):"Never";
       const isAdm=u.is_admin;
       return `<tr>
         <td><strong style="color:var(--text)">${esc(u.full_name||"—")}</strong>${isAdm?` <span style="background:var(--gold-bg);color:var(--gold);font-size:9px;font-weight:700;padding:1px 6px;border-radius:10px">ADMIN</span>`:""}
         </td>
         <td>${esc(u.email||"—")}</td>
         <td>${joined}</td>
-        <td><span style="font-size:12px;color:var(--muted)">Tracked per session</span></td>
+        <td style="font-size:12px;color:var(--muted)">Last login: ${lastSeen}</td>
       </tr>`;
     }).join(""):`<tr><td colspan="4" style="text-align:center;padding:28px;color:var(--muted)">No team members found. Add the first one above.</td></tr>`;
     document.getElementById("adm-tbl").innerHTML=`
@@ -6250,12 +6315,12 @@ async function renderAdmin(){
       <div class="stat-card"><div class="stat-lbl">Total Lessons</div><div class="stat-val">${total}</div><div class="stat-sub">across all courses</div></div>
     </div>
     <div class="tbl-wrap"><table class="adm-table">
-      <thead><tr><th style="${thS}">Name</th><th style="${thS}">Email</th><th style="${thS}">Joined</th><th style="${thS}">Progress</th></tr></thead>
+      <thead><tr><th style="${thS}">Name</th><th style="${thS}">Email</th><th style="${thS}">Joined</th><th style="${thS}">Last Login</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
   }catch(e){
     const el=document.getElementById("adm-tbl");
-    if(el)el.innerHTML=`<div style="padding:16px;color:var(--red)">Failed to load team data. Confirm your Supabase token is valid and profiles table is accessible.</div>`;
+    if(el)el.innerHTML=`<div style="padding:16px;color:var(--red)">Failed to load team data.</div>`;
   }
   // Load practical submissions
   adminLoadSubmissions();
@@ -7729,21 +7794,21 @@ async function adminCreateUser(){
   const pw=document.getElementById("adm-pw")?.value;
   const msg=document.getElementById("adm-msg");
   if(!name||!email||!pw){if(msg){msg.style.color="var(--red)";msg.textContent="Please fill in all three fields.";}return;}
-  if(msg){msg.style.color="var(--dim)";msg.textContent="Creating account…";}
+  if(msg){msg.style.color="var(--dim)";msg.textContent="Creating account and sending welcome email…";}
   try{
-    const res=await fetch(SUPA_URL+"/auth/v1/admin/users",{
+    const res=await fetch(SUPA_URL+"/functions/v1/admin-users",{
       method:"POST",
       headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token,"Content-Type":"application/json"},
-      body:JSON.stringify({email,password:pw,email_confirm:true,user_metadata:{full_name:name}})
+      body:JSON.stringify({name,email,password:pw})
     });
     const data=await res.json();
-    if(data.error||!data.id){
-      if(msg){msg.style.color="var(--red)";msg.textContent=data.msg||data.error||"Failed. Admin users need service_role key — add it to the Supabase config.";}
+    if(!res.ok||data.error){
+      if(msg){msg.style.color="var(--red)";msg.textContent=data.error||"Failed to create account. Please try again.";}
       return;
     }
-    if(msg){msg.style.color="var(--green)";msg.textContent=`✓ Account created for ${name}. They can now log in.`;}
+    if(msg){msg.style.color="var(--green)";msg.textContent=`✓ Account created for ${name}. Welcome email sent to ${email}.`;}
     ["adm-nm","adm-em","adm-pw"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
-    setTimeout(()=>renderAdmin(),1400);
+    setTimeout(()=>renderAdmin(),1600);
   }catch(e){if(msg){msg.style.color="var(--red)";msg.textContent="Network error. Please try again.";}}
 }
 </script>

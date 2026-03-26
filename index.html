@@ -5679,18 +5679,20 @@ function toast(msg,col){
 }
 
 async function sendToZapier(data){
-  if(!ZAPIER_WEBHOOK)return;
   try{
     const base={timestamp:new Date().toLocaleString("en-GB"),name:U?.name||"",email:U?.email||""};
     const type=data.type||"quiz_result";
-    let payload={...base,...data,type};
-    // Ensure formatted fields for quiz results
-    if(type==="quiz_result"||(!data.type&&data.score!==undefined)){
-      payload.scoreFormatted=(data.score||0)+"%";
-      payload.result=data.passed?"PASSED":"FAILED";
-      payload.correctFormatted=(data.correct||0)+"/"+(data.total||0);
+    const payload={...base,...data,type};
+    // Fire-and-forget to Supabase edge function — no CORS issues, no Zapier routing needed
+    fetch(SUPA_URL+"/functions/v1/send-academy-email",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","apikey":SUPA_KEY,"Authorization":"Bearer "+SUPA_KEY},
+      body:JSON.stringify(payload)
+    });
+    // Also forward to Zapier if configured (optional extra webhook)
+    if(ZAPIER_WEBHOOK){
+      fetch(ZAPIER_WEBHOOK,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
     }
-    await fetch(ZAPIER_WEBHOOK,{method:"POST",mode:"no-cors",body:JSON.stringify(payload)});
   }catch(e){}
 }
 

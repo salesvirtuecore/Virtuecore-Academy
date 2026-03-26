@@ -294,6 +294,8 @@ async function supaFetch(path, opts={}){
 const ZAPIER_WEBHOOK="https://hooks.zapier.com/hooks/catch/26321921/uxcjy1e/";
 /* ── Replace with your n8n webhook URL after importing the workflow ── */
 const N8N_LOGIN_WEBHOOK="https://ehpnumpupqpwjsvyhrkr.supabase.co/functions/v1/login-notification";
+const MARKETPLACE_WEBHOOK="https://hire.virtuecore.co.uk/api/academy/webhook";
+const MARKETPLACE_SECRET="vc_academy_wh_ef00f418682d4feb0a78e267c463ce26";
 
 /* ═══════════════════════════════════════════════════════
    COURSES
@@ -5725,6 +5727,29 @@ async function sendToZapier(data){
   }catch(e){}
 }
 
+async function pushToMarketplace(eventType){
+  if(!U?.email||!AC||!MARKETPLACE_WEBHOOK)return;
+  try{
+    const ls=allL(AC);
+    const completed=ls.filter(l=>P[l.id]).length;
+    const total=ls.length;
+    const percentage=total?Math.round(completed/total*100):0;
+    fetch(MARKETPLACE_WEBHOOK,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-academy-secret":MARKETPLACE_SECRET},
+      body:JSON.stringify({
+        event:eventType,
+        user_email:U.email,
+        course_id:AC.id,
+        course_title:AC.title,
+        lessons_completed:completed,
+        total_lessons:total,
+        percentage
+      })
+    });
+  }catch(e){}
+}
+
 /* ═══════════════════════════════════════════════════════
    AUTH
 ═══════════════════════════════════════════════════════ */
@@ -6057,11 +6082,11 @@ function renderLesson(){
   </div>`);
 }
 
-function markDone(){P[AL.id]=true;saveP();toast("✓ Lesson complete!");renderLesson();}
+function markDone(){P[AL.id]=true;saveP();toast("✓ Lesson complete!");pushToMarketplace("lesson_completed");renderLesson();}
 
 function goNext(){
   const ls=allL(AC),idx=ls.findIndex(l=>l.id===AL.id);
-  if(!P[AL.id]){P[AL.id]=true;saveP();}
+  if(!P[AL.id]){P[AL.id]=true;saveP();pushToMarketplace("lesson_completed");}
   if(idx<ls.length-1){const n=ls[idx+1];AM=AC.modules.find(m=>m.lessons.find(l=>l.id===n.id));AL=n;renderLesson();window.scrollTo(0,0);}
 }
 
@@ -6110,6 +6135,7 @@ function finishQ(){
   const prev=P[AQ.id]||{};
   const failCount=passed?0:(prev.failCount||0)+1;
   P[AQ.id]={score,passed,failCount};saveP();
+  if(passed){pushToMarketplace(cDone(AC)?"course_completed":"lesson_completed");}
   sendToZapier({course:AC.title,quiz:AQ.title,score,passed,correct,total:AQ.qs.length});
   if(!passed&&failCount>=2){
     sendToZapier({type:"quiz_fail_warning",course:AC.title,quiz:AQ.title,score,failCount,

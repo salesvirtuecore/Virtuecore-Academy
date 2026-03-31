@@ -3,6 +3,19 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const RESEND_API_KEY  = Deno.env.get("RESEND_API_KEY")!;
 const ADMIN_EMAILS    = ["sales@virtuecore.co.uk"];
 const FROM            = "VirtueCore Academy <academy@virtuecore.co.uk>";
+const SLACK_BOT_TOKEN = Deno.env.get("SLACK_BOT_TOKEN") ?? "";
+const SLACK_CHANNEL   = "C0AQE787Y9X";
+
+async function postToSlack(text: string): Promise<void> {
+  if (!SLACK_BOT_TOKEN) return;
+  try {
+    await fetch("https://slack.com/api/chat.postMessage", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${SLACK_BOT_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ channel: SLACK_CHANNEL, text }),
+    });
+  } catch (_) { /* non-blocking */ }
+}
 
 const CORS = {
   "Access-Control-Allow-Origin":  "*",
@@ -211,6 +224,9 @@ serve(async (req) => {
         const e = buildQuizResult(d);
         subject = e.subject; html = e.html;
         to = [d.email];
+        const passed = d.passed === "true";
+        const slackEmoji = passed ? "✅" : "❌";
+        await postToSlack(`${slackEmoji} *Quiz ${passed ? "Passed" : "Failed"}* — ${d.name}\n📚 *Quiz:* ${d.quiz}\n🎓 *Course:* ${d.course}\n📊 *Score:* ${d.score}% (${d.correct}/${d.total} correct)`);
         break;
       }
       case "quiz_fail_warning": {

@@ -5790,6 +5790,7 @@ async function doLogin(){
     document.getElementById("pg-app").style.display="block";
     renderDashboard();
     syncPracticalStatuses(); // non-blocking — refreshes practical review results from Supabase
+    migrateLocalQuizResults(); // non-blocking — uploads any pre-existing localStorage quiz results to Supabase
     if(isAdmin)adminLoadSubmissions(); // prime the notification dot
     // Fire login notification to n8n (non-blocking)
     if(N8N_LOGIN_WEBHOOK&&N8N_LOGIN_WEBHOOK!=="PASTE_YOUR_N8N_WEBHOOK_URL_HERE"){
@@ -6137,6 +6138,12 @@ function finishQ(){
   P[AQ.id]={score,passed,failCount};saveP();
   if(passed){pushToMarketplace(cDone(AC)?"course_completed":"lesson_completed");}
   sendToZapier({course:AC.title,quiz:AQ.title,score,passed,correct,total:AQ.qs.length});
+  // Save quiz result to Supabase so admins can view it
+  fetch(SUPA_URL+"/rest/v1/quiz_results",{
+    method:"POST",
+    headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token,"Content-Type":"application/json","Prefer":"return=minimal"},
+    body:JSON.stringify({user_id:U.uid,user_name:U.name,user_email:U.email,quiz_id:AQ.id,quiz_title:AQ.title,course_title:AC.title,score,passed,correct,total:AQ.qs.length,fail_count:failCount,taken_at:new Date().toISOString()})
+  }).catch(()=>{});
   if(!passed&&failCount>=2){
     sendToZapier({type:"quiz_fail_warning",course:AC.title,quiz:AQ.title,score,failCount,
       message:`${U.name} has failed the "${AQ.title}" quiz ${failCount} times (latest score: ${score}%). They need extra support — please follow up.`});
@@ -6312,6 +6319,10 @@ async function renderAdmin(){
   </div>
   <div id="adm-tbl" style="margin-top:4px"><div style="text-align:center;padding:36px;color:var(--muted)">Loading team members…</div></div>
   <div class="adm-section" style="margin-top:24px">
+    <div class="adm-section-title">📝 Quiz Results</div>
+    <div id="adm-quiz-results"><div style="text-align:center;padding:24px;color:var(--muted)">Loading…</div></div>
+  </div>
+  <div class="adm-section" style="margin-top:24px">
     <div class="adm-section-title">🎯 Practical Assessment Submissions</div>
     <div id="adm-submissions"><div style="text-align:center;padding:24px;color:var(--muted)">Loading…</div></div>
   </div>`);
@@ -6348,8 +6359,97 @@ async function renderAdmin(){
     const el=document.getElementById("adm-tbl");
     if(el)el.innerHTML=`<div style="padding:16px;color:var(--red)">Failed to load team data.</div>`;
   }
-  // Load practical submissions
+  // Load quiz results and practical submissions
+  adminLoadQuizResults();
   adminLoadSubmissions();
+}
+
+async function adminLoadQuizResults(){
+  const wrap=document.getElementById("adm-quiz-results");
+  if(!wrap)return;
+  wrap.innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted)">Loading quiz results…</div>`;
+  try{
+    const res=await fetch(SUPA_URL+"/rest/v1/quiz_results?order=taken_at.desc&limit=200",{
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token}
+    });
+    const rows=await res.json();
+    if(!Array.isArray(rows)||rows.length===0){
+      wrap.innerHTML=`<div style="padding:20px;color:var(--muted);font-size:13px">No quiz results yet.</div>`;return;
+    }
+    // Group by user
+    const byUser={};
+    rows.forEach(r=>{
+      const key=r.user_email||r.user_id;
+      if(!byUser[key])byUser[key]={name:r.user_name||"Unknown",email:r.user_email||"",results:[]};
+      byUser[key].results.push(r);
+    });
+    const thS="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);border-bottom:1px solid var(--border);background:var(--s2)";
+    const tdS="padding:9px 12px;font-size:12px;border-bottom:1px solid var(--border)";
+    let html="";
+    Object.values(byUser).forEach(u=>{
+      const passed=u.results.filter(r=>r.passed).length;
+      html+=`<div style="margin-bottom:20px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">${esc(u.name)} <span style="font-weight:400;color:var(--muted);font-size:12px">${esc(u.email)}</span>
+          <span style="margin-left:10px;font-size:11px;color:var(--green)">${passed} passed</span> <span style="color:var(--muted);font-size:11px">/ ${u.results.length} taken</span>
+        </div>
+        <div class="tbl-wrap"><table class="adm-table" style="width:100%">
+          <thead><tr>
+            <th style="${thS}">Quiz</th>
+            <th style="${thS}">Course</th>
+            <th style="${thS}">Score</th>
+            <th style="${thS}">Result</th>
+            <th style="${thS}">Attempts</th>
+            <th style="${thS}">Date</th>
+          </tr></thead>
+          <tbody>
+            ${u.results.map(r=>`<tr>
+              <td style="${tdS}">${esc(r.quiz_title||r.quiz_id||"")}</td>
+              <td style="${tdS};color:var(--muted)">${esc(r.course_title||"")}</td>
+              <td style="${tdS};font-weight:700;color:${r.passed?"var(--green)":"var(--red)"}">${r.score}%</td>
+              <td style="${tdS}">${r.passed?`<span style="color:var(--green);font-weight:700">✓ Passed</span>`:`<span style="color:var(--red);font-weight:700">✗ Failed</span>`}</td>
+              <td style="${tdS};color:var(--muted)">${r.fail_count>0?r.fail_count+" fail(s)":"—"}</td>
+              <td style="${tdS};color:var(--muted)">${r.taken_at?new Date(r.taken_at).toLocaleDateString("en-GB"):""}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table></div>
+      </div>`;
+    });
+    wrap.innerHTML=html;
+  }catch(e){
+    wrap.innerHTML=`<div style="padding:16px;color:var(--red);font-size:13px">Failed to load quiz results: ${esc(e.message)}</div>`;
+  }
+}
+
+async function migrateLocalQuizResults(){
+  if(!U.uid||!U.token)return;
+  const migKey="vc_qmig_"+U.email;
+  const alreadyMigrated=new Set(JSON.parse(localStorage.getItem(migKey)||"[]"));
+  const allQuizIds=COURSES.flatMap(c=>c.modules.map(m=>m.quiz?.id)).filter(Boolean);
+  const toUpload=[];
+  allQuizIds.forEach(qid=>{
+    if(alreadyMigrated.has(qid))return;
+    const qd=P[qid];
+    if(!qd||qd.score===undefined)return;
+    // Find quiz/module/course metadata
+    let quizTitle="",courseTitle="";
+    for(const c of COURSES){
+      const m=c.modules.find(m=>m.quiz?.id===qid);
+      if(m){quizTitle=m.quiz.title;courseTitle=c.title;break;}
+    }
+    toUpload.push({user_id:U.uid,user_name:U.name,user_email:U.email,quiz_id:qid,quiz_title:quizTitle,course_title:courseTitle,score:qd.score,passed:!!qd.passed,fail_count:qd.failCount||0,taken_at:new Date().toISOString()});
+  });
+  if(!toUpload.length)return;
+  try{
+    const res=await fetch(SUPA_URL+"/rest/v1/quiz_results",{
+      method:"POST",
+      headers:{"apikey":SUPA_KEY,"Authorization":"Bearer "+U.token,"Content-Type":"application/json","Prefer":"return=minimal"},
+      body:JSON.stringify(toUpload)
+    });
+    if(res.ok||res.status===201){
+      toUpload.forEach(r=>alreadyMigrated.add(r.quiz_id));
+      localStorage.setItem(migKey,JSON.stringify([...alreadyMigrated]));
+    }
+  }catch(e){}
 }
 
 async function syncPracticalStatuses(){

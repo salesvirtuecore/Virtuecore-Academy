@@ -6296,6 +6296,7 @@ async function doLogin(){
     const name=prof.full_name||authData.user.user_metadata?.full_name||e.split("@")[0];
     const isAdmin=!!prof.is_admin;
     U={name,email:e,isAdmin,token:authData.access_token,uid:authData.user.id};
+    saveSession(authData.refresh_token,authData.expires_in);
     try{const raw=localStorage.getItem("vc_p_"+e);P=raw?JSON.parse(raw):{};}catch(ex){P={}}
     document.getElementById("nav-uname").textContent=name;
     if(isAdmin)document.getElementById("tab-admin").classList.remove("hide");
@@ -6360,7 +6361,7 @@ async function doResetPassword(){
 }
 
 function doLogout(){
-  U=null;P={};
+  U=null;P={};clearSession();
   document.getElementById("pg-app").style.display="none";
   document.getElementById("pg-login").style.display="flex";
   ["inp-name","inp-email","inp-code"].forEach(id=>document.getElementById(id).value="");
@@ -8450,6 +8451,67 @@ async function adminCreateUser(){
     setTimeout(()=>renderAdmin(),1600);
   }catch(e){if(msg){msg.style.color="var(--red)";msg.textContent="Network error. Please try again.";}}
 }
+
+/* ═══════════════════════════════════════════════════════
+   SESSION PERSISTENCE & IDLE TIMEOUT
+═══════════════════════════════════════════════════════ */
+const VC_SESSION_KEY="vc_session";
+const IDLE_MS=15*60*1000;
+let _lastTouched=0;
+
+function saveSession(rt,ei){
+  try{localStorage.setItem(VC_SESSION_KEY,JSON.stringify({u:U,rt,exp:Date.now()+ei*1000,la:Date.now()}));}catch(e){}
+}
+function clearSession(){
+  try{localStorage.removeItem(VC_SESSION_KEY);}catch(e){}
+}
+function touchSession(){
+  const n=Date.now();if(n-_lastTouched<30000)return;_lastTouched=n;
+  try{const r=localStorage.getItem(VC_SESSION_KEY);if(!r)return;const s=JSON.parse(r);s.la=n;localStorage.setItem(VC_SESSION_KEY,JSON.stringify(s));}catch(e){}
+}
+async function tryRefreshToken(rt){
+  try{const r=await fetch(SUPA_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{"apikey":SUPA_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:rt})});return r.ok?r.json():null;}catch(e){return null;}
+}
+async function initSession(){
+  try{
+    const raw=localStorage.getItem(VC_SESSION_KEY);if(!raw)return;
+    const s=JSON.parse(raw);
+    if(Date.now()-s.la>IDLE_MS){clearSession();return;}
+    U=s.u;
+    if(Date.now()>s.exp-5*60*1000){
+      const d=await tryRefreshToken(s.rt);
+      if(!d||d.error){clearSession();U=null;return;}
+      U.token=d.access_token;
+      saveSession(d.refresh_token,d.expires_in);
+    }
+    try{const r=localStorage.getItem("vc_p_"+U.email);P=r?JSON.parse(r):{};}catch(e){P={};}
+    document.getElementById("nav-uname").textContent=U.name;
+    if(U.isAdmin)document.getElementById("tab-admin").classList.remove("hide");
+    document.getElementById("pg-login").style.display="none";
+    document.getElementById("pg-app").style.display="block";
+    renderDashboard();syncPracticalStatuses();migrateLocalQuizResults();
+    if(U.isAdmin)adminLoadSubmissions();
+  }catch(e){clearSession();U=null;}
+}
+
+// Refresh lastActive on any user interaction (throttled to once per 30s)
+["mousemove","click","keydown","touchstart"].forEach(ev=>document.addEventListener(ev,touchSession,{passive:true}));
+
+// Check every 60s — auto-logout if idle for more than 15 minutes
+setInterval(()=>{
+  if(!U)return;
+  try{
+    const r=localStorage.getItem(VC_SESSION_KEY);if(!r){doLogout();return;}
+    const s=JSON.parse(r);
+    if(Date.now()-s.la>IDLE_MS){
+      doLogout();
+      const err=document.getElementById("login-err");
+      if(err){err.style.display="block";err.textContent="You were signed out after 15 minutes of inactivity.";}
+    }
+  }catch(e){}
+},60000);
+
+initSession();
 </script>
 </body>
 </html>

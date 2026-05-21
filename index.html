@@ -5950,7 +5950,7 @@ FINAL FRAMEWORK — APPLY IN ORDER
 ]}
 
 ,
-{id:"lynch",icon:"📊",color:"#3E7BFA",tagBg:"rgba(62,123,250,0.12)",tagCol:"#6B9EFF",tag:"BOOK MODULE",title:"One Up on Wall Street",badge:{icon:"📊",name:"Stock Picker"},desc:"Master Peter Lynch's system for beating the market — from spotting tenbaggers in daily life to the six stock categories, P/E analysis, and when to buy and sell.",
+{id:"lynch",icon:"📊",color:"#3E7BFA",tagBg:"rgba(62,123,250,0.12)",tagCol:"#6B9EFF",tag:"BOOK MODULE",adminOnly:true,title:"One Up on Wall Street",badge:{icon:"📊",name:"Stock Picker"},desc:"Master Peter Lynch's system for beating the market — from spotting tenbaggers in daily life to the six stock categories, P/E analysis, and when to buy and sell.",
 modules:[
 {id:"lynch-m1",title:"Part I — Preparing to Invest",lessons:[
 {id:"lynch-m1-l1",title:"The Amateur's Edge",mins:6,body:`ONE UP ON WALL STREET BY PETER LYNCH — PART I: PREPARING TO INVEST
@@ -6917,6 +6917,7 @@ function renderDashboard(){
   }
   h+='<div class="course-grid">';
   COURSES.forEach(c=>{
+    if(c.adminOnly&&!U.isAdmin)return;
     const p=cPct(c),d=cDone(c);
     h+=`<div class="c-card" onclick="openCourse('${c.id}')">
       ${d?'<div class="done-badge">✓ Complete</div>':c.startHere&&p===0?'<div class="start-here-badge">★ Start Here</div>':""}
@@ -6934,7 +6935,7 @@ function renderDashboard(){
 /* ═══════════════════════════════════════════════════════
    COURSE
 ═══════════════════════════════════════════════════════ */
-function openCourse(id){AC=COURSES.find(c=>c.id===id);EXP={};AC.modules.forEach(m=>EXP[m.id]=true);renderCourse();}
+function openCourse(id){AC=COURSES.find(c=>c.id===id);if(!AC||AC.adminOnly&&!U.isAdmin)return;EXP={};AC.modules.forEach(m=>EXP[m.id]=true);renderCourse();}
 
 function renderCourse(){
   const c=AC,p=cPct(c);
